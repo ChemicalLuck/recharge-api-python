@@ -203,3 +203,10 @@ class RechargeSubscription(RechargeResource):
                 'date': date
             }
         )
+
+
+class RechargeOnetime(RechargeResource):
+    """
+    https://developer.rechargepayments.com/#onetimes
+    """
+    object_list_key = 'onetimes'
