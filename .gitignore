@@ -1,6 +1,8 @@
 *.pyc
 __pycache__
 .vscode
-recharge.egg-info
 venv
 .idea
+dist/*
+recharge_api.egg-info
+recharge-api.toml
