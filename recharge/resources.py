@@ -193,6 +193,12 @@ class RechargeSubscription(RechargeResource):
             }
         )
 
+    def delete(self, subscription_id):
+        """Delete a subscription
+        https://developer.rechargepayments.com/#delete-subscription
+        """
+        return self.http_delete(f'{self.url}/{subscription_id}')
+
     def set_next_charge_date(self, subscription_id, date):
         """Change the next charge date of a subscription
         https://developer.rechargepayments.com/#change-next-charge-date-on-subscription
