@@ -7,15 +7,17 @@ from setuptools import setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+with open("README.rst", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
-    name='recharge',
+    name='recharge-api',
     version='1.0.0',
-    author='Tobin Brown',
-    author_email='tobin@bulugroup.com',
+    author='ChemicalLuck',
+    author_email='chemicalluck@outlook.com',
     packages=['recharge'],
     include_package_data=True,
-    url='http://github.com/BuluBox/recharge-api',
+    url='http://github.com/ChemicalLuck/recharge-api',
     license='MIT',
     description='Python API Wrapper for Recharge',
     classifiers=[
@@ -30,7 +32,8 @@ setup(
         'Topic :: Utilities',
     ],
     keywords='api recharge',
-    long_description=open('README.rst', 'r').read(),
+    long_description=long_description,
     install_requires=['requests'],
     zip_safe=False,
+    python_requires=">=3.6"
 )
