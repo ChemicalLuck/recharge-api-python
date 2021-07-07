@@ -37,7 +37,7 @@ class RechargeResource(object):
 
     @property
     def url(self):
-        return '{0}/{1}'.format(self.base_url, self.object_list_key)
+        return f'{self.base_url}/{self.object_list_key}'
 
     def http_delete(self, url):
         response = requests.delete(url, headers=self.headers)
@@ -75,10 +75,10 @@ class RechargeResource(object):
         return self.http_post(self.url, data)
 
     def update(self, resource_id, data):
-        return self.http_put('{0}/{1}'.format(self.url, resource_id), data)
+        return self.http_put(f'{self.url}/{resource_id}', data)
 
     def get(self, resource_id):
-        return self.http_get('{0}/{1}'.format(self.url, resource_id))
+        return self.http_get(f'{self.url}/{resource_id}')
 
     def list(self, url_params=None):
         """
@@ -103,7 +103,7 @@ class RechargeAddress(RechargeResource):
         https://developer.rechargepayments.com/#add-discount-to-address-new
         """
         return self.http_post(
-            '{0}/{1}/apply_discount'.format(self.url, address_id),
+            f'{self.url}/{address_id}/apply_discount',
             {'discount_code': discount_code}
         )
 
@@ -111,8 +111,7 @@ class RechargeAddress(RechargeResource):
         """Create an address for the customer.
         https://developer.rechargepayments.com/#create-address
         """
-        url = '{0}/customers/{1}/{2}'.format(
-            self.base_url, customer_id, self.object_list_key)
+        url = f'{self.base_url}/customers/{customer_id}/{self.object_list_key}'
         return self.http_post(url, data)
 
 
@@ -127,7 +126,7 @@ class RechargeCharge(RechargeResource):
         https://developer.rechargepayments.com/#change-next-charge-date
         """
         return self.http_put(
-            '{0}/{1}/change_next_charge_date'.format(self.url, charge_id),
+            f'{self.url}/{charge_id}/change_next_charge_date',
             {'next_charge_date': to_date}
         )
 
@@ -143,7 +142,7 @@ class RechargeCheckout(RechargeResource):
         https://developer.rechargepayments.com/#process-checkout-beta
         """
         return self.http_post(
-            '{0}/{1}/charge'.format(self.url, checkout_id),
+            f'{self.url}/{checkout_id}/charge',
             data
         )
 
@@ -166,15 +165,15 @@ class RechargeOrder(RechargeResource):
         https://developer.rechargepayments.com/#change-order-date
         """
         return self.http_put(
-            '{0}/{1}/change_date'.format(self.url, order_id),
-            {'scheduled_at': '{0}T00:00:00'.format(to_date)}
+            f'{self.url}/{order_id}/change_date',
+            {'scheduled_at': f'{to_date}T00:00:00'}
         )
 
     def delete(self, order_id):
         """
         https://developer.rechargepayments.com/#delete-order-beta
         """
-        return self.http_delete('{0}/{1}'.format(self.url, order_id))
+        return self.http_delete(f'{self.url}/{order_id}')
 
 
 class RechargeSubscription(RechargeResource):
@@ -188,7 +187,7 @@ class RechargeSubscription(RechargeResource):
         https://developer.rechargepayments.com/#cancel-subscription
         """
         return self.http_post(
-            '{0}/{1}/cancel'.format(self.url, subscription_id), {
+            f'{self.url}/{subscription_id}/cancel', {
                 'cancellation_reason': reason,
                 'send_email': send_email
             }
@@ -199,7 +198,7 @@ class RechargeSubscription(RechargeResource):
         https://developer.rechargepayments.com/#change-next-charge-date-on-subscription
         """
         return self.http_post(
-            '{0}/{1}/set_next_charge_date'.format(self.url, subscription_id), {
+            f'{self.url}/{subscription_id}/set_next_charge_date', {
                 'date': date
             }
         )
