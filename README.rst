@@ -15,7 +15,7 @@ Installation
 
 .. code-block:: bash
 
-    pip install recharge
+    pip install recharge-api
 
 -----
 Usage
@@ -23,7 +23,7 @@ Usage
 
 .. code-block:: python
 
-    from recharge import RechargeAPI
+    from recharge-api import RechargeAPI
 
     api = RechargeAPI(access_token='XXXXX')
 
