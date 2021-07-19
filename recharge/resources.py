@@ -215,3 +215,9 @@ class RechargeOnetime(RechargeResource):
     https://developer.rechargepayments.com/#onetimes
     """
     object_list_key = 'onetimes'
+
+    def delete(self, onetime_id):
+        """Delete a Onetime
+        https://developer.rechargepayments.com/#delete-a-onetime
+        """
+        return self.http_delete(f'{self.url}/{onetime_id}')
