@@ -182,16 +182,11 @@ class RechargeSubscription(RechargeResource):
     """
     object_list_key = 'subscriptions'
 
-    def cancel(self, subscription_id, reason='Other', send_email=False):
+    def cancel(self, subscription_id, data=None):
         """Cancel a subsciption.
         https://developer.rechargepayments.com/#cancel-subscription
         """
-        return self.http_post(
-            f'{self.url}/{subscription_id}/cancel', {
-                'cancellation_reason': reason,
-                'send_email': send_email
-            }
-        )
+        return self.http_post(f'{self.url}/{subscription_id}/cancel', data)
 
     def delete(self, subscription_id):
         """Delete a subscription
