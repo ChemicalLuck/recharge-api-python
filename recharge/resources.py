@@ -5,7 +5,6 @@ from urllib.parse import urlencode
 
 import requests
 
-
 log = logging.getLogger(__name__)
 
 
@@ -24,11 +23,10 @@ class RechargeResource(object):
     def __init__(self, access_token=None, log_debug=False):
         self.log_debug = log_debug
         self.headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
+            'Accept':                  'application/json',
+            'Content-Type':            'application/json',
             'X-Recharge-Access-Token': access_token,
         }
-
 
     def log(self, url, response):
         if self.log_debug:
@@ -188,7 +186,7 @@ class RechargeSubscription(RechargeResource):
         """
         return self.http_post(f'{self.url}/{subscription_id}/cancel', data)
 
-    def delete(self, subscription_id):
+    def delete(self, subscription_id, data=None):
         """Delete a subscription
         https://developer.rechargepayments.com/#delete-subscription
         """
@@ -211,11 +209,11 @@ class RechargeOnetime(RechargeResource):
     """
     object_list_key = 'onetimes'
 
-    def delete(self, onetime_id):
+    def delete(self, onetime_id, data=None):
         """Delete a Onetime
         https://developer.rechargepayments.com/#delete-a-onetime
         """
-        return self.http_delete(f'{self.url}/{onetime_id}')
+        return self.http_delete(f'{self.url}/{onetime_id}', data)
 
 
 class RechargeDiscount(RechargeResource):
@@ -224,7 +222,7 @@ class RechargeDiscount(RechargeResource):
     """
     object_list_key = 'discounts'
 
-    def delete(self, discount_id):
+    def delete(self, discount_id, data=None):
         """Delete a Discount
         https://developer.rechargepayments.com/#delete-a-discount
         """
