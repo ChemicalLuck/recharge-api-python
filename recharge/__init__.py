@@ -5,7 +5,8 @@ from .resources import (
     RechargeCustomer,
     RechargeOrder,
     RechargeSubscription,
-    RechargeOnetime
+    RechargeOnetime,
+    RechargeDiscount
 )
 
 
@@ -27,3 +28,4 @@ class RechargeAPI(object):
         self.Order = RechargeOrder(**kwargs)
         self.Subscription = RechargeSubscription(**kwargs)
         self.Onetime = RechargeOnetime(**kwargs)
+        self.Discount = RechargeDiscount(**kwargs)

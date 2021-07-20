@@ -216,3 +216,16 @@ class RechargeOnetime(RechargeResource):
         https://developer.rechargepayments.com/#delete-a-onetime
         """
         return self.http_delete(f'{self.url}/{onetime_id}')
+
+
+class RechargeDiscount(RechargeResource):
+    """
+    https://developer.rechargepayments.com/#discounts
+    """
+    object_list_key = 'discounts'
+
+    def delete(self, discount_id):
+        """Delete a Discount
+        https://developer.rechargepayments.com/#delete-a-discount
+        """
+        return self.http_delete(f'{self.url}/{discount_id}')
