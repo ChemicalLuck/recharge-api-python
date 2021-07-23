@@ -6,7 +6,11 @@ from .resources import (
     RechargeOrder,
     RechargeSubscription,
     RechargeOnetime,
-    RechargeDiscount
+    RechargeDiscount,
+    RechargeWebhook,
+    RechargeMetafield,
+    RechargeShop,
+    RechargeProduct
 )
 
 
@@ -29,3 +33,7 @@ class RechargeAPI(object):
         self.Subscription = RechargeSubscription(**kwargs)
         self.Onetime = RechargeOnetime(**kwargs)
         self.Discount = RechargeDiscount(**kwargs)
+        self.Webhook = RechargeWebhook(**kwargs)
+        self.Metafield = RechargeMetafield(**kwargs)
+        self.Shop = RechargeShop(**kwargs)
+        self.Product = RechargeProduct(**kwargs)
