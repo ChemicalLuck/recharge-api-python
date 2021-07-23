@@ -12,7 +12,7 @@ with open("README.rst", "r", encoding="utf-8") as fh:
 
 setup(
     name='recharge-api',
-    version='1.3.0',
+    version='1.4.0',
     author='ChemicalLuck',
     author_email='chemicalluck@outlook.com',
     packages=['recharge'],
