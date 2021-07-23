@@ -300,7 +300,7 @@ class RechargeSubscription(RechargeResource):
         )
 
     def cancel(self, subscription_id, data=None):
-        """Cancel a subsciption.
+        """Cancel a subscription.
         https://developer.rechargepayments.com/#cancel-subscription
         """
         return self.http_post(f'{self.url}/{subscription_id}/cancel', data)
@@ -347,7 +347,7 @@ class RechargeOnetime(RechargeResource):
         """Delete a Onetime
         https://developer.rechargepayments.com/#delete-a-onetime
         """
-        return self.http_delete(f'{self.url}/{onetime_id}', data)
+        return self.http_delete(f'{self.url}/{onetime_id}')
 
 
 class RechargeDiscount(RechargeResource):
@@ -449,3 +449,16 @@ class RechargeMetafield(RechargeResource):
         https://developer.rechargepayments.com/v1#delete-a-metafield
         """
         return self.http_delete(f'{self.url}/{metafield_id}')
+
+
+class RechargeWebhook(RechargeResource):
+    """
+    https://developer.rechargepayments.com/v1#webhooks
+    """
+    object_list_key = 'webhooks'
+
+    def delete(self, webhook_id):
+        """Delete a webhook.
+        https://developer.rechargepayments.com/v1#delete-a-webhook
+        """
+        return self.http_delete(f'{self.url}/{webhook_id}')
