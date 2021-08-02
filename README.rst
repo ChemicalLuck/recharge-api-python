@@ -47,7 +47,11 @@ Resources Available
     api.Checkout    
     api.Customer    
     api.Order    
-    api.Subscription    
+    api.Subscription
+    api.Onetime
+    api.Discount
+    api.Shop
+    api.Product
 
 -----------------
 Methods Available
