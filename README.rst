@@ -7,7 +7,8 @@ Recharge API Wrapper
 
 ------------------
 
-This library makes interacting with the Recharge API dead simple.
+A fork of recharge-api by BuluBox.
+Expanded to include every v1 recharge api endpoint as well as all methods available.
 
 ------------
 Installation
