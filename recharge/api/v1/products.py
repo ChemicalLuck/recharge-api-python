@@ -1,16 +1,15 @@
-from recharge.api.tokens import TokenScope
-from recharge.api import RechargeResource
+from typing import Literal, Required, TypedDict, TypeAlias
 
-from typing import TypedDict, Required, Literal
+from recharge.api import RechargeResource, RechargeScope
 
-type ProductDiscountType = Literal["percentage"]
+ProductDiscountType: TypeAlias = Literal["percentage"]
 
-type ProductStorefrontPurchaseOptions = Literal[
+ProductStorefrontPurchaseOptions: TypeAlias = Literal[
     "subscription_only", "subscription_and_onetime"
 ]
 
 
-class ProductCreateBody(TypedDict):
+class ProductCreateBody(TypedDict, total=False):
     charge_interval_frequency: int
     cutoff_day_of_month: int
     cutoff_day_of_week: int
@@ -25,17 +24,17 @@ class ProductCreateBody(TypedDict):
     storefront_purchase_options: ProductStorefrontPurchaseOptions
 
 
-class ProductImages(TypedDict):
+class ProductImages(TypedDict, total=False):
     large: str
     medium: str
     original: str
     small: str
 
 
-type ProductOrderIntervalUnit = Literal["day", "week", "month"]
+ProductOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
 
 
-class ProductGetQuery(TypedDict):
+class ProductGetQuery(TypedDict, total=False):
     charge_interval_frequency: str
     created_at: str
     cutoff_day_of_month: str
@@ -57,7 +56,7 @@ class ProductGetQuery(TypedDict):
     updated_at: str
 
 
-class ProductUpdateBody(TypedDict):
+class ProductUpdateBody(TypedDict, total=False):
     charge_interval_frequency: int
     cutoff_day_of_month: int
     cutoff_day_of_week: int
@@ -72,7 +71,11 @@ class ProductUpdateBody(TypedDict):
     storefront_purchase_options: ProductStorefrontPurchaseOptions
 
 
-class ProductListQuery(TypedDict):
+class ProductDeleteBody(TypedDict):
+    product_id: str
+
+
+class ProductListQuery(TypedDict, total=False):
     id: str
     limit: str
     shopify_product_id: int
@@ -90,52 +93,52 @@ class ProductResource(RechargeResource):
         """Create a product.
         https://developer.rechargepayments.com/2021-01/products/products_create
         """
-        required_scopes: list[TokenScope] = ["write_products"]
+        required_scopes: list[RechargeScope] = ["write_products"]
         self.check_scopes("POST /products", required_scopes)
 
-        return self.http_post(self.url, body)
+        return self._http_post(self.url, body)
 
     def get(self, product_id: str):
         """Get a product.
         https://developer.rechargepayments.com/2021-01/products/products_retrieve
         """
-        required_scopes: list[TokenScope] = ["read_products"]
+        required_scopes: list[RechargeScope] = ["read_products"]
         self.check_scopes(f"GET /products/{product_id}", required_scopes)
 
-        return self.http_get(f"{self.url}/{product_id}")
+        return self._http_get(f"{self.url}/{product_id}")
 
     def update(self, product_id: str, body: ProductUpdateBody):
         """Update a product.
         https://developer.rechargepayments.com/2021-01/products/products_update
         """
-        required_scopes: list[TokenScope] = ["write_products"]
+        required_scopes: list[RechargeScope] = ["write_products"]
         self.check_scopes(f"PUT /products/{product_id}", required_scopes)
 
-        return self.http_put(f"{self.url}/{product_id}", body)
+        return self._http_put(f"{self.url}/{product_id}", body)
 
     def delete(self, product_id: str):
         """Delete a product.
         https://developer.rechargepayments.com/2021-01/products/products_delete
         """
-        required_scopes: list[TokenScope] = ["write_products"]
+        required_scopes: list[RechargeScope] = ["write_products"]
         self.check_scopes(f"DELETE /products/{product_id}", required_scopes)
 
-        return self.http_delete(f"{self.url}/{product_id}")
+        return self._http_delete(f"{self.url}/{product_id}")
 
     def list(self, query: ProductListQuery):
         """List products.
         https://developer.rechargepayments.com/2021-01/products/products_list
         """
-        required_scopes: list[TokenScope] = ["read_products"]
+        required_scopes: list[RechargeScope] = ["read_products"]
         self.check_scopes("GET /products", required_scopes)
 
-        return self.http_get(self.url, query)
+        return self._http_get(self.url, query)
 
     def count(self):
         """Count products.
         https://developer.rechargepayments.com/2021-01/products/products_count
         """
-        required_scopes: list[TokenScope] = ["read_products"]
+        required_scopes: list[RechargeScope] = ["read_products"]
         self.check_scopes("GET /products/count", required_scopes)
 
-        return self.http_get(f"{self.url}/count")
+        return self._http_get(f"{self.url}/count")

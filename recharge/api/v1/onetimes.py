@@ -1,7 +1,6 @@
-from recharge.api.tokens import TokenScope
-from . import RechargeResource
+from typing import Required, TypedDict
 
-from typing import TypedDict, Required
+from recharge.api import RechargeResource, RechargeScope
 
 
 class OnetimeProperty(TypedDict):
@@ -9,7 +8,7 @@ class OnetimeProperty(TypedDict):
     value: str
 
 
-class OnetimeCreateBody(TypedDict):
+class OnetimeCreateBody(TypedDict, total=False):
     add_to_next_charge: bool
     next_charge_scheduled_at: Required[str]
     price: int
@@ -20,7 +19,7 @@ class OnetimeCreateBody(TypedDict):
     shopify_variant_id: Required[int]
 
 
-class OnetimeUpdateBody(TypedDict):
+class OnetimeUpdateBody(TypedDict, total=False):
     next_charge_scheduled_at: str
     price: int
     product_title: str
@@ -31,7 +30,11 @@ class OnetimeUpdateBody(TypedDict):
     shopify_variant_id: int
 
 
-class OnetimeListQuery(TypedDict):
+class OnetimeDeleteBody(TypedDict):
+    onetime_id: str
+
+
+class OnetimeListQuery(TypedDict, total=False):
     address_id: str
     created_at_max: str
     created_at_min: str
@@ -54,43 +57,43 @@ class OnetimeResource(RechargeResource):
         """Create a Onetime
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_create
         """
-        required_scopes: list[TokenScope] = ["write_subscriptions"]
+        required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes("POST /onetimes", required_scopes)
 
-        return self.http_post(self.url, body)
+        return self._http_post(self.url, body)
 
     def get(self, onetime_id: str):
         """Get a Onetime
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_retrieve
         """
-        required_scopes: list[TokenScope] = ["read_subscriptions"]
+        required_scopes: list[RechargeScope] = ["read_subscriptions"]
         self.check_scopes("GET /onetimes/:onetime_id", required_scopes)
 
-        return self.http_get(f"{self.url}/{onetime_id}")
+        return self._http_get(f"{self.url}/{onetime_id}")
 
     def update(self, onetime_id: str, body: OnetimeUpdateBody):
         """Update a Onetime
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_update
         """
-        required_scopes: list[TokenScope] = ["write_subscriptions"]
+        required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes("PUT /onetimes/:onetime_id", required_scopes)
 
-        return self.http_put(f"{self.url}/{onetime_id}", body)
+        return self._http_put(f"{self.url}/{onetime_id}", body)
 
     def delete(self, onetime_id: str):
         """Delete a Onetime.
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_delete
         """
-        required_scopes: list[TokenScope] = ["write_subscriptions"]
+        required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes("DELETE /onetimes/:onetime_id", required_scopes)
 
-        return self.http_delete(f"{self.url}/{onetime_id}")
+        return self._http_delete(f"{self.url}/{onetime_id}")
 
     def list(self, query: OnetimeListQuery):
         """List Onetimes.
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_list
         """
-        required_scopes: list[TokenScope] = ["read_subscriptions"]
+        required_scopes: list[RechargeScope] = ["read_subscriptions"]
         self.check_scopes("GET /onetimes", required_scopes)
 
-        return self.http_get(self.url, query)
+        return self._http_get(self.url, query)

@@ -1,10 +1,9 @@
-from recharge.api import RechargeResource
-from recharge.api.tokens import TokenScope
+from typing import Literal, Required, TypedDict, TypeAlias
 
-from typing import TypedDict, Required, Literal
+from recharge.api import RechargeResource, RechargeScope
 
 
-class CustomerCreateBody(TypedDict):
+class CustomerCreateBody(TypedDict, total=False):
     accepts_marketing: bool
     billing_address1: Required[str]
     billing_address2: str
@@ -24,7 +23,7 @@ class CustomerCreateBody(TypedDict):
     shopify_customer_id: str
 
 
-class CustomerUpdateBody(TypedDict):
+class CustomerUpdateBody(TypedDict, total=False):
     accepts_marketing: bool
     billing_address1: str
     billing_address2: str
@@ -43,10 +42,10 @@ class CustomerUpdateBody(TypedDict):
     shopify_customer_id: str
 
 
-type CustomerStatus = Literal["ACTIVE", "INACTIVE"]
+CustomerStatus: TypeAlias = Literal["ACTIVE", "INACTIVE"]
 
 
-class CustomerListQuery(TypedDict):
+class CustomerListQuery(TypedDict, total=False):
     email: str
     created_at_max: str
     created_at_min: str
@@ -60,7 +59,7 @@ class CustomerListQuery(TypedDict):
     updated_at_min: str
 
 
-class CustomerCountQuery(TypedDict):
+class CustomerCountQuery(TypedDict, total=False):
     created_at_max: str
     created_at_min: str
     status: CustomerStatus
@@ -79,54 +78,54 @@ class CustomerResource(RechargeResource):
         """Create a customer.
         https://developer.rechargepayments.com/2021-01/customers/customers_create
         """
-        required_scopes: list[TokenScope] = ["write_customers", "write_payments"]
+        required_scopes: list[RechargeScope] = ["write_customers", "write_payments"]
         self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self.http_post(self.url, body)
+        return self._http_post(self.url, body)
 
     def get(self, customer_id: str):
         """Get a customer by ID.
         https://developer.rechargepayments.com/2021-01/customers/customers_retrieve
         """
-        required_scopes: list[TokenScope] = ["read_customers"]
+        required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(f"GET /{self.object_list_key}/:customer_id", required_scopes)
 
-        return self.http_get(f"{self.url}/{customer_id}")
+        return self._http_get(f"{self.url}/{customer_id}")
 
     def update(self, customer_id: str, body: CustomerUpdateBody):
         """Update a customer.
         https://developer.rechargepayments.com/2021-01/customers/customers_update
         """
-        required_scopes: list[TokenScope] = ["write_customers"]
+        required_scopes: list[RechargeScope] = ["write_customers"]
         self.check_scopes(f"PUT /{self.object_list_key}/:customer_id", required_scopes)
 
-        return self.http_put(f"{self.url}/{customer_id}", body)
+        return self._http_put(f"{self.url}/{customer_id}", body)
 
     def delete(self, customer_id: str):
         """Delete a customer.
         https://developer.rechargepayments.com/2021-01/customers/customers_delete
         """
-        required_scopes: list[TokenScope] = ["write_customers"]
+        required_scopes: list[RechargeScope] = ["write_customers"]
         self.check_scopes(
             f"DELETE /{self.object_list_key}/:customer_id", required_scopes
         )
 
-        return self.http_delete(f"{self.url}/{customer_id}")
+        return self._http_delete(f"{self.url}/{customer_id}")
 
     def list(self, query: CustomerListQuery | None = None):
         """List customers.
         https://developer.rechargepayments.com/2021-01/customers/customers_list
         """
-        required_scopes: list[TokenScope] = ["read_customers"]
+        required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self.http_get(self.url, query)
+        return self._http_get(self.url, query)
 
     def count(self, query: CustomerCountQuery | None = None):
         """Retrieve a count of customers.
         https://developer.rechargepayments.com/2021-01/customers/customers_count
         """
-        required_scopes: list[TokenScope] = ["read_customers"]
+        required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        return self.http_get(f"{self.url}/count", query)
+        return self._http_get(f"{self.url}/count", query)

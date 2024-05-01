@@ -1,12 +1,12 @@
-from typing import Literal, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource
-from recharge.api.tokens import TokenScope
-
-type NotificationTemplateType = Literal["upcoming_charge", "get_account_access"]
+from recharge.api import RechargeResource, RechargeScope
 
 
-class NotificationTemplateVars(TypedDict):
+NotificationTemplateType: TypeAlias = Literal["upcoming_charge", "get_account_access"]
+
+
+class NotificationTemplateVars(TypedDict, total=False):
     address_id: int
     charge_id: int
 
@@ -27,9 +27,11 @@ class NotificationResource(RechargeResource):
         Send an email notification to a customer.
         https://developer.rechargepayments.com/2021-01/notifications/notifications_get_account_access
         """
-        required_scopes: list[TokenScope] = ["write_notifications"]
+        required_scopes: list[RechargeScope] = ["write_notifications"]
         self.check_scopes(
             f"POST /customers/{customer_id}/notifications", required_scopes
         )
 
-        return self.http_post(f"{self.url}/customers/{customer_id}/notifications", body)
+        return self._http_post(
+            f"{self.url}/customers/{customer_id}/notifications", body
+        )

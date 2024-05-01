@@ -1,9 +1,8 @@
-from recharge.api.tokens import TokenScope
-from . import RechargeResource
+from typing import Literal, Required, TypedDict, TypeAlias
 
-from typing import Literal, Required, TypedDict
+from recharge.api import RechargeResource, RechargeScope
 
-type WebhookTopic = Literal[
+WebhookTopic: TypeAlias = Literal[
     "address/created",
     "address/updated",
     "async_batch/processed",
@@ -55,7 +54,8 @@ type WebhookTopic = Literal[
     "store/updated",
     "recharge/uninstalled",
 ]
-WebhookTopicMap: dict[str, TokenScope] = {
+
+WebhookTopicMap: dict[str, RechargeScope] = {
     "address": "read_customers",
     "async_batch": "read_batches",
     "bundle_selection": "read_subscriptions",
@@ -70,12 +70,12 @@ WebhookTopicMap: dict[str, TokenScope] = {
     "recharge": "store_info",
 }
 
-type WebhookIncludedObject = Literal[
+WebhookIncludedObject: TypeAlias = Literal[
     "addresses", "collections", "customer", "metafields"
 ]
 
 
-class WebhookCreateBody(TypedDict):
+class WebhookCreateBody(TypedDict, total=False):
     address: Required[str]
     inclded_objects: list[WebhookIncludedObject]
     topic: Required[WebhookTopic]
@@ -93,31 +93,31 @@ class WebhookResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_create
         """
         resource = body["topic"].split("/")[0]
-        required_scopes: list[TokenScope] = [WebhookTopicMap[resource]]
+        required_scopes: list[RechargeScope] = [WebhookTopicMap[resource]]
         self.check_scopes("POST /webhooks", required_scopes)
 
-        return self.http_post(self.url, body)
+        return self._http_post(self.url, body)
 
     def get(self, webhook_id: str):
         """Get a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_retrieve
         """
-        return self.http_get(f"{self.url}/{webhook_id}")
+        return self._http_get(f"{self.url}/{webhook_id}")
 
     def update(self, webhook_id: str):
         """Update a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_update
         """
-        return self.http_delete(f"{self.url}/{webhook_id}")
+        return self._http_delete(f"{self.url}/{webhook_id}")
 
     def list(self):
         """List webhooks.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_list
         """
-        return self.http_get(self.url)
+        return self._http_get(self.url)
 
     def test(self, webhook_id: str):
         """Test a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_test
         """
-        return self.http_post(f"{self.url}/{webhook_id}/test")
+        return self._http_post(f"{self.url}/{webhook_id}/test")

@@ -1,10 +1,9 @@
-from typing import Literal, TypedDict, Required
+from typing import Literal, Required, TypedDict, TypeAlias
 
-from recharge.api import RechargeResource
-from recharge.api.tokens import TokenScope
+from recharge.api import RechargeResource, RechargeScope
 
 
-class CheckoutUtmParams(TypedDict):
+class CheckoutUtmParams(TypedDict, total=False):
     utm_campaign: str
     utm_content: str
     utm_data_source: str
@@ -14,11 +13,11 @@ class CheckoutUtmParams(TypedDict):
     utm_timestamp: str
 
 
-class CheckoutAnalyticsData(TypedDict):
+class CheckoutAnalyticsData(TypedDict, total=False):
     utm_params: list[CheckoutUtmParams]
 
 
-class CheckoutBillingAddress(TypedDict):
+class CheckoutBillingAddress(TypedDict, total=False):
     address1: str
     address2: str
     city: str
@@ -31,9 +30,11 @@ class CheckoutBillingAddress(TypedDict):
     zip: str
 
 
-type CheckoutExternalCheckoutSource = Literal["big_commerce", "headless", "shopify"]
+CheckoutExternalCheckoutSource: TypeAlias = Literal[
+    "big_commerce", "headless", "shopify"
+]
 
-type CheckoutOrderIntervalUnit = Literal["day", "week", "month"]
+CheckoutOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
 
 
 class CheckoutLineItemProperty(TypedDict):
@@ -41,10 +42,10 @@ class CheckoutLineItemProperty(TypedDict):
     value: str
 
 
-type CheckoutLineItemType = Literal["SUBSCRIPTION", "ONETIME"]
+CheckoutLineItemType: TypeAlias = Literal["SUBSCRIPTION", "ONETIME"]
 
 
-class CheckoutLineItem(TypedDict):
+class CheckoutLineItem(TypedDict, total=False):
     charge_interval_frequency: int
     cutoff_day_of_month: int
     cutoff_day_of_week: int
@@ -78,7 +79,7 @@ class CheckoutNoteAttribute(TypedDict):
     value: str
 
 
-class CheckoutShippingAddress(TypedDict):
+class CheckoutShippingAddress(TypedDict, total=False):
     address1: str
     address2: str
     city: str
@@ -91,7 +92,7 @@ class CheckoutShippingAddress(TypedDict):
     zip: str
 
 
-class CheckoutCreateBody(TypedDict):
+class CheckoutCreateBody(TypedDict, total=False):
     analytics_data: CheckoutAnalyticsData
     billing_address: CheckoutBillingAddress
     buyer_accepts_marketing: bool
@@ -108,7 +109,7 @@ class CheckoutCreateBody(TypedDict):
     shipping_address: CheckoutShippingAddress
 
 
-class CheckoutUpdateBody(TypedDict):
+class CheckoutUpdateBody(TypedDict, total=False):
     analytics_data: CheckoutAnalyticsData
     billing_address: CheckoutBillingAddress
     buyer_accepts_marketing: bool
@@ -126,12 +127,16 @@ class CheckoutUpdateBody(TypedDict):
     shipping_address: CheckoutShippingAddress
 
 
-type CheckoutPaymentProcessor = Literal["stripe", "braintree", "mollie", "authorize"]
+CheckoutPaymentProcessor: TypeAlias = Literal[
+    "stripe", "braintree", "mollie", "authorize"
+]
 
-type CheckoutPaymentType = Literal["CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY"]
+CheckoutPaymentType: TypeAlias = Literal[
+    "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY"
+]
 
 
-class CheckoutProcessBody(TypedDict):
+class CheckoutProcessBody(TypedDict, total=False):
     payment_processor: Required[CheckoutPaymentProcessor]
     payment_token: Required[str]
     payment_type: CheckoutPaymentType
@@ -148,47 +153,47 @@ class CheckoutResource(RechargeResource):
         """Create a new checkout.
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_create
         """
-        required_scopes: list[TokenScope] = ["write_checkouts"]
+        required_scopes: list[RechargeScope] = ["write_checkouts"]
         self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self.http_post(self.url, body)
+        return self._http_post(self.url, body)
 
     def get(self, checkout_id: str):
         """Get a checkout by ID.
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_retrieve
         """
-        required_scopes: list[TokenScope] = ["read_checkouts"]
+        required_scopes: list[RechargeScope] = ["read_checkouts"]
         self.check_scopes(f"GET /{self.object_list_key}/:checkout_id", required_scopes)
 
-        return self.http_get(f"{self.url}/{checkout_id}")
+        return self._http_get(f"{self.url}/{checkout_id}")
 
     def update(self, checkout_id: str, body: CheckoutUpdateBody):
         """Update a checkout.
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_update
         """
-        required_scopes: list[TokenScope] = ["write_checkouts"]
+        required_scopes: list[RechargeScope] = ["write_checkouts"]
         self.check_scopes(f"PUT /{self.object_list_key}/:checkout_id", required_scopes)
 
-        return self.http_put(f"{self.url}/{checkout_id}", body)
+        return self._http_put(f"{self.url}/{checkout_id}", body)
 
     def get_shipping(self, checkout_id: str):
         """Retrieve shipping rates for a checkout
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_retrieve_shipping_address
         """
-        required_scopes: list[TokenScope] = ["read_checkouts"]
+        required_scopes: list[RechargeScope] = ["read_checkouts"]
         self.check_scopes(
             f"GET /{self.object_list_key}/:checkout_id/shipping_rates", required_scopes
         )
 
-        return self.http_get(f"{self.url}/{checkout_id}/shipping_rates")
+        return self._http_get(f"{self.url}/{checkout_id}/shipping_rates")
 
     def process(self, checkout_id: str, body: CheckoutProcessBody):
         """Process (charge) a checkout.
         https://developer.rechargepayments.com/2021-01/checkout/checkout_process
         """
-        required_scopes: list[TokenScope] = ["write_checkouts"]
+        required_scopes: list[RechargeScope] = ["write_checkouts"]
         self.check_scopes(
             f"POST /{self.object_list_key}/:checkout_id/charge", required_scopes
         )
 
-        return self.http_post(f"{self.url}/{checkout_id}/charge", body)
+        return self._http_post(f"{self.url}/{checkout_id}/charge", body)

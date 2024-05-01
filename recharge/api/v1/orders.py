@@ -1,10 +1,9 @@
-from recharge.api import RechargeResource
-from recharge.api.tokens import TokenScope
+from typing import Literal, TypeAlias, TypedDict
 
-from typing import TypedDict, Literal
+from recharge.api import RechargeResource, RechargeScope
 
 
-class OrderBillingAddress(TypedDict):
+class OrderBillingAddress(TypedDict, total=False):
     address1: str
     province: str
     address2: str
@@ -17,7 +16,7 @@ class OrderBillingAddress(TypedDict):
     zip: str
 
 
-class OrderShippingAddress(TypedDict):
+class OrderShippingAddress(TypedDict, total=False):
     address1: str
     province: str
     address2: str
@@ -30,22 +29,22 @@ class OrderShippingAddress(TypedDict):
     zip: str
 
 
-class OrderCustomer(TypedDict):
+class OrderCustomer(TypedDict, total=False):
     first_name: str
     last_name: str
     email: str
 
 
-class OrderUpdateBody(TypedDict):
+class OrderUpdateBody(TypedDict, total=False):
     billing_address: OrderBillingAddress
     shipping_address: OrderShippingAddress
     customer: OrderCustomer
 
 
-type OrderStatus = Literal["SUCCESS", "QUEUED", "ERROR", "REFUNDED", "SKIPPED"]
+OrderStatus: TypeAlias = Literal["SUCCESS", "QUEUED", "ERROR", "REFUNDED", "SKIPPED"]
 
 
-class OrderListQuery(TypedDict):
+class OrderListQuery(TypedDict, total=False):
     address_id: str
     charge_id: str
     created_at_max: str
@@ -65,7 +64,7 @@ class OrderListQuery(TypedDict):
     updated_at_min: str
 
 
-class OrderCountQuery(TypedDict):
+class OrderCountQuery(TypedDict, total=False):
     address_id: str
     charge_id: str
     created_at_max: str
@@ -103,55 +102,55 @@ class OrderResource(RechargeResource):
         """Get an order.
         https://developer.rechargepayments.com/2021-01/orders/orders_retrieve
         """
-        required_scopes: list[TokenScope] = ["read_orders"]
+        required_scopes: list[RechargeScope] = ["read_orders"]
         self.check_scopes(f"GET /orders/{order_id}", required_scopes)
 
-        return self.http_get(f"{self.url}/{order_id}")
+        return self._http_get(f"{self.url}/{order_id}")
 
     def update(self, order_id: str, body: OrderUpdateBody):
         """Update an order.
         https://developer.rechargepayments.com/2021-01/orders/orders_update
         """
-        required_scopes: list[TokenScope] = ["write_orders"]
+        required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(f"PUT /orders/{order_id}", required_scopes)
 
-        return self.http_put(f"{self.url}/{order_id}", body)
+        return self._http_put(f"{self.url}/{order_id}", body)
 
     def delete(self, order_id: str):
         """Delete an order.
         https://developer.rechargepayments.com/2021-01/orders/orders_delete
         """
-        required_scopes: list[TokenScope] = ["write_orders"]
+        required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(f"DELETE /orders/{order_id}", required_scopes)
 
-        return self.http_delete(f"{self.url}/{order_id}")
+        return self._http_delete(f"{self.url}/{order_id}")
 
     def list(self, query: OrderListQuery):
         """List orders.
         https://developer.rechargepayments.com/2021-01/orders/orders_list
         """
-        required_scopes: list[TokenScope] = ["read_orders"]
+        required_scopes: list[RechargeScope] = ["read_orders"]
         self.check_scopes("GET /orders", required_scopes)
 
-        return self.http_get(self.url, query)
+        return self._http_get(self.url, query)
 
     def count(self, query: OrderCountQuery):
         """Count orders.
         https://developer.rechargepayments.com/2021-01/orders/orders_count
         """
-        required_scopes: list[TokenScope] = ["read_orders"]
+        required_scopes: list[RechargeScope] = ["read_orders"]
         self.check_scopes("GET /orders/count", required_scopes)
 
-        return self.http_get(f"{self.url}/count", query)
+        return self._http_get(f"{self.url}/count", query)
 
     def change_date(self, order_id: str, body: OrderChangeDateBody):
         """Change the date of a queued order.
         https://developer.rechargepayments.com/2021-01/orders/orders_change_date
         """
-        required_scopes: list[TokenScope] = ["write_orders"]
+        required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes("POST /orders/:order_id/change_date", required_scopes)
 
-        return self.http_post(
+        return self._http_post(
             f"{self.url}/{order_id}/change_date",
             body,
         )
@@ -162,13 +161,13 @@ class OrderResource(RechargeResource):
         """Change an order variant.
         https://developer.rechargepayments.com/v1#change-an-order-variant
         """
-        required_scopes: list[TokenScope] = ["write_orders"]
+        required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(
             "PUT /orders/:order_id/update_shopify_variant/:old_variant_id",
             required_scopes,
         )
 
-        return self.http_put(
+        return self._http_put(
             f"{self.url}/{order_id}/update_shopify_variant/{old_variant_id}", body
         )
 
@@ -176,10 +175,10 @@ class OrderResource(RechargeResource):
         """Clone an order.
         https://developer.rechargepayments.com/2021-01/orders/orders_clone
         """
-        required_scopes: list[TokenScope] = ["write_orders"]
+        required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes("POST /orders/:order_id/clone", required_scopes)
 
-        return self.http_post(
+        return self._http_post(
             f"{self.url}/clone_order_on_success_charge/{order_id}/charge/{charge_id}",
             body,
         )
@@ -188,7 +187,7 @@ class OrderResource(RechargeResource):
         """Delay an order.
         https://developer.rechargepayments.com/2021-01/orders/orders_delay
         """
-        required_scopes: list[TokenScope] = ["write_orders"]
+        required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes("POST /orders/:order_id/delay", required_scopes)
 
-        return self.http_post(f"{self.url}/{order_id}/delay", None)
+        return self._http_post(f"{self.url}/{order_id}/delay", None)

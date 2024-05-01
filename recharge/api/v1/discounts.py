@@ -1,34 +1,35 @@
-from typing import Literal, Required, TypedDict
+from typing import Literal, Required, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource
-from recharge.api.tokens import TokenScope
+from recharge.api import RechargeResource, RechargeScope
 
-type DiscountProductType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
+DiscountProductType: TypeAlias = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
-type DiscountAppliesToResource = Literal["shopify_product", "shopify_collection_id"]
+DiscountAppliesToResource: TypeAlias = Literal[
+    "shopify_product", "shopify_collection_id"
+]
 
 
 class DiscountChannelSettingsValue:
     can_apply: bool
 
 
-class DiscountChannelSettings(TypedDict):
+class DiscountChannelSettings(TypedDict, total=False):
     api: DiscountChannelSettingsValue
     checkout_page: DiscountChannelSettingsValue
     customer_portal: DiscountChannelSettingsValue
     merchant_portal: DiscountChannelSettingsValue
 
 
-type DiscountType = Literal["percentage", "fixed_amount"]
+DiscountType: TypeAlias = Literal["percentage", "fixed_amount"]
 
-type DiscountFirstTimeCustomerRestriction = Literal[
+DiscountFirstTimeCustomerRestriction: TypeAlias = Literal[
     "null", "customer_must_not_exist_in_recharge"
 ]
 
-type DiscountStatus = Literal["enabled", "disabled", "fully_disabled"]
+DiscountStatus: TypeAlias = Literal["enabled", "disabled", "fully_disabled"]
 
 
-class DiscountCreateBody(TypedDict):
+class DiscountCreateBody(TypedDict, total=False):
     applies_to_id: int
     applies_to_product_type: DiscountProductType
     applies_to_resource: DiscountAppliesToResource
@@ -47,7 +48,7 @@ class DiscountCreateBody(TypedDict):
     value: str
 
 
-class DiscountUpdateBody(TypedDict):
+class DiscountUpdateBody(TypedDict, total=False):
     channel_settings: DiscountChannelSettings
     ends_at: str
     starts_at: str
@@ -55,7 +56,11 @@ class DiscountUpdateBody(TypedDict):
     usage_limit: int
 
 
-class DiscountListQuery(TypedDict):
+class DiscountDeleteBody(TypedDict):
+    discount_id: str
+
+
+class DiscountListQuery(TypedDict, total=False):
     created_at_max: str
     created_at_min: str
     discount_code: str
@@ -68,7 +73,7 @@ class DiscountListQuery(TypedDict):
     updated_at_min: str
 
 
-class DiscountCountQuery(TypedDict):
+class DiscountCountQuery(TypedDict, total=False):
     created_at_max: str
     created_at_min: str
     discount_type: DiscountType
@@ -88,54 +93,54 @@ class DiscountResource(RechargeResource):
         """Create a discount.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_create
         """
-        required_scopes: list[TokenScope] = ["write_discounts"]
+        required_scopes: list[RechargeScope] = ["write_discounts"]
         self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self.http_post(self.url, body)
+        return self._http_post(self.url, body)
 
     def get(self, discount_id: str):
         """Get a discount by ID.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_retrieve
         """
-        required_scopes: list[TokenScope] = ["read_discounts"]
+        required_scopes: list[RechargeScope] = ["read_discounts"]
         self.check_scopes(f"GET /{self.object_list_key}/:discount_id", required_scopes)
 
-        return self.http_get(f"{self.url}/{discount_id}")
+        return self._http_get(f"{self.url}/{discount_id}")
 
     def update(self, discount_id: str, body: DiscountUpdateBody):
         """Update a discount.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_update
         """
-        required_scopes: list[TokenScope] = ["write_discounts"]
+        required_scopes: list[RechargeScope] = ["write_discounts"]
         self.check_scopes(f"PUT /{self.object_list_key}/:discount_id", required_scopes)
 
-        return self.http_put(f"{self.url}/{discount_id}", body)
+        return self._http_put(f"{self.url}/{discount_id}", body)
 
     def delete(self, discount_id: str):
         """Delete a discount.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_delete
         """
-        required_scopes: list[TokenScope] = ["write_discounts"]
+        required_scopes: list[RechargeScope] = ["write_discounts"]
         self.check_scopes(
             f"DELETE /{self.object_list_key}/:discount_id", required_scopes
         )
 
-        return self.http_delete(f"{self.url}/{discount_id}")
+        return self._http_delete(f"{self.url}/{discount_id}")
 
     def list(self, query: DiscountListQuery | None = None):
         """List discounts.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_list
         """
-        required_scopes: list[TokenScope] = ["read_discounts"]
+        required_scopes: list[RechargeScope] = ["read_discounts"]
         self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self.http_get(self.url, query)
+        return self._http_get(self.url, query)
 
     def count(self, query: DiscountCountQuery | None = None):
         """Receive a count of all discounts.
         https://developer.rechargepayments.com/v1#count-discounts
         """
-        required_scopes: list[TokenScope] = ["read_discounts"]
+        required_scopes: list[RechargeScope] = ["read_discounts"]
         self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        return self.http_get(f"{self.url}/count", query)
+        return self._http_get(f"{self.url}/count", query)
