@@ -1,39 +1,46 @@
-from .resources import (
-    RechargeAddress,
-    RechargeCharge,
-    RechargeCheckout,
-    RechargeCustomer,
-    RechargeOrder,
-    RechargeSubscription,
-    RechargeOnetime,
-    RechargeDiscount,
-    RechargeWebhook,
-    RechargeMetafield,
-    RechargeShop,
-    RechargeProduct
-)
+from recharge.api.notifications import NotificationResource
+from recharge.api.addresses import AddressResource
+from recharge.api.charges import ChargeResource
+from recharge.api.checkouts import CheckoutResource
+from recharge.api.customers import CustomerResource
+from recharge.api.orders import OrderResource
+from recharge.api.subscriptions import SubscriptionResource
+from recharge.api.onetimes import OnetimeResource
+from recharge.api.discounts import DiscountResource
+from recharge.api.webhooks import WebhookResource
+from recharge.api.metafields import MetafieldResource
+from recharge.api.shop import ShopResource
+from recharge.api.products import ProductResource
+from recharge.api.async_batches import AsyncBatchResource
+from recharge.api.tokens import TokenResource
 
 
 class RechargeAPI(object):
-
-    def __init__(self, access_token=None, log_debug=False):
+    def __init__(self, access_token=None, debug=False):
         self.access_token = access_token
-        self.log_debug = log_debug
+        self.debug = debug
 
         kwargs = {
-            'access_token': access_token,
-            'log_debug': log_debug,
+            "access_token": access_token,
+            "log_debug": debug,
         }
 
-        self.Address = RechargeAddress(**kwargs)
-        self.Charge = RechargeCharge(**kwargs)
-        self.Checkout = RechargeCheckout(**kwargs)
-        self.Customer = RechargeCustomer(**kwargs)
-        self.Order = RechargeOrder(**kwargs)
-        self.Subscription = RechargeSubscription(**kwargs)
-        self.Onetime = RechargeOnetime(**kwargs)
-        self.Discount = RechargeDiscount(**kwargs)
-        self.Webhook = RechargeWebhook(**kwargs)
-        self.Metafield = RechargeMetafield(**kwargs)
-        self.Shop = RechargeShop(**kwargs)
-        self.Product = RechargeProduct(**kwargs)
+        self.Token = TokenResource(**kwargs)
+        self.scopes = self.Token.get()["scopes"]
+
+        kwargs["scopes"] = self.scopes
+
+        self.Address = AddressResource(**kwargs)
+        self.Charge = ChargeResource(**kwargs)
+        self.Checkout = CheckoutResource(**kwargs)
+        self.Customer = CustomerResource(**kwargs)
+        self.Order = OrderResource(**kwargs)
+        self.Subscription = SubscriptionResource(**kwargs)
+        self.Onetime = OnetimeResource(**kwargs)
+        self.Discount = DiscountResource(**kwargs)
+        self.Webhook = WebhookResource(**kwargs)
+        self.Metafield = MetafieldResource(**kwargs)
+        self.Shop = ShopResource(**kwargs)
+        self.Product = ProductResource(**kwargs)
+        self.AsyncBatch = AsyncBatchResource(**kwargs)
+        self.Notification = NotificationResource(**kwargs)
