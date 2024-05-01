@@ -1,8 +1,4 @@
-*.pyc
+/.ruff_cache
 __pycache__
-.vscode
-venv
-.idea
-dist/*
-recharge_api.egg-info
-recharge-api.toml
+/.venv
+/*.egg-info
