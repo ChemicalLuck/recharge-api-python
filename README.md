@@ -9,7 +9,7 @@ pip install recharge-api
 ## Usage
 
 ```python
-from recharge import Recharge
+from recharge import RechargeAPI
 
 client = Recharge(access_token='XXXXX')
 
