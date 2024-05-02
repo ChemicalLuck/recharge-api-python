@@ -33,6 +33,7 @@ RechargeScope: TypeAlias = Literal[
     "read_gift_purchases",
     "write_gift_purchases",
     "read_bundle_products",
+    "read_credit_summary",
 ]
 
 log = logging.getLogger(__name__)

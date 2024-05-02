@@ -42,6 +42,31 @@ class RechargeAPI(object):
                 NotificationResource,
             )
         elif self.version == "2021-11":
+            from recharge.api.v2 import (
+                AddressResource,
+                BundleSelectionResource,
+                ChargeResource,
+                CheckoutResource,
+                CollectionResource,
+                CustomerResource,
+                DiscountResource,
+                MetafieldResource,
+                NotificationResource,
+                OnetimeResource,
+                OrderResource,
+                PaymentMethodResource,
+                PlanResource,
+                ProductResource,
+                RetentionStrategyResource,
+                StoreResource,
+                SubscriptionResource,
+                WebhookResource,
+                AsyncBatchResource,
+                TokenResource,
+                AccountResource,
+                EventResource,
+            )
+
             raise NotImplementedError("2021-11 is not yet implemented")
         else:
             raise ValueError(f"Unknown version: {self.version}")
