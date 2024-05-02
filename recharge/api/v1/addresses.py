@@ -103,7 +103,9 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/create_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes("POST /customers/:customer_id/addresses", required_scopes)
+        self.check_scopes(
+            f"POST /customers/:customer_id/{self.object_list_key}", required_scopes
+        )
 
         url = f"{self.base_url}/customers/{customer_id}/{self.object_list_key}"
         return self._http_post(url, body)
@@ -113,7 +115,7 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/retrieve_address
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(f"GET {self.object_list_key}/:address_id", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/:address_id", required_scopes)
 
         return self._http_get(f"{self.url}/{address_id}")
 
@@ -122,7 +124,7 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/update_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"PUT {self.object_list_key}/:id", required_scopes)
+        self.check_scopes(f"PUT /{self.object_list_key}/:id", required_scopes)
 
         return self._http_put(f"{self.url}/{address_id}", body)
 
@@ -131,7 +133,9 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/delete_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"DELETE {self.object_list_key}/:address_id", required_scopes)
+        self.check_scopes(
+            f"DELETE /{self.object_list_key}/:address_id", required_scopes
+        )
 
         return self._http_delete(f"{self.url}/{address_id}")
 
@@ -153,7 +157,7 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/count_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes("GET /addresses/count", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
         return self._http_get(f"{self.url}/count", query)
 
@@ -173,7 +177,9 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_apply_address
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes("POST /addresses/:address_id/apply_discount", required_scopes)
+        self.check_scopes(
+            f"POST /{self.object_list_key}/:address_id/apply_discount", required_scopes
+        )
 
         return self._http_post(f"{self.url}/{address_id}/apply_discount", body)
 
@@ -183,7 +189,7 @@ class AddressResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
         self.check_scopes(
-            "POST /addresses/:address_id/remove_discount", required_scopes
+            f"POST /{self.object_list_key}/:address_id/remove_discount", required_scopes
         )
 
         return self._http_post(f"{self.url}/{address_id}/remove_discount")

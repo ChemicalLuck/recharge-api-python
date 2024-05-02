@@ -70,7 +70,7 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["write_batches"]
-        self.check_scopes("POST /async_batches", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
         return self._http_post(self.url, body)
 
@@ -90,7 +90,7 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["read_batches"]
-        self.check_scopes("GET /async_batches/:batch_id", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/:batch_id", required_scopes)
 
         return self._http_get(f"{self.url}/{batch_id}")
 
@@ -99,7 +99,7 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["read_batches"]
-        self.check_scopes("GET /async_batches", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(self.url)
 
