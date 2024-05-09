@@ -29,7 +29,7 @@ class NotificationResource(RechargeResource):
     def send_email(self, customer_id: str, body: NotificationSendEmailBody):
         """
         Send an email notification to a customer.
-        https://developer.rechargepayments.com/2021-11/notifications/notifications_get_account_access
+        https://developer.rechargepayments.com/2021-11/notifications/notifications_send
         """
         required_scopes: list[RechargeScope] = ["write_notifications"]
         self.check_scopes(

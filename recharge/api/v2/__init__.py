@@ -1,5 +1,5 @@
 from .addresses import AddressResource
-from .bundles import BundleSelectionResource
+from .bundle_selections import BundleSelectionResource
 from .charges import ChargeResource
 from .checkouts import CheckoutResource
 from .collections import CollectionResource

@@ -3,6 +3,10 @@ from typing import Literal, TypeAlias, TypedDict
 from recharge.api import RechargeResource, RechargeScope
 
 
+class OrderCloneBody(TypedDict, total=False):
+    scheduled_at: str
+
+
 class OrderBillingAddress(TypedDict, total=False):
     address1: str
     province: str
@@ -144,6 +148,28 @@ class OrderResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{order_id}")
 
+    def clone(self, order_id: str, body: OrderCloneBody):
+        """Clone an order.
+        https://developer.rechargepayments.com/2021-11/orders/orders_clone
+        """
+        required_scopes: list[RechargeScope] = ["write_orders"]
+        self.check_scopes(
+            f"POST /{self.object_list_key}/:order_id/clone", required_scopes
+        )
+
+        return self._http_post(f"{self.url}/{order_id}/clone", body)
+
+    def delay(self, order_id: str):
+        """Delay an order.
+        https://developer.rechargepayments.com/2021-11/orders/orders_delay
+        """
+        required_scopes: list[RechargeScope] = ["write_orders"]
+        self.check_scopes(
+            f"POST /{self.object_list_key}/:order_id/delay", required_scopes
+        )
+
+        return self._http_post(f"{self.url}/{order_id}/delay")
+
     def update(self, order_id: str, body: OrderUpdateBody):
         """Update an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_update
@@ -162,7 +188,7 @@ class OrderResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{order_id}")
 
-    def list(self, query: OrderListQuery):
+    def list(self, query: OrderListQuery | None = None):
         """List orders.
         https://developer.rechargepayments.com/2021-11/orders/orders_list
         """

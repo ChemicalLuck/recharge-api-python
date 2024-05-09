@@ -142,7 +142,7 @@ class AddressResource(RechargeResource):
 
     def merge(self, body: AddressMergeBody):
         """Merge two addresses.
-        https://developer.rechargepayments.com/2021-11/addresses/merge_addresses
+        https://developer.rechargepayments.com/2021-11/addresses/merge
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self.check_scopes(f"POST /{self.object_list_key}/merge", required_scopes)
@@ -151,7 +151,7 @@ class AddressResource(RechargeResource):
 
     def skip(self, address_id: str, body: AddressSkipBody):
         """Skip an address.
-        https://developer.rechargepayments.com/2021-11/addresses/skip_address
+        https://developer.rechargepayments.com/2021-11/addresses/skip_future_charge
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self.check_scopes(f"POST /{self.object_list_key}/skip", required_scopes)

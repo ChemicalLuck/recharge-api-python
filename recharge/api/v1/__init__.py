@@ -14,6 +14,7 @@ from .metafields import MetafieldResource
 from .async_batches import AsyncBatchResource
 from .notifications import NotificationResource
 
+
 __all__ = [
     "ShopResource",
     "ProductResource",

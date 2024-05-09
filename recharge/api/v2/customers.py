@@ -109,7 +109,7 @@ class CustomerResource(RechargeResource):
         self, customer_id: str, query: CustomerGetDeliveryScheduleQuery | None = None
     ):
         """Get a customer's delivery schedule.
-        https://developer.rechargepayments.com/2021-11/customers/customers_retrieve_delivery_schedule
+        https://developer.rechargepayments.com/2021-11/customers/customer_delivery_schedule
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(
@@ -121,7 +121,7 @@ class CustomerResource(RechargeResource):
 
     def get_credit_summary(self, customer_id: str):
         """Get a customer's credit summary.
-        https://developer.rechargepayments.com/2021-11/customers/customers_retrieve_credit_summary
+        https://developer.rechargepayments.com/2021-11/customers/customer_credit_summary
         """
         required_scopes: list[RechargeScope] = ["read_credit_summary"]
         self.check_scopes(

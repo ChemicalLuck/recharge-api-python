@@ -1,90 +1,91 @@
 from typing import Literal, TypeAlias
 
-from recharge.api.v1.tokens import TokenResource
+import recharge.api.v1 as v1
+import recharge.api.v2 as v2
 
+from recharge.api import RechargeScope
 
 RechargeVersion: TypeAlias = Literal["2021-01", "2021-11"]
 
 
-class RechargeAPI(object):
+class RechargeAPIv1Helper:
     def __init__(
-        self, access_token: str, debug=False, version: RechargeVersion = "2021-01"
+        self,
+        access_token: str,
+        debug: bool = False,
+        scopes: list[RechargeScope] = [],
     ):
+        kwargs = {"access_token": access_token, "debug": debug, "scopes": scopes}
+
+        self.Address = v1.AddressResource(**kwargs)
+        self.Charge = v1.ChargeResource(**kwargs)
+        self.Checkout = v1.CheckoutResource(**kwargs)
+        self.Customer = v1.CustomerResource(**kwargs)
+        self.Order = v1.OrderResource(**kwargs)
+        self.Subscription = v1.SubscriptionResource(**kwargs)
+        self.Onetime = v1.OnetimeResource(**kwargs)
+        self.Discount = v1.DiscountResource(**kwargs)
+        self.Webhook = v1.WebhookResource(**kwargs)
+        self.Metafield = v1.MetafieldResource(**kwargs)
+        self.Shop = v1.ShopResource(**kwargs)
+        self.Product = v1.ProductResource(**kwargs)
+        self.AsyncBatch = v1.AsyncBatchResource(**kwargs)
+        self.Notification = v1.NotificationResource(**kwargs)
+        self.Token = v1.TokenResource(**kwargs)
+
+
+class RechargeAPIv2Helper:
+    def __init__(
+        self,
+        access_token: str,
+        debug: bool = False,
+        scopes: list[RechargeScope] = [],
+    ):
+        kwargs = {"access_token": access_token, "debug": debug, "scopes": scopes}
+
+        self.Address = v2.AddressResource(**kwargs)
+        self.BundleSelection = v2.BundleSelectionResource(**kwargs)
+        self.Charge = v2.ChargeResource(**kwargs)
+        self.Checkout = v2.CheckoutResource(**kwargs)
+        self.Collection = v2.CollectionResource(**kwargs)
+        self.Customer = v2.CustomerResource(**kwargs)
+        self.Discount = v2.DiscountResource(**kwargs)
+        self.Metafield = v2.MetafieldResource(**kwargs)
+        self.Notification = v2.NotificationResource(**kwargs)
+        self.Onetime = v2.OnetimeResource(**kwargs)
+        self.Order = v2.OrderResource(**kwargs)
+        self.PaymentMethod = v2.PaymentMethodResource(**kwargs)
+        self.Plan = v2.PlanResource(**kwargs)
+        self.RetentionStrategy = v2.RetentionStrategyResource(**kwargs)
+        self.Subscription = v2.SubscriptionResource(**kwargs)
+        self.Webhook = v2.WebhookResource(**kwargs)
+        self.AsyncBatch = v2.AsyncBatchResource(**kwargs)
+        self.Token = v2.TokenResource(**kwargs)
+        self.Account = v2.AccountResource(**kwargs)
+        self.Event = v2.EventResource(**kwargs)
+        self.Store = v2.StoreResource(**kwargs)
+
+
+class RechargeAPI(object):
+    def __init__(self, access_token: str, debug=False):
         self.access_token = access_token
         self.debug = debug
-        self.version = version
 
         kwargs = {
             "access_token": access_token,
             "debug": debug,
         }
 
+        from recharge.api.v1 import TokenResource
+
         self.Token = TokenResource(**kwargs)
+
         self.scopes = self.Token.get()["scopes"]
 
         kwargs["scopes"] = self.scopes
 
-        if self.version == "2021-01":
-            from recharge.api.v1 import (
-                AddressResource,
-                ChargeResource,
-                CheckoutResource,
-                CustomerResource,
-                OrderResource,
-                SubscriptionResource,
-                OnetimeResource,
-                DiscountResource,
-                WebhookResource,
-                MetafieldResource,
-                ShopResource,
-                ProductResource,
-                AsyncBatchResource,
-                NotificationResource,
-            )
-        elif self.version == "2021-11":
-            from recharge.api.v2 import (
-                AddressResource,
-                BundleSelectionResource,
-                ChargeResource,
-                CheckoutResource,
-                CollectionResource,
-                CustomerResource,
-                DiscountResource,
-                MetafieldResource,
-                NotificationResource,
-                OnetimeResource,
-                OrderResource,
-                PaymentMethodResource,
-                PlanResource,
-                ProductResource,
-                RetentionStrategyResource,
-                StoreResource,
-                SubscriptionResource,
-                WebhookResource,
-                AsyncBatchResource,
-                TokenResource,
-                AccountResource,
-                EventResource,
-            )
-
-            raise NotImplementedError("2021-11 is not yet implemented")
-        else:
-            raise ValueError(f"Unknown version: {self.version}")
-
-        self.Address = AddressResource(**kwargs)
-        self.Charge = ChargeResource(**kwargs)
-        self.Checkout = CheckoutResource(**kwargs)
-        self.Customer = CustomerResource(**kwargs)
-        self.Order = OrderResource(**kwargs)
-        self.Subscription = SubscriptionResource(**kwargs)
-        self.Onetime = OnetimeResource(**kwargs)
-        self.Discount = DiscountResource(**kwargs)
-        self.Webhook = WebhookResource(**kwargs)
-        self.Metafield = MetafieldResource(**kwargs)
-        self.Shop = ShopResource(**kwargs)
-        self.Product = ProductResource(**kwargs)
-        self.AsyncBatch = AsyncBatchResource(**kwargs)
-        self.Notification = NotificationResource(**kwargs)
+        self.v1 = RechargeAPIv1Helper(**kwargs)
+        self.v2 = RechargeAPIv2Helper(**kwargs)
 
 
 __all__ = ["RechargeAPI", "RechargeVersion"]

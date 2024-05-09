@@ -88,7 +88,7 @@ class CollectionResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{collection_id}")
 
-    def list(self, query: CollectionListQuery):
+    def list(self, query: CollectionListQuery | None = None):
         """List collections.
         https://developer.rechargepayments.com/2021-11/collections/collections_list
         """
@@ -97,7 +97,7 @@ class CollectionResource(RechargeResource):
 
         return self._http_get(self.url, query)
 
-    def list_products(self, query: CollectionListProductsQuery):
+    def list_products(self, query: CollectionListProductsQuery | None = None):
         """List products in a collection.
         https://developer.rechargepayments.com/2021-11/collections/collection_products
         """

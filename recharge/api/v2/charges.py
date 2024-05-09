@@ -100,7 +100,7 @@ class ChargeResource(RechargeResource):
 
     def apply_discount(self, charge_id: str, body: ChargeDiscountApplyBody):
         """Apply a discount to a charge.
-        https://developer.rechargepayments.com/2021-11/charges/charge_apply_discount
+        https://developer.rechargepayments.com/2021-11/charges/apply_discount
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(
@@ -111,7 +111,7 @@ class ChargeResource(RechargeResource):
 
     def remove_discount(self, charge_id: str):
         """Remove a discount from a charge.
-        https://developer.rechargepayments.com/2021-11/charges/charge_remove_discount
+        https://developer.rechargepayments.com/2021-11/charges/remove_discount
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(

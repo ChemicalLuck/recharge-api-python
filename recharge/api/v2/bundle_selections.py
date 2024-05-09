@@ -31,7 +31,7 @@ class BundleSelectionCreateBody(TypedDict):
     items: list[BundleSelectionCreateItem]
 
 
-class BundleSelectionUpdateItem(TypedDict, total=False):
+class BundleSelectionUpdateBody(TypedDict, total=False):
     purchase_item_id: int
     items: list[BundleSelectionCreateItem]
 
@@ -43,7 +43,7 @@ class BundleSelectionResource(RechargeResource):
 
     object_list_key = "bundle_selections"
 
-    def list(self, query: BundleSelectionListQuery):
+    def list(self, query: BundleSelectionListQuery | None = None):
         """List bundle selections.
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_list
         """

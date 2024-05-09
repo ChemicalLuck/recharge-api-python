@@ -66,7 +66,7 @@ class PaymentMethodResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["read_payment_methods"]
         self.check_scopes(
-            f"GET /{self.object_list_key}/{{payment_method_id}}", required_scopes
+            f"GET /{self.object_list_key}/:payment_method_id", required_scopes
         )
 
         return self._http_get(f"/{self.url}/{payment_method_id}")
@@ -77,7 +77,7 @@ class PaymentMethodResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_payment_methods"]
         self.check_scopes(
-            f"PUT /{self.object_list_key}/{{payment_method_id}}", required_scopes
+            f"PUT /{self.object_list_key}/:payment_method_id", required_scopes
         )
 
         return self._http_put(f"{self.url}/{payment_method_id}", body)
@@ -88,7 +88,7 @@ class PaymentMethodResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_payment_methods"]
         self.check_scopes(
-            f"DELETE /{self.object_list_key}/{{payment_method_id}}", required_scopes
+            f"DELETE /{self.object_list_key}/:payment_method_id", required_scopes
         )
 
         return self._http_delete(f"{self.url}/{payment_method_id}")

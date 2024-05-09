@@ -8,9 +8,9 @@ class AccountResource(RechargeResource):
 
     object_list_key = "accounts"
 
-    def get(self, account_id: int):
+    def get(self, account_id: str):
         """Get an account.
-        https://developer.rechargepayments.com/2021-11/accounts/accounts_get
+        https://developer.rechargepayments.com/2021-11/accounts/account_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_accounts"]
         self.check_scopes(f"GET /{self.object_list_key}/:account_id", required_scopes)

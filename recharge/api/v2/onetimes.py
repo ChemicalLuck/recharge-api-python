@@ -81,7 +81,7 @@ class OnetimeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/onetimes/onetimes_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes("GET /onetimes/:onetime_id", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/:onetime_id", required_scopes)
 
         return self._http_get(f"{self.url}/{onetime_id}")
 
@@ -105,7 +105,7 @@ class OnetimeResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{onetime_id}")
 
-    def list(self, query: OnetimeListQuery):
+    def list(self, query: OnetimeListQuery | None = None):
         """List Onetimes.
         https://developer.rechargepayments.com/2021-11/onetimes/onetimes_list
         """

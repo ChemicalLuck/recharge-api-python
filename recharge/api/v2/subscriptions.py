@@ -168,7 +168,7 @@ class SubscriptionResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{subscription_id}", body)
 
-    def list(self, query: SubscriptionListQuery):
+    def list(self, query: SubscriptionListQuery | None = None):
         """List subscriptions.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_list
         """
@@ -179,7 +179,7 @@ class SubscriptionResource(RechargeResource):
 
     def change_date(self, subscription_id: str, body: SubscriptionChangeDateBody):
         """Change the date of a queued subscription.
-        https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_change_date
+        https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_change_next_charge
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes(

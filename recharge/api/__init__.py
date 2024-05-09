@@ -54,9 +54,9 @@ class RechargeResource(object):
 
     def __init__(
         self,
-        access_token=None,
-        debug=False,
-        scopes: list[RechargeScope] | None = None,
+        access_token,
+        debug,
+        scopes: list[RechargeScope],
     ):
         self.headers = {
             "Accept": "application/json",
