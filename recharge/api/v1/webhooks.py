@@ -94,7 +94,7 @@ class WebhookResource(RechargeResource):
         """
         resource = body["topic"].split("/")[0]
         required_scopes: list[RechargeScope] = [WebhookTopicMap[resource]]
-        self.check_scopes("POST /webhooks", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
         return self._http_post(self.url, body)
 

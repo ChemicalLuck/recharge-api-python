@@ -60,6 +60,19 @@ class ChargeRefundBody(TypedDict, total=False):
     full_refund: bool
 
 
+class ChargeApplyDiscountCodeBody(TypedDict):
+    discount_code: str
+
+
+class ChargeApplyDiscountIdBody(TypedDict):
+    discount_id: str
+
+
+ChargeApplyDiscountBody: TypeAlias = (
+    ChargeApplyDiscountCodeBody | ChargeApplyDiscountIdBody
+)
+
+
 class ChargeResource(RechargeResource):
     """
     https://developer.rechargepayments.com/2021-01/charges
@@ -72,7 +85,7 @@ class ChargeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/charges/charge_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
-        self.check_scopes(f"GET {self.object_list_key}/:charge_id", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/:charge_id", required_scopes)
 
         return self._http_get(f"{self.url}/{charge_id}")
 
@@ -81,7 +94,7 @@ class ChargeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/charges/charge_list
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
-        self.check_scopes(f"GET {self.object_list_key}", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(self.url, query)
 
@@ -90,7 +103,7 @@ class ChargeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/charges/charge_count
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
-        self.check_scopes(f"GET {self.object_list_key}/count", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
         return self._http_get(f"{self.url}/count", query)
 
@@ -102,7 +115,7 @@ class ChargeResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(
-            f"POST {self.object_list_key}/:charge_id/change_next_charge_date",
+            f"POST /{self.object_list_key}/:charge_id/change_next_charge_date",
             required_scopes,
         )
 
@@ -114,7 +127,7 @@ class ChargeResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(
-            f"POST {self.object_list_key}/:charge_id/skip", required_scopes
+            f"POST /{self.object_list_key}/:charge_id/skip", required_scopes
         )
 
         return self._http_post(f"{self.url}/{charge_id}/skip", body)
@@ -125,7 +138,7 @@ class ChargeResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self.check_scopes(
-            f"POST {self.object_list_key}/:charge_id/unskip", required_scopes
+            f"POST /{self.object_list_key}/:charge_id/unskip", required_scopes
         )
 
         return self._http_post(f"{self.url}/{charge_id}/unskip", body)
@@ -136,7 +149,7 @@ class ChargeResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_orders", "write_payments"]
         self.check_scopes(
-            f"POST {self.object_list_key}/:charge_id/refund", required_scopes
+            f"POST /{self.object_list_key}/:charge_id/refund", required_scopes
         )
 
         return self._http_post(f"{self.url}/{charge_id}/refund", body)
@@ -147,7 +160,7 @@ class ChargeResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_payments"]
         self.check_scopes(
-            f"POST {self.object_list_key}/:charge_id/process", required_scopes
+            f"POST /{self.object_list_key}/:charge_id/process", required_scopes
         )
 
         return self._http_post(f"{self.url}/{charge_id}/process", None)
@@ -163,7 +176,29 @@ class ChargeResource(RechargeResource):
             "write_customers",
         ]
         self.check_scopes(
-            f"POST {self.object_list_key}/:charge_id/capture", required_scopes
+            f"POST /{self.object_list_key}/:charge_id/capture", required_scopes
         )
 
         return self._http_post(f"{self.url}/{charge_id}/capture_payment", None)
+
+    def apply_discount(self, charge_id: str, body: ChargeApplyDiscountBody):
+        """Apply a discount to a charge.
+        https://developer.rechargepayments.com/2021-01/charges/charge_apply_discount
+        """
+        required_scopes: list[RechargeScope] = ["write_orders"]
+        self.check_scopes(
+            f"POST /{self.object_list_key}/:charge_id/apply_discount", required_scopes
+        )
+
+        return self._http_post(f"{self.url}/{charge_id}/apply_discount", body)
+
+    def remove_discount(self, charge_id: str):
+        """Remove a discount from a charge.
+        https://developer.rechargepayments.com/2021-01/charges/charge_remove_discount
+        """
+        required_scopes: list[RechargeScope] = ["write_orders"]
+        self.check_scopes(
+            f"POST /{self.object_list_key}/:charge_id/remove_discount", required_scopes
+        )
+
+        return self._http_post(f"{self.url}/{charge_id}/remove_discount")
