@@ -13,7 +13,7 @@ from recharge import RechargeAPI
 
 client = Recharge(access_token='XXXXX')
 
-response = client.Order.list({'status': 'QUEUED', 'limit': '250'})
+response = client.v1.Order.list({'status': 'QUEUED', 'limit': '250'})
 
 for order in response['orders']:
     print(order['id'])
@@ -22,20 +22,43 @@ for order in response['orders']:
 For more details on the content of the reponses, visit the (official recharge API docs)[https://developer.rechargepayments.com].
 
 ## Resources Available
-- Addresses
-- Charges
-- Checkouts
-- Customers
-- Discounts
-- Metafields
-- Notifications
-- Onetimes
-- Orders
-- Products
+### v1(2021-01)
+- Address
+- Charge
+- Checkout
+- Customer
+- Discount
+- Metafield
+- Notification
+- Onetime
+- Order
+- Product
 - Shop
-- Subscriptions
-- Webhooks
-- Async Batches
+- Subscription
+- Webhook
+- Async Batch
+### v2(2021-11)
+- Address
+- BundleSelection
+- Charge
+- Checkout
+- Collection
+- Customer
+- Discount
+- Metafield
+- Notification
+- Onetime
+- Order
+- Payment Method
+- Plan
+- Retention Strategy
+- Subscription
+- Webhook
+- Async Batch
+- Token
+- Account
+- Event
+- Store
 
 ## License
 MIT. See LICENSE for more details.
