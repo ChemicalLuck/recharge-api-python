@@ -22,7 +22,7 @@ class MetafieldCreateBody(TypedDict, total=False):
 class MetafieldUpdateBody(TypedDict, total=False):
     description: str
     owner_id: str
-    owner_resource: MetafieldOwnerResource
+    owner_resource: Required[MetafieldOwnerResource]
     value: str
     value_type: MetafieldValueType
 
@@ -31,14 +31,14 @@ class MetafieldListQuery(TypedDict, total=False):
     limit: str
     namespace: str
     owner_id: str
-    owner_resource: MetafieldOwnerResource
+    owner_resource: Required[MetafieldOwnerResource]
     page: str
 
 
 class MetafieldCountQuery(TypedDict, total=False):
     namespace: str
     owner_id: str
-    owner_resource: MetafieldOwnerResource
+    owner_resource: Required[MetafieldOwnerResource]
 
 
 MetafieldOwnerResourceScopeMap: dict[str, dict[str, RechargeScope]] = {
