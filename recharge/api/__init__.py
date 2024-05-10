@@ -33,6 +33,7 @@ RechargeScope: TypeAlias = Literal[
     "read_gift_purchases",
     "write_gift_purchases",
     "read_bundle_products",
+    "read_credit_summary",
 ]
 
 log = logging.getLogger(__name__)
@@ -53,9 +54,9 @@ class RechargeResource(object):
 
     def __init__(
         self,
-        access_token=None,
-        debug=False,
-        scopes: list[RechargeScope] | None = None,
+        access_token,
+        debug,
+        scopes: list[RechargeScope],
     ):
         self.headers = {
             "Accept": "application/json",
