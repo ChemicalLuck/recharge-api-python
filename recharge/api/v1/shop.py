@@ -13,7 +13,7 @@ class ShopResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/shop/shop_retrieve
         """
         required_scopes: list[RechargeScope] = ["store_info"]
-        self.check_scopes("GET /shop", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(f"{self.url}")
 

@@ -58,7 +58,7 @@ class OnetimeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_create
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("POST /onetimes", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
         return self._http_post(self.url, body)
 
@@ -67,7 +67,7 @@ class OnetimeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes("GET /onetimes/:onetime_id", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/:onetime_id", required_scopes)
 
         return self._http_get(f"{self.url}/{onetime_id}")
 
@@ -76,7 +76,7 @@ class OnetimeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_update
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("PUT /onetimes/:onetime_id", required_scopes)
+        self.check_scopes(f"PUT /{self.object_list_key}/:onetime_id", required_scopes)
 
         return self._http_put(f"{self.url}/{onetime_id}", body)
 
@@ -85,7 +85,9 @@ class OnetimeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_delete
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("DELETE /onetimes/:onetime_id", required_scopes)
+        self.check_scopes(
+            f"DELETE /{self.object_list_key}/:onetime_id", required_scopes
+        )
 
         return self._http_delete(f"{self.url}/{onetime_id}")
 
@@ -94,6 +96,6 @@ class OnetimeResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_list
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes("GET /onetimes", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(self.url, query)

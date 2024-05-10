@@ -94,7 +94,7 @@ class ProductResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/products/products_create
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes("POST /products", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
         return self._http_post(self.url, body)
 
@@ -103,7 +103,7 @@ class ProductResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/products/products_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_products"]
-        self.check_scopes(f"GET /products/{product_id}", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/:product_id", required_scopes)
 
         return self._http_get(f"{self.url}/{product_id}")
 
@@ -112,7 +112,7 @@ class ProductResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/products/products_update
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(f"PUT /products/{product_id}", required_scopes)
+        self.check_scopes(f"PUT /{self.object_list_key}/:product_id", required_scopes)
 
         return self._http_put(f"{self.url}/{product_id}", body)
 
@@ -121,7 +121,9 @@ class ProductResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/products/products_delete
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(f"DELETE /products/{product_id}", required_scopes)
+        self.check_scopes(
+            f"DELETE /{self.object_list_key}/:product_id", required_scopes
+        )
 
         return self._http_delete(f"{self.url}/{product_id}")
 
@@ -130,7 +132,7 @@ class ProductResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/products/products_list
         """
         required_scopes: list[RechargeScope] = ["read_products"]
-        self.check_scopes("GET /products", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(self.url, query)
 
@@ -139,6 +141,6 @@ class ProductResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/products/products_count
         """
         required_scopes: list[RechargeScope] = ["read_products"]
-        self.check_scopes("GET /products/count", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
         return self._http_get(f"{self.url}/count")

@@ -28,9 +28,7 @@ class NotificationResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/notifications/notifications_get_account_access
         """
         required_scopes: list[RechargeScope] = ["write_notifications"]
-        self.check_scopes(
-            f"POST /customers/{customer_id}/notifications", required_scopes
-        )
+        self.check_scopes("POST /customers/:customer_id/notifications", required_scopes)
 
         return self._http_post(
             f"{self.url}/customers/{customer_id}/notifications", body

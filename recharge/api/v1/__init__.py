@@ -1,34 +1,35 @@
-from .shop import ShopResource
-from .products import ProductResource
-from .orders import OrderResource
-from .customers import CustomerResource
-from .checkouts import CheckoutResource
-from .tokens import TokenResource
-from .charges import ChargeResource
-from .webhooks import WebhookResource
-from .subscriptions import SubscriptionResource
-from .onetimes import OnetimeResource
 from .addresses import AddressResource
+from .charges import ChargeResource
+from .checkouts import CheckoutResource
+from .customers import CustomerResource
 from .discounts import DiscountResource
 from .metafields import MetafieldResource
-from .async_batches import AsyncBatchResource
 from .notifications import NotificationResource
+from .onetimes import OnetimeResource
+from .orders import OrderResource
+from .products import ProductResource
+from .shop import ShopResource
+from .subscriptions import SubscriptionResource
+from .webhooks import WebhookResource
+from .async_batches import AsyncBatchResource
+from .tokens import TokenResource
+
 
 
 __all__ = [
-    "ShopResource",
-    "ProductResource",
-    "OrderResource",
-    "CustomerResource",
-    "CheckoutResource",
-    "TokenResource",
-    "ChargeResource",
-    "WebhookResource",
-    "SubscriptionResource",
-    "OnetimeResource",
     "AddressResource",
+    "ChargeResource",
+    "CheckoutResource",
+    "CustomerResource",
     "DiscountResource",
     "MetafieldResource",
-    "AsyncBatchResource",
     "NotificationResource",
+    "OnetimeResource",
+    "OrderResource",
+    "ProductResource",
+    "ShopResource",
+    "SubscriptionResource",
+    "WebhookResource",
+    "AsyncBatchResource",
+    "TokenResource",
 ]

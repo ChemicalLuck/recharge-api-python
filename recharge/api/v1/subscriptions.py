@@ -129,7 +129,7 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_create
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("POST /subscriptions", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
         return self._http_post(self.url, body)
 
@@ -138,7 +138,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes("GET /subscriptions/:subscription_id", required_scopes)
+        self.check_scopes(
+            f"GET /{self.object_list_key}/:subscription_id", required_scopes
+        )
 
         return self._http_get(f"{self.url}/{subscription_id}")
 
@@ -147,7 +149,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_update
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("PUT /subscriptions/:subscription_id", required_scopes)
+        self.check_scopes(
+            f"PUT /{self.object_list_key}/:subscription_id", required_scopes
+        )
 
         return self._http_put(f"{self.url}/{subscription_id}", body)
 
@@ -156,7 +160,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_delete
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("DELETE /subscriptions/:subscription_id", required_scopes)
+        self.check_scopes(
+            f"DELETE /{self.object_list_key}/:subscription_id", required_scopes
+        )
 
         return self._http_delete(f"{self.url}/{subscription_id}", body)
 
@@ -165,7 +171,7 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_list
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes("GET /subscriptions", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(self.url, query)
 
@@ -174,7 +180,7 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_count
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes("GET /subscriptions/count", required_scopes)
+        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
         return self._http_get(f"{self.url}/count", query)
 
@@ -184,7 +190,8 @@ class SubscriptionResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes(
-            "POST /subscriptions/:subscription_id/change_date", required_scopes
+            f"POST /{self.object_list_key}/:subscription_id/change_date",
+            required_scopes,
         )
 
         return self._http_post(f"{self.url}/{subscription_id}/change_date", body)
@@ -195,7 +202,8 @@ class SubscriptionResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes(
-            "POST /subscriptions/:subscription_id/change_address", required_scopes
+            f"POST /{self.object_list_key}/:subscription_id/change_address",
+            required_scopes,
         )
 
         return self._http_post(f"{self.url}/{subscription_id}/change_address", body)
@@ -206,7 +214,7 @@ class SubscriptionResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes(
-            "POST /subscriptions/:subscription_id/cancel", required_scopes
+            f"POST /{self.object_list_key}/:subscription_id/cancel", required_scopes
         )
 
         return self._http_post(f"{self.url}/{subscription_id}/cancel", {})
@@ -217,7 +225,7 @@ class SubscriptionResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self.check_scopes(
-            "POST /subscriptions/:subscription_id/activate", required_scopes
+            f"POST /{self.object_list_key}/:subscription_id/activate", required_scopes
         )
 
         return self._http_post(f"{self.url}/{subscription_id}/activate", {})
@@ -227,7 +235,7 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_bulk_create
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("POST /subscriptions/bulk_create", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}/bulk_create", required_scopes)
 
         return self._http_post(f"{self.url}/bulk_create", body)
 
@@ -236,7 +244,7 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_bulk_update
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("POST /subscriptions/bulk_update", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}/bulk_update", required_scopes)
 
         return self._http_post(f"{self.url}/bulk_update", body)
 
@@ -245,6 +253,6 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_bulk_delete
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes("POST /subscriptions/bulk_delete", required_scopes)
+        self.check_scopes(f"POST /{self.object_list_key}/bulk_delete", required_scopes)
 
         return self._http_post(f"{self.url}/bulk_delete", body)
