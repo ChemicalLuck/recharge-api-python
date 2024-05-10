@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypedDict, TypeAlias
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 WebhookTopic: TypeAlias = Literal[
     "address/created",
@@ -88,6 +88,7 @@ class WebhookResource(RechargeResource):
     """
 
     object_list_key = "webhooks"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: WebhookCreateBody):
         """Create a webhook.

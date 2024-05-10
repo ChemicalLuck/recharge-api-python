@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypedDict, TypeAlias
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 ProductDiscountType: TypeAlias = Literal["percentage"]
 
@@ -92,14 +92,15 @@ class ProductListQuery(TypedDict, total=False):
 
 class ProductResource(RechargeResource):
     """
-    https://developer.rechargepayments.com/2021-01/products
+    https://developer.rechargepayments.com/2021-11/products
     """
 
     object_list_key = "products"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: ProductCreateBody):
         """Create a product.
-        https://developer.rechargepayments.com/2021-01/products/products_create
+        https://developer.rechargepayments.com/2021-11/products/products_create
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
@@ -108,7 +109,7 @@ class ProductResource(RechargeResource):
 
     def get(self, product_id: str):
         """Get a product.
-        https://developer.rechargepayments.com/2021-01/products/products_retrieve
+        https://developer.rechargepayments.com/2021-11/products/products_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_products"]
         self.check_scopes(f"GET /{self.object_list_key}/:product_id", required_scopes)
@@ -117,7 +118,7 @@ class ProductResource(RechargeResource):
 
     def update(self, product_id: str, body: ProductUpdateBody):
         """Update a product.
-        https://developer.rechargepayments.com/2021-01/products/products_update
+        https://developer.rechargepayments.com/2021-11/products/products_update
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self.check_scopes(f"PUT /{self.object_list_key}/:product_id", required_scopes)
@@ -126,7 +127,7 @@ class ProductResource(RechargeResource):
 
     def delete(self, product_id: str):
         """Delete a product.
-        https://developer.rechargepayments.com/2021-01/products/products_delete
+        https://developer.rechargepayments.com/2021-11/products/products_delete
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self.check_scopes(
@@ -137,7 +138,7 @@ class ProductResource(RechargeResource):
 
     def list(self, query: ProductListQuery | None = None):
         """List products.
-        https://developer.rechargepayments.com/2021-01/products/products_list
+        https://developer.rechargepayments.com/2021-11/products/products_list
         """
         required_scopes: list[RechargeScope] = ["read_products"]
         self.check_scopes(f"GET /{self.object_list_key}", required_scopes)

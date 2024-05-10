@@ -1,7 +1,6 @@
-from recharge.api import RechargeResource, RechargeScope
-
 from typing import Literal, Required, TypeAlias, TypedDict
 
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 RetentionStrategyCancellationFlowType: TypeAlias = Literal["subscription", "membership"]
 
@@ -32,6 +31,7 @@ class RetentionStrategyResource(RechargeResource):
     """
 
     object_list_key = "retention_strategies"
+    resource_version: RechargeVersion = "2021-11"
 
     def create(self, body: RetentionStrategyCreateBody):
         """Create a retention strategy.

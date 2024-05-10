@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 SubscriptionOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
@@ -125,6 +125,7 @@ class SubscriptionResource(RechargeResource):
     """
 
     object_list_key = "subscriptions"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: SubscriptionCreateBody):
         """Create a subscription.

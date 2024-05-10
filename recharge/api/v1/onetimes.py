@@ -1,6 +1,6 @@
 from typing import Required, TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class OnetimeProperty(TypedDict):
@@ -52,6 +52,7 @@ class OnetimeResource(RechargeResource):
     """
 
     object_list_key = "onetimes"
+    recharge_version: RechargeVersion = "2021-01"
 
     def create(self, body: OnetimeCreateBody):
         """Create a Onetime

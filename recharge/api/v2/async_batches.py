@@ -1,6 +1,6 @@
 from typing import Literal, TypedDict, TypeAlias
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 from .discounts import DiscountCreateBody, DiscountUpdateBody, DiscountDeleteBody
 from .plans import (
@@ -53,6 +53,7 @@ class AsyncBatchResource(RechargeResource):
     """
 
     object_list_key = "async_batches"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: AsyncBatchCreateBody):
         """Create an async batch.

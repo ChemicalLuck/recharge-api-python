@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class PlanChannelSettingsApi(TypedDict):
@@ -104,6 +104,7 @@ class PlanResource(RechargeResource):
     """
 
     object_list_key = "plans"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: PlanCreateBody):
         """Create a plan.

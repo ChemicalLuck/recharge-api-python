@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class TokenClient(TypedDict):
@@ -21,6 +21,7 @@ class TokenResource(RechargeResource):
     """
 
     object_list_key = "token_information"
+    recharge_version: RechargeVersion = "2021-11"
 
     def get(self) -> TokenInformation:
         """Get token information.

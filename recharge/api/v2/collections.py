@@ -1,6 +1,6 @@
 from typing import Required, TypedDict, TypeAlias, Literal
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 CollectionCreateSortOrder: TypeAlias = Literal[
     "id-asc", "id-desc", "title-asc", "title-desc", "created-asc", "created-desc"
@@ -45,6 +45,7 @@ class CollectionResource(RechargeResource):
     """
 
     object_list_key = "collections"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: CollectionCreateBody):
         """Create a collection.

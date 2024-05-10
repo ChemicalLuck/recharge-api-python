@@ -1,21 +1,18 @@
-from typing import Literal, TypeAlias
+from requests import Session
 
 import recharge.api.v1 as v1
 import recharge.api.v2 as v2
-
 from recharge.api import RechargeScope
-
-RechargeVersion: TypeAlias = Literal["2021-01", "2021-11"]
 
 
 class RechargeAPIv1Helper:
     def __init__(
         self,
-        access_token: str,
+        session: Session,
         debug: bool = False,
         scopes: list[RechargeScope] = [],
     ):
-        kwargs = {"access_token": access_token, "debug": debug, "scopes": scopes}
+        kwargs = {"session": session, "debug": debug, "scopes": scopes}
 
         self.Address = v1.AddressResource(**kwargs)
         self.Charge = v1.ChargeResource(**kwargs)
@@ -37,11 +34,11 @@ class RechargeAPIv1Helper:
 class RechargeAPIv2Helper:
     def __init__(
         self,
-        access_token: str,
+        session: Session,
         debug: bool = False,
         scopes: list[RechargeScope] = [],
     ):
-        kwargs = {"access_token": access_token, "debug": debug, "scopes": scopes}
+        kwargs = {"session": session, "debug": debug, "scopes": scopes}
 
         self.Address = v2.AddressResource(**kwargs)
         self.BundleSelection = v2.BundleSelectionResource(**kwargs)
@@ -68,11 +65,18 @@ class RechargeAPIv2Helper:
 
 class RechargeAPI(object):
     def __init__(self, access_token: str, debug=False):
-        self.access_token = access_token
+        self.headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-Recharge-Access-Token": access_token,
+        }
+        self.session = Session()
+        self.session.headers.update(self.headers)
+
         self.debug = debug
 
         kwargs = {
-            "access_token": access_token,
+            "session": self.session,
             "debug": debug,
         }
 
@@ -88,4 +92,4 @@ class RechargeAPI(object):
         self.v2 = RechargeAPIv2Helper(**kwargs)
 
 
-__all__ = ["RechargeAPI", "RechargeVersion"]
+__all__ = ["RechargeAPI"]

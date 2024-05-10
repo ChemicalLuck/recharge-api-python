@@ -1,4 +1,4 @@
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class AccountResource(RechargeResource):
@@ -7,6 +7,7 @@ class AccountResource(RechargeResource):
     """
 
     object_list_key = "accounts"
+    recharge_version: RechargeVersion = "2021-11"
 
     def get(self, account_id: str):
         """Get an account.

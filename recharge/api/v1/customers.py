@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypedDict, TypeAlias
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class CustomerCreateBody(TypedDict, total=False):
@@ -73,6 +73,7 @@ class CustomerResource(RechargeResource):
     """
 
     object_list_key = "customers"
+    recharge_version: RechargeVersion = "2021-01"
 
     def create(self, body: CustomerCreateBody):
         """Create a customer.
@@ -117,6 +118,7 @@ class CustomerResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/customers/customers_list
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
+        print(query)
         self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(self.url, query)

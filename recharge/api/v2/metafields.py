@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 MetafieldOwnerResource: TypeAlias = Literal[
     "address", "store", "customer", "subscription", "order", "charge"
@@ -76,6 +76,7 @@ class MetafieldResource(RechargeResource):
     """
 
     object_list_key = "metafields"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: MetafieldCreateBody):
         """Create a metafield.

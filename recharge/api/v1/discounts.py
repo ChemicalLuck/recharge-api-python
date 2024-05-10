@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 DiscountProductType: TypeAlias = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
@@ -88,6 +88,7 @@ class DiscountResource(RechargeResource):
     """
 
     object_list_key = "discounts"
+    recharge_version: RechargeVersion = "2021-01"
 
     def create(self, body: DiscountCreateBody):
         """Create a discount.

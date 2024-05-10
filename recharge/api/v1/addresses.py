@@ -1,6 +1,6 @@
 from typing import Required, TypedDict, TypeAlias
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class AddressNoteAttributes(TypedDict):
@@ -97,6 +97,7 @@ class AddressResource(RechargeResource):
     """
 
     object_list_key = "addresses"
+    recharge_version: RechargeVersion = "2021-01"
 
     def create(self, customer_id, body: AddressCreateBody):
         """Create an address for the customer.

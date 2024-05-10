@@ -1,4 +1,4 @@
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class ShopResource(RechargeResource):
@@ -7,6 +7,7 @@ class ShopResource(RechargeResource):
     """
 
     object_list_key = "shop"
+    recharge_version: RechargeVersion = "2021-01"
 
     def get(self):
         """Retrieve store using the Recharge API.

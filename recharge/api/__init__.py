@@ -4,6 +4,8 @@ from typing import Any, Literal, Mapping, TypeAlias
 
 import requests
 
+RechargeVersion: TypeAlias = Literal["2021-01", "2021-11"]
+
 RechargeScope: TypeAlias = Literal[
     "write_orders",
     "read_orders",
@@ -51,18 +53,15 @@ class RechargeResource(object):
 
     base_url = "https://api.rechargeapps.com"
     object_list_key = None
+    recharge_version: RechargeVersion = "2021-11"
 
     def __init__(
         self,
-        access_token,
-        debug,
-        scopes: list[RechargeScope],
+        session: requests.Session,
+        debug: bool = False,
+        scopes: list[RechargeScope] = [],
     ):
-        self.headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-Recharge-Access-Token": access_token,
-        }
+        self.session = session
         self.debug = debug
         self.scopes = scopes
 
@@ -95,20 +94,26 @@ class RechargeResource(object):
     def url(self) -> str:
         return f"{self.base_url}/{self.object_list_key}"
 
+    def update_headers(self):
+        self.session.headers.update({"X-Recharge-Version": self.recharge_version})
+
     def _http_delete(self, url: str, body: Mapping[str, Any] | None = None):
-        response = requests.delete(url, headers=self.headers, json=body)
-        log.info(url)
-        log.info(response.headers["X-Recharge-Limit"])
+        self.update_headers()
+        response = self.session.delete(url, json=body)
+        self.log(url, response)
         if response.status_code == 429:
-            return self._http_delete(url)
+            return self._http_delete(url, body)
         return response
 
     def _http_get(self, url: str, query: Mapping[str, Any] | None = None):
-        response = requests.get(url, params=query, headers=self.headers)
+        self.update_headers()
+        print(url)
+        response = self.session.get(url, params=query)
+        print(response.text)
         self.log(url, response)
         if response.status_code == 429:
             time.sleep(1)
-            return self._http_get(url)
+            return self._http_get(url, query)
         return response.json()
 
     def _http_put(
@@ -117,7 +122,8 @@ class RechargeResource(object):
         body: Mapping[str, Any] | None = None,
         query: Mapping[str, Any] | None = None,
     ):
-        response = requests.put(url, json=body, params=query, headers=self.headers)
+        self.update_headers()
+        response = self.session.put(url, json=body, params=query)
         self.log(url, response)
         if response.status_code == 429:
             time.sleep(1)
@@ -130,7 +136,8 @@ class RechargeResource(object):
         body: Mapping[str, Any] | None = None,
         query: Mapping[str, Any] | None = None,
     ):
-        response = requests.post(url, json=body, params=query, headers=self.headers)
+        self.update_headers()
+        response = self.session.post(url, json=body, params=query)
         self.log(url, response)
         if response.status_code == 429:
             time.sleep(1)

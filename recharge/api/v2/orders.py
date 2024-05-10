@@ -1,6 +1,6 @@
 from typing import Literal, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class OrderCloneBody(TypedDict, total=False):
@@ -138,6 +138,7 @@ class OrderResource(RechargeResource):
     """
 
     object_list_key = "orders"
+    recharge_version: RechargeVersion = "2021-11"
 
     def get(self, order_id: str):
         """Get an order.

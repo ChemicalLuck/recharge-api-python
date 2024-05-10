@@ -1,6 +1,6 @@
 from typing import Literal, Required, TypedDict, TypeAlias
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class CheckoutUtmParams(TypedDict, total=False):
@@ -192,6 +192,7 @@ class CheckoutResource(RechargeResource):
     """
 
     object_list_key = "checkouts"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: CheckoutCreateBody):
         """Create a new checkout.

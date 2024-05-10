@@ -1,5 +1,6 @@
-from typing import TypeAlias, TypedDict, Literal, Required
-from recharge.api import RechargeResource, RechargeScope
+from typing import Literal, Required, TypeAlias, TypedDict
+
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 PaymentMethodType: TypeAlias = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"
@@ -50,6 +51,7 @@ class PaymentMethodResource(RechargeResource):
     """
 
     object_list_key = "payment_methods"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: PaymentMethodCreateBody):
         """Create a payment method.

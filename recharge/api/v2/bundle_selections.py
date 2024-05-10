@@ -1,6 +1,6 @@
-from recharge.api import RechargeResource, RechargeScope
+from typing import Literal, TypedDict
 
-from typing import TypedDict, Literal
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 BundleSelectionListSortBy = Literal[
     "id-asc", "id-desc", "updated_at-asc", "updated_at-desc"
@@ -42,6 +42,7 @@ class BundleSelectionResource(RechargeResource):
     """
 
     object_list_key = "bundle_selections"
+    recharge_version: RechargeVersion = "2021-11"
 
     def list(self, query: BundleSelectionListQuery | None = None):
         """List bundle selections.

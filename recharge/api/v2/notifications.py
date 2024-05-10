@@ -1,6 +1,6 @@
 from typing import Literal, TypeAlias, TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 NotificationTemplateType: TypeAlias = Literal[
@@ -25,6 +25,7 @@ class NotificationResource(RechargeResource):
     """
 
     object_list_key = "notifications"
+    resource_version: RechargeVersion = "2021-11"
 
     def send_email(self, customer_id: str, body: NotificationSendEmailBody):
         """

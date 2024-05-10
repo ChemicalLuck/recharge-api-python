@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from recharge.api import RechargeResource, RechargeScope
+from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
 class EventListQuery(TypedDict, total=False):
@@ -19,6 +19,7 @@ class EventResource(RechargeResource):
     """
 
     object_list_key = "events"
+    recharge_version: RechargeVersion = "2021-11"
 
     def list(self, query: EventListQuery | None = None):
         """List events.
