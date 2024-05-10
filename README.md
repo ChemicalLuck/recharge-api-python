@@ -1,6 +1,8 @@
 # Recharge API Wrapper
 
 [![PyPI](https://github.com/ChemicalLuck/recharge-api/actions/workflows/python-publish.yml/badge.svg)](https://github.com/ChemicalLuck/recharge-api/actions/workflows/python-publish.yml)
+![GitHub Release](https://img.shields.io/github/v/release/ChemicalLuck/recharge-api)
+![PyPI - Version](https://img.shields.io/pypi/v/recharge-api)
 ![PyPI - License](https://img.shields.io/pypi/l/recharge-api)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/recharge-api)
 
