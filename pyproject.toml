@@ -2,7 +2,7 @@
 name = "recharge-api"
 version = "1.6.2"
 authors = [
-	{ name="ChemicalLuck", email="69787209+ChemicalLuck@users.noreply.github.com" }
+	{ name="ChemicalLuck", email="j.tebbett@outlook.com" }
 ]
 description = "Python API Client for Recharge"
 readme = "README.md"
