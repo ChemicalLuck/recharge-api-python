@@ -1,5 +1,9 @@
 # Recharge API Wrapper
 
+[![PyPI](https://github.com/ChemicalLuck/recharge-api/actions/workflows/python-publish.yml/badge.svg)](https://github.com/ChemicalLuck/recharge-api/actions/workflows/python-publish.yml)
+![PyPI - License](https://img.shields.io/pypi/l/recharge-api)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/recharge-api)
+
 ## Installation
 
 ```bash
