@@ -111,7 +111,7 @@ class WebhookResource(RechargeResource):
         """
         return self._http_delete(f"{self.url}/{webhook_id}")
 
-    def list(self):
+    def list_(self):
         """List webhooks.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_list
         """

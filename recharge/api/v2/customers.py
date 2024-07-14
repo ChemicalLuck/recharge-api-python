@@ -97,7 +97,7 @@ class CustomerResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{customer_id}")
 
-    def list(self, query: CustomerListQuery | None = None):
+    def list_(self, query: CustomerListQuery | None = None):
         """List customers.
         https://developer.rechargepayments.com/2021-11/customers/customers_list
         """

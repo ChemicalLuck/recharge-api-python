@@ -126,7 +126,7 @@ class OrderResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{order_id}")
 
-    def list(self, query: OrderListQuery):
+    def list_(self, query: OrderListQuery):
         """List orders.
         https://developer.rechargepayments.com/2021-01/orders/orders_list
         """

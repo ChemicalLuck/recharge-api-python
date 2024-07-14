@@ -18,7 +18,7 @@ class AccountResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{account_id}")
 
-    def list(self):
+    def list_(self):
         """List accounts.
         https://developer.rechargepayments.com/2021-11/accounts/accounts_list
         """

@@ -89,7 +89,7 @@ class CollectionResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{collection_id}")
 
-    def list(self, query: CollectionListQuery | None = None):
+    def list_(self, query: CollectionListQuery | None = None):
         """List collections.
         https://developer.rechargepayments.com/2021-11/collections/collections_list
         """

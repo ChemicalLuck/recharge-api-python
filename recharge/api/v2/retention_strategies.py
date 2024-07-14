@@ -75,7 +75,7 @@ class RetentionStrategyResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{retention_strategy_id}")
 
-    def list(self):
+    def list_(self):
         """List retention strategies.
         https://developer.rechargepayments.com/2021-11/retention_strategies/retention_strategies_list
         """

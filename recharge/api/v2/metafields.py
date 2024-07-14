@@ -119,7 +119,7 @@ class MetafieldResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{metafield_id}")
 
-    def list(self, query: MetafieldListQuery):
+    def list_(self, query: MetafieldListQuery):
         """List metafields.
         https://developer.rechargepayments.com/2021-11/metafields/metafields_list
         """

@@ -169,7 +169,7 @@ class SubscriptionResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{subscription_id}", body)
 
-    def list(self, query: SubscriptionListQuery | None = None):
+    def list_(self, query: SubscriptionListQuery | None = None):
         """List subscriptions.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_list
         """

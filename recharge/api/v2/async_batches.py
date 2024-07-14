@@ -84,7 +84,7 @@ class AsyncBatchResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{batch_id}")
 
-    def list(self):
+    def list_(self):
         """List async batches.
         https://developer.rechargepayments.com/2021-11/async_batch_endpoints/async_batch_endpoints_list
         """

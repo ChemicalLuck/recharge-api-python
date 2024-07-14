@@ -132,7 +132,7 @@ class AddressResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{address_id}")
 
-    def list(self, query: AddressListQuery | None = None):
+    def list_(self, query: AddressListQuery | None = None):
         """List all addresses for a customer.
         https://developer.rechargepayments.com/2021-11/addresses/list_addresses
         """

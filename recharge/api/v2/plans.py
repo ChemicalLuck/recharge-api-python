@@ -133,7 +133,7 @@ class PlanResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{plan_id}")
 
-    def list(self, query: PlanListQuery | None = None):
+    def list_(self, query: PlanListQuery | None = None):
         """List plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_list
         """

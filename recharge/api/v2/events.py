@@ -21,7 +21,7 @@ class EventResource(RechargeResource):
     object_list_key = "events"
     recharge_version: RechargeVersion = "2021-11"
 
-    def list(self, query: EventListQuery | None = None):
+    def list_(self, query: EventListQuery | None = None):
         """List events.
         https://developer.rechargepayments.com/2021-11/events/events_list
         """

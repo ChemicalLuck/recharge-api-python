@@ -136,7 +136,7 @@ class ProductResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{product_id}")
 
-    def list(self, query: ProductListQuery | None = None):
+    def list_(self, query: ProductListQuery | None = None):
         """List products.
         https://developer.rechargepayments.com/2021-11/products/products_list
         """

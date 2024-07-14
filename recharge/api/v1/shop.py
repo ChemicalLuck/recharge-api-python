@@ -16,7 +16,7 @@ class ShopResource(RechargeResource):
         required_scopes: list[RechargeScope] = ["store_info"]
         self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(f"{self.url}")
+        return self._http_get(self.url)
 
     def shipping_countries(self):
         """Retrieve shipping countries where items can be shipped.

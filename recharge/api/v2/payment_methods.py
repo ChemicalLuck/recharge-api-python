@@ -95,7 +95,7 @@ class PaymentMethodResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{payment_method_id}")
 
-    def list(self, query: PaymentMethodListQuery | None = None):
+    def list_(self, query: PaymentMethodListQuery | None = None):
         """List payment methods.
         https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_list
         """

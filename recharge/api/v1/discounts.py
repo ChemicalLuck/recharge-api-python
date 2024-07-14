@@ -128,7 +128,7 @@ class DiscountResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{discount_id}")
 
-    def list(self, query: DiscountListQuery | None = None):
+    def list_(self, query: DiscountListQuery | None = None):
         """List discounts.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_list
         """

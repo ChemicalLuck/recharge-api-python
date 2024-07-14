@@ -90,7 +90,7 @@ class ChargeResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{charge_id}")
 
-    def list(self, query: ChargeListQuery | None = None):
+    def list_(self, query: ChargeListQuery | None = None):
         """List charges.
         https://developer.rechargepayments.com/2021-01/charges/charge_list
         """

@@ -106,7 +106,7 @@ class OnetimeResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{onetime_id}")
 
-    def list(self, query: OnetimeListQuery | None = None):
+    def list_(self, query: OnetimeListQuery | None = None):
         """List Onetimes.
         https://developer.rechargepayments.com/2021-11/onetimes/onetimes_list
         """
