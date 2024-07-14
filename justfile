@@ -8,6 +8,6 @@ lock:
 install:
 	uv pip install -e .
 uninstall:
-	uv pip uninstall qrgenerator
+	uv pip uninstall recharge-api
 clean:
 	rm -rf *.egg-info .ruff_cache
