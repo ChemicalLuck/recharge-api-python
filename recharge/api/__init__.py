@@ -1,8 +1,14 @@
 import logging
 import time
-from typing import Any, Literal, Mapping, TypeAlias
+from enum import Enum
+from typing import Any, Literal, Mapping, Type, TypeAlias, Union
 
-import requests
+from requests import Request, Response
+from requests.exceptions import HTTPError, RequestException, JSONDecodeError
+from requests.models import PreparedRequest
+from requests.sessions import Session
+
+from ..exceptions import RechargeHTTPError, RechargeAPIError, RechargeRequestException
 
 RechargeVersion: TypeAlias = Literal["2021-01", "2021-11"]
 
@@ -38,10 +44,15 @@ RechargeScope: TypeAlias = Literal[
     "read_credit_summary",
 ]
 
-log = logging.getLogger(__name__)
+class RequestMethod(Enum):
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
 
 
-class RechargeResource(object):
+
+class RechargeResource:
     """
     Resource from the Recharge API. This class handles
     logging, sending requests, parsing JSON, and rate
@@ -57,22 +68,145 @@ class RechargeResource(object):
 
     def __init__(
         self,
-        session: requests.Session,
-        debug: bool = False,
+        session: Session,
+        logger: logging.Logger | None = None,
         scopes: list[RechargeScope] = [],
+        max_retries: int = 3,
+        retry_delay: int = 10,
     ):
-        self.session = session
-        self.debug = debug
+        self._session = session
+        self._logger = logger or logging.getLogger(__name__)
         self.scopes = scopes
 
+        self._max_retries = max_retries
+        self._retry_delay = retry_delay
+        self._retries = 0
+
         self.allowed_endpoints = []
+
+    def _redact_auth(self, request: PreparedRequest) -> PreparedRequest:
+        """Redacts the Authorization header from a request."""
+
+        temp_request = request.copy()
+        temp_request.headers["X-Recharge-Access-Token"] = "REDACTED"
+        return temp_request
+
+    def _retry(self, request: PreparedRequest) -> Response:
+        """Retries a request."""
+        redacted_request = self._redact_auth(request)
+        if self._retries >= self._max_retries:
+
+            self._logger.error(
+                "Max retries reached",
+                extra={
+                    "retries": self._retries,
+                    "max_retries": self._max_retries,
+                    "url": redacted_request.url,
+                    "body": redacted_request.body,
+                    "headers": redacted_request.headers
+                }
+            )
+            raise RechargeAPIError("Max retries reached")
+
+        self._retries += 1
+        self._logger.info(
+            "Retrying",
+            extra={
+                "retries": self._retries,
+                "max_retries": self._max_retries,
+                "delay": self._retry_delay,
+                "url": redacted_request.url,
+                "body": redacted_request.body,
+                "headers": redacted_request.headers,
+            },
+        )
+        time.sleep(self._retry_delay)
+        return self._send(request)
+
+    def _extract_error_message(self, response: Response):
+        """Extracts an error message from a response."""
+
+        try:
+            error_response = response.json()
+            return error_response
+        except JSONDecodeError:
+            self._logger.error(
+                "Failed to decode JSON response", extra={"response": response.text}
+            )
+            return response.text
+
+    def _send(self, request: PreparedRequest) -> Response:
+        """Sends a request and handles retries and errors."""
+
+        self._logger.debug(
+            "Sending request", extra={"url": self._redact_auth(request).url}
+        )
+        try:
+            response = self._session.send(request)
+
+            if response.status_code == 429:
+                self._logger.warning(
+                    "Rate limited, retrying...", extra={"response": response.text}
+                )
+                return self._retry(request)
+
+            if response.status_code >= 500:
+                self._logger.error(
+                    "Server error, retrying...",
+                    extra={
+                        "response": response.text,
+                        "status_code": response.status_code,
+                    },
+                )
+                return self._retry(request)
+
+            self._retries = 0
+            response.raise_for_status()
+
+            self._logger.debug("Request successful", extra={"response": response.text})
+            return response
+
+        except HTTPError as http_error:
+            self._logger.error(
+                "HTTP error",
+                extra={
+                    "error": http_error.response.text,
+                    "request": http_error.request,
+                },
+            )
+            raise RechargeHTTPError(
+                self._extract_error_message(http_error.response)
+            ) from http_error
+        except RequestException as request_error:
+            self._logger.error(
+                "Request failed",
+                extra={
+                    "error": "An ambiguous error occured",
+                    "request": request_error.request,
+                },
+            )
+            raise RechargeRequestException("Request failed") from request_error
+
+    def _extract_data(
+        self, response: Response
+    ) -> dict:
+        try:
+            data = response.json()
+        except JSONDecodeError:
+            self._logger.error(
+                "Failed to decode JSON response, expect missing data",
+                extra={"response": response.text},
+            )
+            return {}
+
+        return data
 
     def check_scopes(self, endpoint: str, scopes: list[RechargeScope]):
         if endpoint in self.allowed_endpoints:
             return
 
         if not self.scopes:
-            raise ValueError("No scopes found for token.")
+            raise RechargeAPIError("No scopes found for token.")
 
         missing_scopes = []
 
@@ -81,65 +215,54 @@ class RechargeResource(object):
                 missing_scopes.append(scope)
 
         if missing_scopes:
-            raise ValueError(f"Endpoint {endpoint} missing scopes: {missing_scopes}")
+            raise RechargeAPIError(f"Endpoint {endpoint} missing scopes: {missing_scopes}")
         else:
             self.allowed_endpoints.append(endpoint)
 
-    def log(self, url, response):
-        if self.debug:
-            log.info(url)
-            log.info(response.headers["X-Recharge-Limit"])
+    def _request(
+            self,
+            method: RequestMethod,
+            url: str,
+            query: Mapping[str, Any] | None = None,
+            json: Mapping[str, Any] | None = None
+        ) -> Response:
+        request = Request(method.value, url, params=query, json=json)
+        prepared_request = self._session.prepare_request(request)
+        return self._send(prepared_request)
 
     @property
     def url(self) -> str:
         return f"{self.base_url}/{self.object_list_key}"
 
-    def update_headers(self):
-        self.session.headers.update({"X-Recharge-Version": self.recharge_version})
+    def _update_headers(self):
+        self._session.headers.update({"X-Recharge-Version": self.recharge_version})
 
-    def _http_delete(self, url: str, body: Mapping[str, Any] | None = None):
-        self.update_headers()
-        response = self.session.delete(url, json=body)
-        self.log(url, response)
-        if response.status_code == 429:
-            return self._http_delete(url, body)
-        return response
+    def _http_delete(self, url: str, body: Mapping[str, Any] | None = None) -> dict:
+        self._update_headers()
+        response = self._request(RequestMethod.DELETE, url, json=body)
+        return self._extract_data(response)
 
-    def _http_get(self, url: str, query: Mapping[str, Any] | None = None):
-        self.update_headers()
-        print(url)
-        response = self.session.get(url, params=query)
-        print(response.text)
-        self.log(url, response)
-        if response.status_code == 429:
-            time.sleep(1)
-            return self._http_get(url, query)
-        return response.json()
+    def _http_get(self, url: str, query: Mapping[str, Any] | None = None) -> dict:
+        self._update_headers()
+        response = self._request(RequestMethod.GET, url, query)
+        return self._extract_data(response)
 
     def _http_put(
         self,
         url: str,
         body: Mapping[str, Any] | None = None,
         query: Mapping[str, Any] | None = None,
-    ):
-        self.update_headers()
-        response = self.session.put(url, json=body, params=query)
-        self.log(url, response)
-        if response.status_code == 429:
-            time.sleep(1)
-            return self._http_put(url, body)
-        return response.json()
+    ) -> dict:
+        self._update_headers()
+        response = self._request(RequestMethod.PUT, url, query, body)
+        return self._extract_data(response)
 
     def _http_post(
         self,
         url: str,
         body: Mapping[str, Any] | None = None,
         query: Mapping[str, Any] | None = None,
-    ):
-        self.update_headers()
-        response = self.session.post(url, json=body, params=query)
-        self.log(url, response)
-        if response.status_code == 429:
-            time.sleep(1)
-            return self._http_post(url, body)
-        return response.json()
+    ) -> dict:
+        self._update_headers()
+        response = self._request(RequestMethod.POST, url, query, body)
+        return self._extract_data(response)
