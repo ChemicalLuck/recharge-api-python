@@ -1,7 +1,7 @@
 import logging
 import time
 from enum import Enum
-from typing import Any, Literal, Mapping, Type, TypeAlias, Union
+from typing import Any, Literal, Mapping, TypeAlias
 
 from requests import Request, Response
 from requests.exceptions import HTTPError, RequestException, JSONDecodeError
