@@ -44,12 +44,12 @@ RechargeScope: TypeAlias = Literal[
     "read_credit_summary",
 ]
 
+
 class RequestMethod(Enum):
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
     DELETE = "DELETE"
-
 
 
 class RechargeResource:
@@ -95,7 +95,6 @@ class RechargeResource:
         """Retries a request."""
         redacted_request = self._redact_auth(request)
         if self._retries >= self._max_retries:
-
             self._logger.error(
                 "Max retries reached",
                 extra={
@@ -103,8 +102,8 @@ class RechargeResource:
                     "max_retries": self._max_retries,
                     "url": redacted_request.url,
                     "body": redacted_request.body,
-                    "headers": redacted_request.headers
-                }
+                    "headers": redacted_request.headers,
+                },
             )
             raise RechargeAPIError("Max retries reached")
 
@@ -187,9 +186,7 @@ class RechargeResource:
             )
             raise RechargeRequestException("Request failed") from request_error
 
-    def _extract_data(
-        self, response: Response
-    ) -> dict:
+    def _extract_data(self, response: Response) -> dict:
         try:
             data = response.json()
         except JSONDecodeError:
@@ -215,17 +212,19 @@ class RechargeResource:
                 missing_scopes.append(scope)
 
         if missing_scopes:
-            raise RechargeAPIError(f"Endpoint {endpoint} missing scopes: {missing_scopes}")
+            raise RechargeAPIError(
+                f"Endpoint {endpoint} missing scopes: {missing_scopes}"
+            )
         else:
             self.allowed_endpoints.append(endpoint)
 
     def _request(
-            self,
-            method: RequestMethod,
-            url: str,
-            query: Mapping[str, Any] | None = None,
-            json: Mapping[str, Any] | None = None
-        ) -> Response:
+        self,
+        method: RequestMethod,
+        url: str,
+        query: Mapping[str, Any] | None = None,
+        json: Mapping[str, Any] | None = None,
+    ) -> Response:
         request = Request(method.value, url, params=query, json=json)
         prepared_request = self._session.prepare_request(request)
         return self._send(prepared_request)

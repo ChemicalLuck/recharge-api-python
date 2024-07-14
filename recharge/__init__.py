@@ -16,7 +16,7 @@ class RechargeAPIv1Helper:
         kwargs = {
             "session": session,
             "logger": logger or logging.getLogger(__name__),
-            "scopes": scopes
+            "scopes": scopes,
         }
 
         self.Address = v1.AddressResource(**kwargs)
@@ -46,7 +46,7 @@ class RechargeAPIv2Helper:
         kwargs = {
             "session": session,
             "logger": logger or logging.getLogger(__name__),
-            "scopes": scopes
+            "scopes": scopes,
         }
 
         self.Address = v2.AddressResource(**kwargs)

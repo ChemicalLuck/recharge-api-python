@@ -15,7 +15,6 @@ from .async_batches import AsyncBatchResource
 from .tokens import TokenResource
 
 
-
 __all__ = [
     "AddressResource",
     "ChargeResource",
