@@ -18,7 +18,7 @@ from recharge import RechargeAPI
 
 client = Recharge(access_token='XXXXX')
 
-response = client.v1.Order.list({'status': 'QUEUED', 'limit': '250'})
+response = client.v1.Order.list_({'status': 'QUEUED', 'limit': '250'})
 
 for order in response['orders']:
     print(order['id'])
