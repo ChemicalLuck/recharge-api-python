@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -43,11 +43,9 @@ class DiscountUsageLimits(TypedDict, total=False):
     max_subsequent_redemptions: int
     redemptions: int
 
-
-class DiscountCreateBody(TypedDict, total=False):
+class DiscountCreateBodyOptional(TypedDict, total=False):
     applies_to: DiscountAppliesTo
     channel_settings: DiscountChannelSettings
-    code: Required[str]
     ends_at: str
     prerequisite_subtotal_min: int
     starts_at: str
@@ -56,6 +54,8 @@ class DiscountCreateBody(TypedDict, total=False):
     value: str
     value_type: DiscountValueType
 
+class DiscountCreateBody(DiscountCreateBodyOptional):
+    code: str
 
 class DiscountUpdateBody(TypedDict, total=False):
     applies_to: DiscountAppliesTo

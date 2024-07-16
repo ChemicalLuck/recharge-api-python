@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -13,24 +13,24 @@ class SubscriptionProperty(TypedDict):
 
 SubscriptionStatus: TypeAlias = Literal["ACTIVE", "CANCELLED", "EXPIRED"]
 
-
-class SubscriptionCreateBody(TypedDict, total=False):
-    address_id: Required[int]
-    charge_interval_frequency: Required[int]
+class SubscriptionCreateBodyOptional(TypedDict, total=False):
     customer_id: str
     expire_after_specific_number_of_charges: str
-    next_charge_scheduled_at: Required[str]
     order_day_of_month: str
     order_day_of_week: str
-    order_interval_frequency: Required[str]
-    order_interval_unit: Required[SubscriptionOrderIntervalUnit]
     price: str
     properties: list[SubscriptionProperty]
     product_title: str
-    quantity: Required[str]
-    shopify_product_id: Required[str]
-    shopify_variant_id: Required[str]
     status: SubscriptionStatus
+
+class SubscriptionCreateBody(SubscriptionCreateBodyOptional):
+    address_id: int
+    charge_interval_frequency: int
+    next_charge_scheduled_at: str
+    order_interval_frequency: str
+    order_interval_unit: SubscriptionOrderIntervalUnit
+    shopify_product_id: str
+    shopify_variant_id: str
 
 
 class SubscriptionUpdateBody(TypedDict, total=False):
@@ -88,16 +88,18 @@ class SubscriptionCountQuery(TypedDict, total=False):
 class SubscriptionChangeDateBody(TypedDict, total=True):
     date: str
 
-
-class SubscriptionChangeAddressBody(TypedDict, total=False):
-    address_id: Required[str]
+class SubscriptionChangeAddressBodyOptional(TypedDict, total=False):
     next_charge_scheduled_at: str
 
+class SubscriptionChangeAddressBody(SubscriptionChangeAddressBodyOptional):
+    address_id: str
 
-class SubscriptionCancelBody(TypedDict, total=False):
-    cancellation_reason: Required[str]
+class SubscriptionCancelBodyOptional(TypedDict, total=False):
     cancellation_reason_comments: str
     send_email: bool
+
+class SubscriptionCancelBody(SubscriptionCancelBodyOptional):
+    cancellation_reason: str
 
 
 class SubscriptionSkipGiftRecipientAddress(TypedDict, total=False):

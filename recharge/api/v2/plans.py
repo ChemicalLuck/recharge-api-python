@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -50,16 +50,17 @@ class PlanChannelSettings(TypedDict, total=False):
 
 PlanType: TypeAlias = Literal["subscription", "prepaid", "onetime"]
 
-
-class PlanCreateBody(TypedDict, total=False):
+class PlanCreateBodyOptional(TypedDict, total=False):
     channel_settings: PlanChannelSettings
     discount_amount: str
     discount_type: PlanDiscountType
-    external_product_id: Required[PlanExternalProductId]
     sort_order: int
-    subscription_preferences: Required[PlanSubscriptionPreferences]
-    title: Required[str]
-    type: Required[PlanType]
+
+class PlanCreateBody(PlanCreateBodyOptional):
+    external_product_id: PlanExternalProductId
+    subscription_preferences: PlanSubscriptionPreferences
+    title: str
+    type: PlanType
 
 
 class PlanUpdateBody(TypedDict, total=False):

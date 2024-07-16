@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict, TypeAlias
+from typing import Literal, TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -8,8 +8,7 @@ ProductStorefrontPurchaseOptions: TypeAlias = Literal[
     "subscription_only", "subscription_and_onetime"
 ]
 
-
-class ProductCreateBody(TypedDict, total=False):
+class ProductCreateBodyOptional(TypedDict, total=False):
     charge_interval_frequency: int
     cutoff_day_of_month: int
     cutoff_day_of_week: int
@@ -20,9 +19,10 @@ class ProductCreateBody(TypedDict, total=False):
     order_day_of_month: int
     order_day_of_week: int
     order_interval_frequency_options: list[int]
-    shopify_product_id: Required[int]
     storefront_purchase_options: ProductStorefrontPurchaseOptions
 
+class ProductCreateBody(ProductCreateBodyOptional):
+    shopify_product_id: int
 
 class ProductImages(TypedDict, total=False):
     large: str
@@ -30,9 +30,7 @@ class ProductImages(TypedDict, total=False):
     original: str
     small: str
 
-
 ProductOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
-
 
 class ProductGetQuery(TypedDict, total=False):
     charge_interval_frequency: str
@@ -55,8 +53,7 @@ class ProductGetQuery(TypedDict, total=False):
     title: str
     updated_at: str
 
-
-class ProductUpdateBody(TypedDict, total=False):
+class ProductUpdateBodyOptional(TypedDict, total=False):
     charge_interval_frequency: int
     cutoff_day_of_month: int
     cutoff_day_of_week: int
@@ -67,8 +64,10 @@ class ProductUpdateBody(TypedDict, total=False):
     order_day_of_month: int
     order_day_of_week: int
     order_interval_unit: ProductOrderIntervalUnit
-    shopify_product_id: Required[int]
     storefront_purchase_options: ProductStorefrontPurchaseOptions
+
+class ProductUpdateBody(ProductCreateBodyOptional):
+    shopify_product_id: int
 
 
 class ProductDeleteBody(TypedDict):

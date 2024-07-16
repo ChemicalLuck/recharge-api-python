@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -17,25 +17,26 @@ class AddressShippingLinesOverride(TypedDict, total=False):
 class AddressDiscounts(TypedDict):
     id: str
 
-
-class AddressCreateBody(TypedDict, total=False):
-    customer_id: Required[str]
-    address1: Required[str]
-    address2: Required[str]
-    city: Required[str]
+class AddressCreateBodyOptional(TypedDict, total=False):
     company: str
-    country_code: Required[str]
     discounts: list[AddressDiscounts]
-    first_name: Required[str]
-    last_name: Required[str]
     order_attributes: list[AddressOrderAttributes]
     order_note: str
     payment_method_id: int
-    phone: Required[str]
     presentment_currency: str
-    province: Required[str]
     shipping_lines_override: list[AddressShippingLinesOverride]
-    zip: Required[str]
+
+class AddressCreateBody(AddressCreateBodyOptional):
+    customer_id: str
+    address1: str
+    address2: str
+    city: str
+    country_code: str
+    first_name: str
+    last_name: str
+    phone: str
+    province: str
+    zip: str
 
 
 class AddressUpdateBody(TypedDict, total=False):
@@ -73,12 +74,13 @@ class AddressListQuery(TypedDict, total=False):
 class AddressMergeTargetAddress(TypedDict):
     id: str
 
-
-class AddressMergeBody(TypedDict, total=False):
+class AddressMergeBodyOptional(TypedDict, total=False):
     delete_source_address: bool
     next_charge_date: str
-    target_address: Required[AddressMergeTargetAddress]
-    source_addresses: Required[list[str]]
+
+class AddressMergeBody(AddressMergeBodyOptional):
+    target_address: AddressMergeTargetAddress
+    source_addresses: list[str]
 
 
 class AddressSkipBody(TypedDict):

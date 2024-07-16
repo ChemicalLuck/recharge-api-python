@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -8,13 +8,14 @@ RetentionStrategyIncentiveType: TypeAlias = Literal[
     "delay_subscription", "discount", "skip_charge", "swap_product"
 ]
 
-
-class RetentionStrategyCreateBody(TypedDict, total=False):
+class RetentionStrategyCreateBodyOptional(TypedDict, total=False):
     cancellation_flow_type: RetentionStrategyCancellationFlowType
     incentive_type: RetentionStrategyIncentiveType
     discount_code: str
-    prevention_text: Required[str]
-    reason: Required[str]
+
+class RetentionStrategyCreateBody(RetentionStrategyCreateBodyOptional):
+    prevention_text: str
+    reason: str
 
 
 class RetentionStrategyUpdateBody(TypedDict, total=False):
@@ -31,7 +32,7 @@ class RetentionStrategyResource(RechargeResource):
     """
 
     object_list_key = "retention_strategies"
-    resource_version: RechargeVersion = "2021-11"
+    recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: RetentionStrategyCreateBody):
         """Create a retention strategy.

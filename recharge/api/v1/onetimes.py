@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -7,16 +7,17 @@ class OnetimeProperty(TypedDict):
     name: str
     value: str
 
-
-class OnetimeCreateBody(TypedDict, total=False):
+class OnetimeCreateBodyOptional(TypedDict, total=False):
     add_to_next_charge: bool
-    next_charge_scheduled_at: Required[str]
     price: int
     product_title: str
     properties: list[OnetimeProperty]
-    quantity: Required[int]
     shopify_product_id: int
-    shopify_variant_id: Required[int]
+
+class OnetimeCreateBody(OnetimeCreateBodyOptional):
+    next_charge_scheduled_at: str
+    quantity: int
+    shopify_variant_id: int
 
 
 class OnetimeUpdateBody(TypedDict, total=False):

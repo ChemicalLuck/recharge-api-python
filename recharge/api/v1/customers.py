@@ -1,27 +1,27 @@
-from typing import Literal, Required, TypedDict, TypeAlias
+from typing import Literal, TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-
-class CustomerCreateBody(TypedDict, total=False):
+class CustomerCreateBodyOptional(TypedDict, total=False):
     accepts_marketing: bool
-    billing_address1: Required[str]
     billing_address2: str
-    billing_city: Required[str]
     billing_company: str
-    billing_country: Required[str]
-    billing_first_name: Required[str]
-    billing_last_name: Required[str]
     billing_phone: str
-    billing_province: Required[str]
-    billing_zip: Required[str]
-    email: Required[str]
-    first_name: Required[str]
-    last_name: Required[str]
     phone: str
     processor_type: str
     shopify_customer_id: str
 
+class CustomerCreateBody(CustomerCreateBodyOptional):
+    billing_address1: str
+    billing_city: str
+    billing_country: str
+    billing_first_name: str
+    billing_last_name: str
+    billing_province: str
+    billing_zip: str
+    email: str
+    first_name: str
+    last_name: str
 
 class CustomerUpdateBody(TypedDict, total=False):
     accepts_marketing: bool

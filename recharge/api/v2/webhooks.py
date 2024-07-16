@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict, TypeAlias
+from typing import Literal, TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -74,12 +74,13 @@ WebhookIncludedObject: TypeAlias = Literal[
     "addresses", "collections", "customer", "metafields"
 ]
 
-
-class WebhookCreateBody(TypedDict, total=False):
-    address: Required[str]
+class WebhookCreateBodyOptional(TypedDict, total=False):
     included_objects: list[WebhookIncludedObject]
-    topic: Required[WebhookTopic]
     verion: str
+
+class WebhookCreateBody(WebhookCreateBodyOptional):
+    address: str
+    topic: WebhookTopic
 
 
 class WebhookResource(RechargeResource):

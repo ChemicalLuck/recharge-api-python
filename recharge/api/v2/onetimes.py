@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -15,18 +15,19 @@ class OnetimeExternalProductId(TypedDict):
 class OnetimeExternalVariantId(TypedDict):
     ecommerce: str
 
-
-class OnetimeCreateBody(TypedDict, total=False):
-    address_id: Required[int]
+class OnetimeCreateBodyOptional(TypedDict, total=False):
     add_to_next_charge: bool
     external_product_id: OnetimeExternalProductId
-    external_variant_id: Required[OnetimeExternalVariantId]
-    next_charge_scheduled_at: Required[str]
     price: str
-    product_title: Required[str]
     properties: list[OnetimeProperty]
-    quantity: Required[int]
     sku: str
+
+class OnetimeCreateBody(OnetimeCreateBodyOptional):
+    address_id: int
+    external_variant_id: OnetimeExternalVariantId
+    next_charge_scheduled_at: str
+    product_title: str
+    quantity: int
 
 
 class OnetimeUpdateBody(TypedDict, total=False):

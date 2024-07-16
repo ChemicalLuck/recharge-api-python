@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict, TypeAlias
+from typing import Literal, TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -91,8 +91,7 @@ class CheckoutShippingAddress(TypedDict, total=False):
     province: str
     zip: str
 
-
-class CheckoutCreateBody(TypedDict, total=False):
+class CheckoutCreateBodyOptional(TypedDict, total=False):
     analytics_data: CheckoutAnalyticsData
     billing_address: CheckoutBillingAddress
     buyer_accepts_marketing: bool
@@ -102,11 +101,13 @@ class CheckoutCreateBody(TypedDict, total=False):
     external_checkout_id: str
     external_checkout_source: CheckoutExternalCheckoutSource
     external_checkout_customer_id: str
-    line_items: Required[list[CheckoutLineItem]]
     note: str
     note_attributes: list[CheckoutNoteAttribute]
     phone: str
     shipping_address: CheckoutShippingAddress
+
+class CheckoutCreateBody(CheckoutCreateBodyOptional):
+    line_items: list[CheckoutLineItem]
 
 
 class CheckoutUpdateBody(TypedDict, total=False):
@@ -135,12 +136,13 @@ CheckoutPaymentType: TypeAlias = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY"
 ]
 
-
-class CheckoutProcessBody(TypedDict, total=False):
-    payment_processor: Required[CheckoutPaymentProcessor]
-    payment_token: Required[str]
+class CheckoutProcessBodyOptional(TypedDict, total=False):
     payment_type: CheckoutPaymentType
 
+
+class CheckoutProcessBody(CheckoutProcessBodyOptional):
+    payment_processor: CheckoutPaymentProcessor
+    payment_token: str
 
 class CheckoutResource(RechargeResource):
     """
@@ -148,7 +150,7 @@ class CheckoutResource(RechargeResource):
     """
 
     object_list_key = "checkouts"
-    resource_version: RechargeVersion = "2021-01"
+    recharge_version: RechargeVersion = "2021-01"
 
     def create(self, body: CheckoutCreateBody):
         """Create a new checkout.

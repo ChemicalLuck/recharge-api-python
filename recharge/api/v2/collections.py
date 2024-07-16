@@ -1,4 +1,4 @@
-from typing import Required, TypedDict, TypeAlias, Literal
+from typing import TypedDict, TypeAlias, Literal
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -6,11 +6,12 @@ CollectionCreateSortOrder: TypeAlias = Literal[
     "id-asc", "id-desc", "title-asc", "title-desc", "created-asc", "created-desc"
 ]
 
-
-class CollectionCreateBody(TypedDict, total=False):
-    description: Required[str]
+class CollectionCreateBodyOptional(TypedDict, total=False):
     sort_order: CollectionCreateSortOrder
-    titel: Required[str]
+
+class CollectionCreateBody(CollectionCreateBodyOptional):
+    description: str
+    titel: str
 
 
 class CollectionUpdateBody(TypedDict, total=False):

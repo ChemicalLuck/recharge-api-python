@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -23,17 +23,17 @@ class PaymentMethodBillingAddress(TypedDict, total=False):
     province: str
     zip: str
 
-
-class PaymentMethodCreateBody(TypedDict, total=False):
-    customer_id: Required[int]
+class PaymentMethodCreateBodyOptional(TypedDict, total=False):
     default: bool
-    payment_type: Required[PaymentMethodType]
-    processor_customer_token: Required[str]
-    processor_name: Required[PaymentMethodProcessorName]
     processor_payment_method_token: str
     billing_address: PaymentMethodBillingAddress
     retry_charges: bool
 
+class PaymentMethodCreateBody(PaymentMethodCreateBodyOptional):
+    customer_id: int
+    payment_type: PaymentMethodType
+    processor_customer_token: str
+    processor_name: PaymentMethodProcessorName
 
 class PaymentMethodUpdateBody(TypedDict, total=False):
     default: bool

@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict, TypeAlias
+from typing import Literal, TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -134,8 +134,7 @@ class CheckoutAppliedShippingLine(TypedDict):
     title: str
     taxable: bool
 
-
-class CheckoutCreateBody(TypedDict, total=False):
+class CheckoutCreateBodyOptional(TypedDict, total=False):
     get_shipping_rates: bool
     analytics_data: CheckoutAnalyticsData
     applied_discounts: list[CheckoutAppliedDiscount]
@@ -147,11 +146,12 @@ class CheckoutCreateBody(TypedDict, total=False):
     external_checkout_id: str
     external_checkout_source: str
     external_transaction_id: CheckoutExternalTransactionId
-    line_items: Required[list[CheckoutLineItem]]
     note: str
     order_attributes: list[CheckoutOrderAttribute]
     shipping_address: CheckoutShippingAddress
 
+class CheckoutCreateBody(CheckoutCreateBodyOptional):
+    line_items: list[CheckoutLineItem]
 
 class CheckoutUpdateBody(TypedDict, total=False):
     get_shipping_rates: bool
@@ -179,11 +179,12 @@ CheckoutPaymentType: TypeAlias = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"
 ]
 
-
-class CheckoutProcessBody(TypedDict, total=False):
-    payment_processor: Required[CheckoutPaymentProcessor]
-    payment_token: Required[str]
+class CheckoutProcessBodyOptional(TypedDict, total=False):
     payment_type: CheckoutPaymentType
+
+class CheckoutProcessBody(TypedDict):
+    payment_processor: CheckoutPaymentProcessor
+    payment_token: str
 
 
 class CheckoutResource(RechargeResource):

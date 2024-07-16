@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -28,25 +28,25 @@ DiscountFirstTimeCustomerRestriction: TypeAlias = Literal[
 
 DiscountStatus: TypeAlias = Literal["enabled", "disabled", "fully_disabled"]
 
-
-class DiscountCreateBody(TypedDict, total=False):
+class DiscountCreateBodyOptional(TypedDict, total=False):
     applies_to_id: int
-    applies_to_product_type: DiscountProductType
-    applies_to_resource: DiscountAppliesToResource
-    channel_settings: DiscountChannelSettings
-    code: Required[str]
-    discount_type: DiscountType
     duration: str
     duration_usage_limit: int
     ends_at: str
-    first_time_customer_restriction: DiscountFirstTimeCustomerRestriction
     once_per_customer: bool
     prerequisite_subtotal_min: int
+    usage_limit: int
+
+class DiscountCreateBody(DiscountCreateBodyOptional):
+    applies_to_product_type: DiscountProductType
+    applies_to_resource: DiscountAppliesToResource
+    channel_settings: DiscountChannelSettings
+    code: str
+    discount_type: DiscountType
+    first_time_customer_restriction: DiscountFirstTimeCustomerRestriction
     starts_at: str
     status: DiscountStatus
-    usage_limit: int
     value: str
-
 
 class DiscountUpdateBody(TypedDict, total=False):
     channel_settings: DiscountChannelSettings

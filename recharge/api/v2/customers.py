@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict, TypeAlias
+from typing import Literal, TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -6,14 +6,15 @@ from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 class CustomerCreateExternalCustomerId(TypedDict, total=False):
     ecommerce: str
 
-
-class CustomerCreateBody(TypedDict, total=False):
-    email: Required[str]
+class CustomerCreateBodyOptional(TypedDict, total=False):
     external_customer_id: CustomerCreateExternalCustomerId
-    first_name: Required[str]
-    last_name: Required[str]
     phone: str
     tax_exempt: bool
+
+class CustomerCreateBody(CustomerCreateBodyOptional):
+    email: str
+    first_name: str
+    last_name: str
 
 
 class CustomerUpdateBody(TypedDict, total=False):

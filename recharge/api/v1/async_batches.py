@@ -64,7 +64,7 @@ class AsyncBatchResource(RechargeResource):
     """
 
     object_list_key = "async_batches"
-    resource_version: RechargeVersion = "2021-01"
+    recharge_version: RechargeVersion = "2021-01"
 
     def create(self, body: AsyncBatchCreateBody):
         """Create an async batch.

@@ -25,7 +25,7 @@ class NotificationResource(RechargeResource):
     """
 
     object_list_key = "notifications"
-    resource_version: RechargeVersion = "2021-11"
+    recharge_version: RechargeVersion = "2021-11"
 
     def send_email(self, customer_id: str, body: NotificationSendEmailBody):
         """

@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -8,31 +8,35 @@ MetafieldOwnerResource: TypeAlias = Literal[
 
 MetafieldValueType: TypeAlias = Literal["string", "json_string", "integer"]
 
-
-class MetafieldCreateBody(TypedDict, total=False):
+class MetafieldCreateBodyOptional(TypedDict, total=False):
     description: str
-    key: Required[str]
-    namespace: Required[str]
-    owner_id: Required[int]
-    owner_resource: Required[MetafieldOwnerResource]
-    value: Required[str]
-    value_type: Required[MetafieldValueType]
 
 
-class MetafieldUpdateBody(TypedDict, total=False):
-    description: str
-    owner_id: str
-    owner_resource: Required[MetafieldOwnerResource]
+class MetafieldCreateBody(MetafieldCreateBodyOptional):
+    key: str
+    namespace: str
+    owner_id: int
+    owner_resource: MetafieldOwnerResource
     value: str
     value_type: MetafieldValueType
 
+class MetafieldUpdateBodyOptional(TypedDict, total=False):
+    description: str
+    owner_id: int
+    value: str
+    value_type: MetafieldValueType
 
-class MetafieldListQuery(TypedDict, total=False):
+class MetafieldUpdateBody(MetafieldUpdateBodyOptional):
+    owner_resource: MetafieldOwnerResource
+
+class MetafieldListQueryOptional(TypedDict, total=False):
     limit: str
     namespace: str
     owner_id: str
-    owner_resource: Required[MetafieldOwnerResource]
     page: str
+
+class MetafieldListQuery(MetafieldListQueryOptional):
+    owner_resource: MetafieldOwnerResource
 
 
 MetafieldOwnerResourceScopeMap: dict[str, dict[str, RechargeScope]] = {

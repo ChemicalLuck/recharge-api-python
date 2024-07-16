@@ -1,4 +1,4 @@
-from typing import Required, TypedDict, TypeAlias
+from typing import TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -13,22 +13,24 @@ class AddressShippingLinesOverride(TypedDict, total=False):
     price: str
     title: str
 
-
-class AddressCreateBody(TypedDict, total=False):
-    address1: Required[str]
-    address2: Required[str]
+class AddressCreateBodyOptional(TypedDict, total=False):
+    address2: str
     cart_note: str
-    city: Required[str]
     company: str
-    country: Required[str]
-    first_name: Required[str]
-    last_name: Required[str]
     note_attributes: list[AddressNoteAttributes]
-    phone: Required[str]
     presentment_currency: str
-    province: Required[str]
     shipping_lines_override: list[AddressShippingLinesOverride]
-    zip: Required[str]
+
+
+class AddressCreateBody(AddressCreateBodyOptional):
+    address1: str
+    city: str
+    country: str
+    first_name: str
+    last_name: str
+    phone: str
+    province: str
+    zip: str
 
 
 class AddressUpdateBody(TypedDict, total=False):

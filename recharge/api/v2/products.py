@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict, TypeAlias
+from typing import Literal, TypedDict, TypeAlias
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -54,19 +54,20 @@ class ProductVariant(TypedDict):
     taxable: bool
     title: str
 
-
-class ProductCreateBody(TypedDict, total=False):
-    external_product_id: Required[ProductExternalProductId]
+class ProductCreateBodyOptional(TypedDict, total=False):
     brand: str
     external_created_at: str
     external_updated_at: str
     images: ProductImages
-    options: Required[list[ProductOption]]
     published_at: str
     requires_shipping: bool
-    title: Required[str]
-    variants: Required[list[ProductVariant]]
-    vendor: Required[str]
+
+class ProductCreateBody(ProductCreateBodyOptional):
+    external_product_id: ProductExternalProductId
+    options: list[ProductOption]
+    title: str
+    variants: list[ProductVariant]
+    vendor: str
 
 
 ProductOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]

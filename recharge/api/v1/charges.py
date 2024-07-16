@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypeAlias, TypedDict
+from typing import Literal, TypeAlias, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -54,10 +54,11 @@ class ChargeSkupSubscriptionIds(TypedDict, total=True):
 
 ChargeSkipBody: TypeAlias = ChargeSkipSubscriptionId | ChargeSkupSubscriptionIds
 
-
-class ChargeRefundBody(TypedDict, total=False):
-    amount: Required[str]
+class ChargeRefundBodyOptional(TypedDict, total=False):
     full_refund: bool
+
+class ChargeRefundBody(ChargeRefundBodyOptional):
+    amount: str
 
 
 class ChargeApplyDiscountCodeBody(TypedDict):
