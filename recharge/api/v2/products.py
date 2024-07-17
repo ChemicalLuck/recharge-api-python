@@ -106,44 +106,44 @@ class ProductResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/products/products_create
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def get(self, product_id: str):
         """Get a product.
         https://developer.rechargepayments.com/2021-11/products/products_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_products"]
-        self.check_scopes(f"GET /{self.object_list_key}/:product_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:product_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{product_id}")
+        return self._http_get(f"{self._url}/{product_id}")
 
     def update(self, product_id: str, body: ProductUpdateBody):
         """Update a product.
         https://developer.rechargepayments.com/2021-11/products/products_update
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:product_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:product_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{product_id}", body)
+        return self._http_put(f"{self._url}/{product_id}", body)
 
     def delete(self, product_id: str):
         """Delete a product.
         https://developer.rechargepayments.com/2021-11/products/products_delete
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:product_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{product_id}")
+        return self._http_delete(f"{self._url}/{product_id}")
 
     def list_(self, query: Optional[ProductListQuery] = None):
         """List products.
         https://developer.rechargepayments.com/2021-11/products/products_list
         """
         required_scopes: list[RechargeScope] = ["read_products"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)

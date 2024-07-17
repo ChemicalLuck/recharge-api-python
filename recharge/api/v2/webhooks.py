@@ -97,30 +97,30 @@ class WebhookResource(RechargeResource):
         """
         resource = body["topic"].split("/")[0]
         required_scopes: list[RechargeScope] = [WebhookTopicMap[resource]]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def get(self, webhook_id: str):
         """Get a webhook.
         https://developer.rechargepayments.com/2021-11/webhooks_endpoints/webhooks_retrieve
         """
-        return self._http_get(f"{self.url}/{webhook_id}")
+        return self._http_get(f"{self._url}/{webhook_id}")
 
     def update(self, webhook_id: str):
         """Update a webhook.
         https://developer.rechargepayments.com/2021-11/webhooks_endpoints/webhooks_update
         """
-        return self._http_delete(f"{self.url}/{webhook_id}")
+        return self._http_delete(f"{self._url}/{webhook_id}")
 
     def list_(self):
         """List webhooks.
         https://developer.rechargepayments.com/2021-11/webhooks_endpoints/webhooks_list
         """
-        return self._http_get(self.url)
+        return self._http_get(self._url)
 
     def test(self, webhook_id: str):
         """Test a webhook.
         https://developer.rechargepayments.com/2021-11/webhooks_endpoints/webhooks_test
         """
-        return self._http_post(f"{self.url}/{webhook_id}/test")
+        return self._http_post(f"{self._url}/{webhook_id}/test")

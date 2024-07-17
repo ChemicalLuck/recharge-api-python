@@ -39,9 +39,9 @@ class WebhookResource(RechargeResource):
         """
         resource = body["topic"].split("/")[0]
         required_scopes: list[RechargeScope] = [WebhookTopicMap[resource]]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        data = self._http_post(self.url, body)
+        data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Webhook(**data)
@@ -50,7 +50,7 @@ class WebhookResource(RechargeResource):
         """Get a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_retrieve
         """
-        url = f"{self.url}/{webhook_id}"
+        url = f"{self._url}/{webhook_id}"
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -60,7 +60,7 @@ class WebhookResource(RechargeResource):
         """Update a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_update
         """
-        url = f"{self.url}/{webhook_id}"
+        url = f"{self._url}/{webhook_id}"
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -70,7 +70,7 @@ class WebhookResource(RechargeResource):
         """Delete a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_delete
         """
-        url = f"{self.url}/{webhook_id}"
+        url = f"{self._url}/{webhook_id}"
         data = self._http_delete(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -80,7 +80,7 @@ class WebhookResource(RechargeResource):
         """List webhooks.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_list
         """
-        data = self._http_get(self.url, expected=list)
+        data = self._http_get(self._url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Webhook(**item) for item in data]
@@ -89,7 +89,7 @@ class WebhookResource(RechargeResource):
         """Test a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_test
         """
-        url = f"{self.url}/{webhook_id}/test"
+        url = f"{self._url}/{webhook_id}/test"
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")

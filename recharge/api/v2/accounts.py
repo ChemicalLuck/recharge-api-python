@@ -14,15 +14,15 @@ class AccountResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/accounts/account_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_accounts"]
-        self.check_scopes(f"GET /{self.object_list_key}/:account_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:account_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{account_id}")
+        return self._http_get(f"{self._url}/{account_id}")
 
     def list_(self):
         """List accounts.
         https://developer.rechargepayments.com/2021-11/accounts/accounts_list
         """
         required_scopes: list[RechargeScope] = ["read_accounts"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url)
+        return self._http_get(self._url)

@@ -56,9 +56,9 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["write_batches"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        data = self._http_post(self.url, body)
+        data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return AsyncBatch(**data)
@@ -68,11 +68,11 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["write_batches"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:batch_id/tasks", required_scopes
         )
 
-        url = f"{self.url}/{batch_id}/tasks"
+        url = f"{self._url}/{batch_id}/tasks"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -85,9 +85,9 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["read_batches"]
-        self.check_scopes(f"GET /{self.object_list_key}/:batch_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:batch_id", required_scopes)
 
-        url = f"{self.url}/{batch_id}"
+        url = f"{self._url}/{batch_id}"
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -98,9 +98,9 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["read_batches"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self.url, expected=list)
+        data = self._http_get(self._url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [AsyncBatch(**batch) for batch in data]
@@ -113,11 +113,11 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["read_batches"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:batch_id/tasks", required_scopes
         )
 
-        url = f"{self.url}/{batch_id}/tasks"
+        url = f"{self._url}/{batch_id}/tasks"
         self.object_list_key = "async_batch_tasks"
         data = self._http_get(url, expected=list)
         self.object_list_key = "async_batches"
@@ -130,11 +130,11 @@ class AsyncBatchResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
         required_scopes: list[RechargeScope] = ["write_batches"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:batch_id/process", required_scopes
         )
 
-        url = f"{self.url}/{batch_id}/process"
+        url = f"{self._url}/{batch_id}/process"
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")

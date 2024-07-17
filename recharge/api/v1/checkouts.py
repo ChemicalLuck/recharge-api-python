@@ -78,9 +78,9 @@ class CheckoutResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_create
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        data = self._http_post(self.url, body)
+        data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Checkout(**data)
@@ -90,9 +90,9 @@ class CheckoutResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_checkouts"]
-        self.check_scopes(f"GET /{self.object_list_key}/:checkout_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:checkout_id", required_scopes)
 
-        url = f"{self.url}/{checkout_id}"
+        url = f"{self._url}/{checkout_id}"
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -103,9 +103,9 @@ class CheckoutResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_update
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:checkout_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:checkout_id", required_scopes)
 
-        url = f"{self.url}/{checkout_id}"
+        url = f"{self._url}/{checkout_id}"
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -116,11 +116,11 @@ class CheckoutResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_retrieve_shipping_address
         """
         required_scopes: list[RechargeScope] = ["read_checkouts"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:checkout_id/shipping_rates", required_scopes
         )
 
-        url = f"{self.url}/{checkout_id}/shipping_rates"
+        url = f"{self._url}/{checkout_id}/shipping_rates"
         self.object_list_key = "shipping_rates"
         data = self._http_get(url, expected=list)
         self.object_list_key = "checkouts"
@@ -133,11 +133,11 @@ class CheckoutResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/checkout/checkout_process
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:checkout_id/charge", required_scopes
         )
 
-        url = f"{self.url}/{checkout_id}/charge"
+        url = f"{self._url}/{checkout_id}/charge"
         self.object_list_key = "checkout_charge"
         data = self._http_post(url, body)
         self.object_list_key = "checkouts"

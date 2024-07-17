@@ -145,55 +145,55 @@ class OrderResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/orders/orders_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
-        self.check_scopes(f"GET /{self.object_list_key}/:order_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:order_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{order_id}")
+        return self._http_get(f"{self._url}/{order_id}")
 
     def clone(self, order_id: str, body: OrderCloneBody):
         """Clone an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_clone
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:order_id/clone", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{order_id}/clone", body)
+        return self._http_post(f"{self._url}/{order_id}/clone", body)
 
     def delay(self, order_id: str):
         """Delay an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_delay
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:order_id/delay", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{order_id}/delay")
+        return self._http_post(f"{self._url}/{order_id}/delay")
 
     def update(self, order_id: str, body: OrderUpdateBody):
         """Update an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_update
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:order_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:order_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{order_id}", body)
+        return self._http_put(f"{self._url}/{order_id}", body)
 
     def delete(self, order_id: str):
         """Delete an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_delete
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
-        self.check_scopes(f"DELETE /{self.object_list_key}/:order_id", required_scopes)
+        self._check_scopes(f"DELETE /{self.object_list_key}/:order_id", required_scopes)
 
-        return self._http_delete(f"{self.url}/{order_id}")
+        return self._http_delete(f"{self._url}/{order_id}")
 
     def list_(self, query: Optional[OrderListQuery] = None):
         """List orders.
         https://developer.rechargepayments.com/2021-11/orders/orders_list
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)

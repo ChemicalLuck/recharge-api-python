@@ -111,7 +111,7 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/create_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /customers/:customer_id/{self.object_list_key}", required_scopes
         )
 
@@ -126,9 +126,10 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/retrieve_address
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(f"GET /{self.object_list_key}/:address_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:address_id", required_scopes)
 
-        data = self._http_get(f"{self.url}/{address_id}")
+        url = f"{self._url}/{address_id}"
+        data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Address(**data)
@@ -140,9 +141,10 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/update_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:id", required_scopes)
 
-        data = self._http_put(f"{self.url}/{address_id}", body)
+        url = f"{self._url}/{address_id}"
+        data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Address(**data)
@@ -152,11 +154,12 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/delete_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:address_id", required_scopes
         )
 
-        data = self._http_delete(f"{self.url}/{address_id}")
+        url = f"{self._url}/{address_id}"
+        data = self._http_delete(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return data
@@ -168,7 +171,7 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/list_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /customers/:customer_id/{self.object_list_key}", required_scopes
         )
 
@@ -183,9 +186,10 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/count_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        data = self._http_get(f"{self.url}/count", query)
+        url = f"{self._url}/count"
+        data = self._http_get(url, query)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         if "count" not in data:
@@ -197,7 +201,8 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/addresses/validate_address
         """
 
-        data = self._http_post(f"{self.url}/validate_address", body)
+        url = f"{self._url}/validate_address"
+        data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return AddressValidateResponse(**data)
@@ -211,11 +216,11 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_apply_address
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:address_id/apply_discount", required_scopes
         )
 
-        url = f"{self.url}/{address_id}/apply_discount"
+        url = f"{self._url}/{address_id}/apply_discount"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -226,11 +231,11 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_remove_from_address_or_charge
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:address_id/remove_discount", required_scopes
         )
 
-        url = f"{self.url}/{address_id}/remove_discount"
+        url = f"{self._url}/{address_id}/remove_discount"
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")

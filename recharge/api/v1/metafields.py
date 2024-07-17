@@ -104,9 +104,9 @@ class MetafieldResource(RechargeResource):
         resource = body["owner_resource"]
 
         required_scopes: list[RechargeScope] = [resource_scope(resource, "write")]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        data = self._http_post(self.url, body)
+        data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Metafield(**data)
@@ -116,9 +116,11 @@ class MetafieldResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/metafields/metafields_retrieve
         """
         required_scopes: list[RechargeScope] = [resource_scope(resource, "read")]
-        self.check_scopes(f"GET /{self.object_list_key}/:metafield_id", required_scopes)
+        self._check_scopes(
+            f"GET /{self.object_list_key}/:metafield_id", required_scopes
+        )
 
-        url = f"{self.url}/{metafield_id}"
+        url = f"{self._url}/{metafield_id}"
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -130,9 +132,11 @@ class MetafieldResource(RechargeResource):
         """
         resource = body["owner_resource"]
         required_scopes: list[RechargeScope] = [resource_scope(resource, "write")]
-        self.check_scopes(f"PUT /{self.object_list_key}/:metafield_id", required_scopes)
+        self._check_scopes(
+            f"PUT /{self.object_list_key}/:metafield_id", required_scopes
+        )
 
-        url = f"{self.url}/{metafield_id}"
+        url = f"{self._url}/{metafield_id}"
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -143,11 +147,11 @@ class MetafieldResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/metafields/metafields_delete
         """
         required_scopes: list[RechargeScope] = [resource_scope(resource, "write")]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:metafield_id", required_scopes
         )
 
-        url = f"{self.url}/{metafield_id}"
+        url = f"{self._url}/{metafield_id}"
         data = self._http_delete(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -159,9 +163,9 @@ class MetafieldResource(RechargeResource):
         """
         resource = query["owner_resource"]
         required_scopes: list[RechargeScope] = [resource_scope(resource, "read")]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self.url, query, expected=list)
+        data = self._http_get(self._url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Metafield(**item) for item in data]
@@ -172,9 +176,9 @@ class MetafieldResource(RechargeResource):
         """
         resource = query["owner_resource"]
         required_scopes: list[RechargeScope] = [resource_scope(resource, "read")]
-        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        url = f"{self.url}/count"
+        url = f"{self._url}/count"
         data = self._http_get(url, query)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")

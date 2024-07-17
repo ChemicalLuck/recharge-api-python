@@ -26,6 +26,6 @@ class EventResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/events/events_list
         """
         required_scopes: list[RechargeScope] = ["read_events"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)

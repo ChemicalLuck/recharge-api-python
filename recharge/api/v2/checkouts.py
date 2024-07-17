@@ -203,46 +203,46 @@ class CheckoutResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/checkouts/checkout_create
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def get(self, checkout_id: str):
         """Get a checkout by ID.
         https://developer.rechargepayments.com/2021-11/checkouts/checkout_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_checkouts"]
-        self.check_scopes(f"GET /{self.object_list_key}/:checkout_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:checkout_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{checkout_id}")
+        return self._http_get(f"{self._url}/{checkout_id}")
 
     def update(self, checkout_id: str, body: CheckoutUpdateBody):
         """Update a checkout.
         https://developer.rechargepayments.com/2021-11/checkouts/checkout_update
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:checkout_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:checkout_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{checkout_id}", body)
+        return self._http_put(f"{self._url}/{checkout_id}", body)
 
     def get_shipping(self, checkout_id: str):
         """Retrieve shipping rates for a checkout
         https://developer.rechargepayments.com/2021-11/checkouts/checkout_retrieve_shipping_address
         """
         required_scopes: list[RechargeScope] = ["read_checkouts"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:checkout_id/shipping_rates", required_scopes
         )
 
-        return self._http_get(f"{self.url}/{checkout_id}/shipping_rates")
+        return self._http_get(f"{self._url}/{checkout_id}/shipping_rates")
 
     def process(self, checkout_id: str, body: CheckoutProcessBody):
         """Process (charge) a checkout.
         https://developer.rechargepayments.com/2021-11/checkout/checkout_process
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:checkout_id/charge", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{checkout_id}/charge", body)
+        return self._http_post(f"{self._url}/{checkout_id}/charge", body)

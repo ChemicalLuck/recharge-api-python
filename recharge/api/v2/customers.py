@@ -67,47 +67,47 @@ class CustomerResource(RechargeResource):
             "write_customers",
             "write_payment_methods",
         ]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def get(self, customer_id: str):
         """Get a customer by ID.
         https://developer.rechargepayments.com/2021-11/customers/customers_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(f"GET /{self.object_list_key}/:customer_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:customer_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{customer_id}")
+        return self._http_get(f"{self._url}/{customer_id}")
 
     def update(self, customer_id: str, body: CustomerUpdateBody):
         """Update a customer.
         https://developer.rechargepayments.com/2021-11/customers/customers_update
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:customer_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:customer_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{customer_id}", body)
+        return self._http_put(f"{self._url}/{customer_id}", body)
 
     def delete(self, customer_id: str):
         """Delete a customer.
         https://developer.rechargepayments.com/2021-11/customers/customers_delete
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:customer_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{customer_id}")
+        return self._http_delete(f"{self._url}/{customer_id}")
 
     def list_(self, query: Optional[CustomerListQuery] = None):
         """List customers.
         https://developer.rechargepayments.com/2021-11/customers/customers_list
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)
 
     def get_delivery_schedule(
         self, customer_id: str, query: Optional[CustomerGetDeliveryScheduleQuery] = None
@@ -116,20 +116,20 @@ class CustomerResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/customers/customer_delivery_schedule
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:customer_id/delivery_schedule",
             required_scopes,
         )
 
-        return self._http_get(f"{self.url}/{customer_id}/delivery_schedule", query)
+        return self._http_get(f"{self._url}/{customer_id}/delivery_schedule", query)
 
     def get_credit_summary(self, customer_id: str):
         """Get a customer's credit summary.
         https://developer.rechargepayments.com/2021-11/customers/customer_credit_summary
         """
         required_scopes: list[RechargeScope] = ["read_credit_summary"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:customer_id/credit_summary", required_scopes
         )
 
-        return self._http_get(f"{self.url}/{customer_id}/credit_summary")
+        return self._http_get(f"{self._url}/{customer_id}/credit_summary")

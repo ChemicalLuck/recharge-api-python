@@ -101,44 +101,44 @@ class DiscountResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/discounts/discounts_create
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def get(self, discount_id: str):
         """Get a discount by ID.
         https://developer.rechargepayments.com/2021-11/discounts/discounts_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_discounts"]
-        self.check_scopes(f"GET /{self.object_list_key}/:discount_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:discount_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{discount_id}")
+        return self._http_get(f"{self._url}/{discount_id}")
 
     def update(self, discount_id: str, body: DiscountUpdateBody):
         """Update a discount.
         https://developer.rechargepayments.com/2021-11/discounts/discounts_update
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:discount_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:discount_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{discount_id}", body)
+        return self._http_put(f"{self._url}/{discount_id}", body)
 
     def delete(self, discount_id: str):
         """Delete a discount.
         https://developer.rechargepayments.com/2021-11/discounts/discounts_delete
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:discount_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{discount_id}")
+        return self._http_delete(f"{self._url}/{discount_id}")
 
     def list_(self, query: Optional[DiscountListQuery] = None):
         """List discounts.
         https://developer.rechargepayments.com/2021-11/discounts/discounts_list
         """
         required_scopes: list[RechargeScope] = ["read_discounts"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)

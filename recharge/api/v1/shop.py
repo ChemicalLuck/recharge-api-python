@@ -17,9 +17,9 @@ class ShopResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/shop/shop_retrieve
         """
         required_scopes: list[RechargeScope] = ["store_info"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self.url)
+        data = self._http_get(self._url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Store(**data)
@@ -29,9 +29,9 @@ class ShopResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/shop/shop_shipping_countries
         """
         required_scopes: list[RechargeScope] = ["store_info"]
-        self.check_scopes("GET /shipping_countries", required_scopes)
+        self._check_scopes("GET /shipping_countries", required_scopes)
 
-        url = f"{self.url}/shipping_countries"
+        url = f"{self._url}/shipping_countries"
         data = self._http_get(url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")

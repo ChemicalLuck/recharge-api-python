@@ -114,43 +114,43 @@ class PlanResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/plans/plans_create
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def update(self, plan_id: int, body: PlanUpdateBody):
         """Update a plan.
         https://developer.rechargepayments.com/2021-11/plans/plans_update
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:plan_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:plan_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{plan_id}", body)
+        return self._http_put(f"{self._url}/{plan_id}", body)
 
     def delete(self, plan_id: int):
         """Delete a plan.
         https://developer.rechargepayments.com/2021-11/plans/plans_delete
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(f"DELETE /{self.object_list_key}/:plan_id", required_scopes)
+        self._check_scopes(f"DELETE /{self.object_list_key}/:plan_id", required_scopes)
 
-        return self._http_delete(f"{self.url}/{plan_id}")
+        return self._http_delete(f"{self._url}/{plan_id}")
 
     def list_(self, query: Optional[PlanListQuery] = None):
         """List plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_list
         """
         required_scopes: list[RechargeScope] = ["read_products"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)
 
     def bulk_create(self, external_product_id: str, body: PlanBulkCreateBody):
         """Bulk create plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_bulk_create
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(
+        self._check_scopes(
             "POST /products/:external_product_id/plans-bulk", required_scopes
         )
 
@@ -163,7 +163,7 @@ class PlanResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/plans/plans_bulk_update
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(
+        self._check_scopes(
             "PUT /products/:external_product_id/plans-bulk", required_scopes
         )
 
@@ -176,7 +176,7 @@ class PlanResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/plans/plans_bulk_delete
         """
         required_scopes: list[RechargeScope] = ["write_products"]
-        self.check_scopes(
+        self._check_scopes(
             "DELETE /products/:external_product_id/plans-bulk", required_scopes
         )
 

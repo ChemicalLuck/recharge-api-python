@@ -1,23 +1,20 @@
 import logging
 from typing import Optional
 
-from requests import Session
-
 import recharge.api.v1 as v1
 import recharge.api.v2 as v2
 from recharge.api import RechargeScope
+from recharge.client import RechargeClient
 
 
 class RechargeAPIv1Helper:
     def __init__(
         self,
-        session: Session,
-        logger: Optional[logging.Logger] = None,
+        client: RechargeClient,
         scopes: list[RechargeScope] = [],
     ):
         kwargs = {
-            "session": session,
-            "logger": logger or logging.getLogger(__name__),
+            "client": client,
             "scopes": scopes,
         }
 
@@ -41,13 +38,11 @@ class RechargeAPIv1Helper:
 class RechargeAPIv2Helper:
     def __init__(
         self,
-        session: Session,
-        logger: Optional[logging.Logger] = None,
+        client: RechargeClient,
         scopes: list[RechargeScope] = [],
     ):
         kwargs = {
-            "session": session,
-            "logger": logger or logging.getLogger(__name__),
+            "client": client,
             "scopes": scopes,
         }
 
@@ -76,29 +71,15 @@ class RechargeAPIv2Helper:
 
 class RechargeAPI(object):
     def __init__(self, access_token: str, logger: Optional[logging.Logger] = None):
-        self.headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-Recharge-Access-Token": access_token,
-        }
-        self.session = Session()
-        self.session.headers.update(self.headers)
-
-        kwargs = {
-            "session": self.session,
-            "logger": logger or logging.getLogger(__name__),
-        }
+        self.client = RechargeClient(access_token, logger=logger)
 
         from recharge.api.v1 import TokenResource
 
-        self.Token = TokenResource(**kwargs)
+        token = TokenResource(self.client)
+        self.scopes = token.get()["scopes"]
 
-        self.scopes = self.Token.get()["scopes"]
-
-        kwargs["scopes"] = self.scopes
-
-        self.v1 = RechargeAPIv1Helper(**kwargs)
-        self.v2 = RechargeAPIv2Helper(**kwargs)
+        self.v1 = RechargeAPIv1Helper(self.client, self.scopes)
+        self.v2 = RechargeAPIv2Helper(self.client, self.scopes)
 
 
 __all__ = ["RechargeAPI"]

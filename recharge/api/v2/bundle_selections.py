@@ -49,48 +49,48 @@ class BundleSelectionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_list
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)
 
     def get(self, bundle_selection_id: str):
         """Get a bundle selection.
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:bundle_selection_id", required_scopes
         )
 
-        return self._http_get(f"{self.url}/{bundle_selection_id}")
+        return self._http_get(f"{self._url}/{bundle_selection_id}")
 
     def create(self, body: BundleSelectionCreateBody):
         """Create a bundle selection.
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_create
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def update(self, bundle_selection_id: str, body: BundleSelectionUpdateBody):
         """Update a bundle selection.
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_update
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"PUT /{self.object_list_key}/:bundle_selection_id", required_scopes
         )
 
-        return self._http_put(f"{self.url}/{bundle_selection_id}", body)
+        return self._http_put(f"{self._url}/{bundle_selection_id}", body)
 
     def delete(self, bundle_selection_id: str):
         """Delete a bundle selection.
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_delete
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:bundle_selection_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{bundle_selection_id}")
+        return self._http_delete(f"{self._url}/{bundle_selection_id}")

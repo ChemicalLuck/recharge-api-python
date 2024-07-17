@@ -139,9 +139,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_create
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        data = self._http_post(self.url, body)
+        data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Subscription(**data)
@@ -151,11 +151,11 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:subscription_id", required_scopes
         )
 
-        url = f"{self.url}/{subscription_id}"
+        url = f"{self._url}/{subscription_id}"
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -168,11 +168,11 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_update
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"PUT /{self.object_list_key}/:subscription_id", required_scopes
         )
 
-        url = f"{self.url}/{subscription_id}"
+        url = f"{self._url}/{subscription_id}"
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -183,11 +183,11 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_delete
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:subscription_id", required_scopes
         )
 
-        url = f"{self.url}/{subscription_id}"
+        url = f"{self._url}/{subscription_id}"
         data = self._http_delete(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -200,9 +200,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_list
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self.url, query, expected=list)
+        data = self._http_get(self._url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Subscription(**item) for item in data]
@@ -212,9 +212,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_count
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        url = f"{self.url}/count"
+        url = f"{self._url}/count"
         data = self._http_get(url, query)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -229,12 +229,12 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_change_date
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/change_date",
             required_scopes,
         )
 
-        url = f"{self.url}/{subscription_id}/change_date"
+        url = f"{self._url}/{subscription_id}/change_date"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -247,12 +247,12 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_change_address
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/change_address",
             required_scopes,
         )
 
-        url = f"{self.url}/{subscription_id}/change_address"
+        url = f"{self._url}/{subscription_id}/change_address"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -265,11 +265,11 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_cancel
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/cancel", required_scopes
         )
 
-        url = f"{self.url}/{subscription_id}/cancel"
+        url = f"{self._url}/{subscription_id}/cancel"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -280,11 +280,11 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_activate
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/activate", required_scopes
         )
 
-        url = f"{self.url}/{subscription_id}/activate"
+        url = f"{self._url}/{subscription_id}/activate"
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -295,9 +295,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_bulk_create
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(f"POST /{self.object_list_key}/bulk_create", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}/bulk_create", required_scopes)
 
-        url = f"{self.url}/bulk_create"
+        url = f"{self._url}/bulk_create"
         data = self._http_post(url, body, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
@@ -308,9 +308,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_bulk_update
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(f"POST /{self.object_list_key}/bulk_update", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}/bulk_update", required_scopes)
 
-        url = f"{self.url}/bulk_update"
+        url = f"{self._url}/bulk_update"
         data = self._http_post(url, body, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
@@ -321,9 +321,9 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_bulk_delete
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(f"POST /{self.object_list_key}/bulk_delete", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}/bulk_delete", required_scopes)
 
-        url = f"{self.url}/bulk_delete"
+        url = f"{self._url}/bulk_delete"
         data = self._http_post(url, body, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")

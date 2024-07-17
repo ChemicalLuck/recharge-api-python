@@ -105,54 +105,54 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/addresses/create_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def get(self, address_id: str):
         """Get an address by ID.
         https://developer.rechargepayments.com/2021-11/addresses/retrieve_address
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(f"GET /{self.object_list_key}/:address_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:address_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{address_id}")
+        return self._http_get(f"{self._url}/{address_id}")
 
     def update(self, address_id: str, body: AddressUpdateBody):
         """Update an address by ID.
         https://developer.rechargepayments.com/2021-11/addresses/update_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:address_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:address_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{address_id}", body)
+        return self._http_put(f"{self._url}/{address_id}", body)
 
     def delete(self, address_id: str):
         """Delete an address by ID.
         https://developer.rechargepayments.com/2021-11/addresses/delete_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:address_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{address_id}")
+        return self._http_delete(f"{self._url}/{address_id}")
 
     def list_(self, query: Optional[AddressListQuery] = None):
         """List all addresses for a customer.
         https://developer.rechargepayments.com/2021-11/addresses/list_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)
 
     def merge(self, body: AddressMergeBody):
         """Merge two addresses.
         https://developer.rechargepayments.com/2021-11/addresses/merge
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"POST /{self.object_list_key}/merge", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}/merge", required_scopes)
 
         return self._http_post(f"{self.base_url}/merge", body)
 
@@ -161,6 +161,6 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/addresses/skip_future_charge
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self.check_scopes(f"POST /{self.object_list_key}/skip", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}/skip", required_scopes)
 
         return self._http_post(f"{self.base_url}/{address_id}/charges/skip", body)

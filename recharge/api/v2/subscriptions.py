@@ -140,64 +140,64 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_create
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        return self._http_post(self._url, body)
 
     def get(self, subscription_id: str):
         """Get a subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"GET /{self.object_list_key}/:subscription_id", required_scopes
         )
 
-        return self._http_get(f"{self.url}/{subscription_id}")
+        return self._http_get(f"{self._url}/{subscription_id}")
 
     def update(self, subscription_id: str, body: SubscriptionUpdateBody):
         """Update a subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_update
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"PUT /{self.object_list_key}/:subscription_id", required_scopes
         )
 
-        return self._http_put(f"{self.url}/{subscription_id}", body)
+        return self._http_put(f"{self._url}/{subscription_id}", body)
 
     def delete(self, subscription_id: str, body: SubscriptionDeleteBody):
         """Delete a subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_delete
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:subscription_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{subscription_id}", body)
+        return self._http_delete(f"{self._url}/{subscription_id}", body)
 
     def list_(self, query: Optional[SubscriptionListQuery] = None):
         """List subscriptions.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_list
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        return self._http_get(self._url, query)
 
     def change_date(self, subscription_id: str, body: SubscriptionChangeDateBody):
         """Change the date of a queued subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_change_next_charge
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/set_next_change_date",
             required_scopes,
         )
 
         return self._http_post(
-            f"{self.url}/{subscription_id}/set_next_change_date", body
+            f"{self._url}/{subscription_id}/set_next_change_date", body
         )
 
     def change_address(self, subscription_id: str, body: SubscriptionChangeAddressBody):
@@ -205,40 +205,40 @@ class SubscriptionResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_change_address
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/change_address",
             required_scopes,
         )
 
-        return self._http_post(f"{self.url}/{subscription_id}/change_address", body)
+        return self._http_post(f"{self._url}/{subscription_id}/change_address", body)
 
     def cancel(self, subscription_id: str):
         """Cancel a subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_cancel
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/cancel", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{subscription_id}/cancel", {})
+        return self._http_post(f"{self._url}/{subscription_id}/cancel", {})
 
     def activate(self, subscription_id: str):
         """Activate a cancelled subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_activate
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(
+        self._check_scopes(
             f"POST /{self.object_list_key}/:subscription_id/activate", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{subscription_id}/activate", {})
+        return self._http_post(f"{self._url}/{subscription_id}/activate", {})
 
     def skip_gift(self, body: SubscriptionSkipGiftBody):
         """Skip a gift subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/skip_gift
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
-        self.check_scopes(f"POST /{self.object_list_key}/skip_gift", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}/skip_gift", required_scopes)
 
-        return self._http_post(f"{self.url}/skip_gift", body)
+        return self._http_post(f"{self._url}/skip_gift", body)

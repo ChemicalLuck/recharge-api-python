@@ -27,5 +27,5 @@ class TokenResource(RechargeResource):
         """Get token information.
         https://developer.rechargepayments.com/2021-11/token_information/token_information_retrieve
         """
-        data = self._http_get(self.url)
+        data = self._http_get(self._url)
         return TokenInformation(**data)

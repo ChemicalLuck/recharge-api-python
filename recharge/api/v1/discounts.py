@@ -83,9 +83,9 @@ class DiscountResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_create
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        data = self._http_post(self.url, body)
+        data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Discount(**data)
@@ -95,9 +95,9 @@ class DiscountResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_discounts"]
-        self.check_scopes(f"GET /{self.object_list_key}/:discount_id", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/:discount_id", required_scopes)
 
-        url = f"{self.url}/{discount_id}"
+        url = f"{self._url}/{discount_id}"
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -108,9 +108,9 @@ class DiscountResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_update
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(f"PUT /{self.object_list_key}/:discount_id", required_scopes)
+        self._check_scopes(f"PUT /{self.object_list_key}/:discount_id", required_scopes)
 
-        url = f"{self.url}/{discount_id}"
+        url = f"{self._url}/{discount_id}"
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -121,11 +121,11 @@ class DiscountResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_delete
         """
         required_scopes: list[RechargeScope] = ["write_discounts"]
-        self.check_scopes(
+        self._check_scopes(
             f"DELETE /{self.object_list_key}/:discount_id", required_scopes
         )
 
-        url = f"{self.url}/{discount_id}"
+        url = f"{self._url}/{discount_id}"
         data = self._http_delete(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
@@ -136,9 +136,9 @@ class DiscountResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/discounts/discounts_list
         """
         required_scopes: list[RechargeScope] = ["read_discounts"]
-        self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self.url, query)
+        data = self._http_get(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Discount(**item) for item in data]
@@ -148,9 +148,9 @@ class DiscountResource(RechargeResource):
         https://developer.rechargepayments.com/v1#count-discounts
         """
         required_scopes: list[RechargeScope] = ["read_discounts"]
-        self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
+        self._check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        url = f"{self.url}/count"
+        url = f"{self._url}/count"
         data = self._http_get(url, query)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
