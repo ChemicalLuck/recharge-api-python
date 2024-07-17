@@ -1,18 +1,6 @@
-from typing import TypedDict
-
-from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-class TokenClient(TypedDict):
-    name: str
-    email: str
-
-
-class TokenInformation(TypedDict):
-    client: TokenClient
-    contact_email: str
-    name: str
-    scopes: list[RechargeScope]
+from recharge.api import RechargeResource, RechargeVersion
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v1.token import TokenInformation
 
 
 class TokenResource(RechargeResource):
@@ -28,4 +16,6 @@ class TokenResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/token_information/token_information_retrieve
         """
         data = self._http_get(self.url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return TokenInformation(**data)

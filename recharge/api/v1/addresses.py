@@ -1,24 +1,19 @@
 from typing import TypedDict, Optional, Union
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-class AddressNoteAttributes(TypedDict):
-    name: str
-    value: str
-
-
-class AddressShippingLinesOverride(TypedDict, total=False):
-    code: str
-    price: str
-    title: str
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v1.address import (
+    Address,
+    AddressNoteAttribute,
+    AddressShippingLinesOverride,
+)
 
 
 class AddressCreateBodyOptional(TypedDict, total=False):
     address2: str
     cart_note: str
     company: str
-    note_attributes: list[AddressNoteAttributes]
+    note_attributes: list[AddressNoteAttribute]
     presentment_currency: str
     shipping_lines_override: list[AddressShippingLinesOverride]
 
@@ -43,7 +38,7 @@ class AddressUpdateBody(TypedDict, total=False):
     country: str
     first_name: str
     last_name: str
-    note_attributes: list[AddressNoteAttributes]
+    note_attributes: list[AddressNoteAttribute]
     phone: str
     province: str
     shipping_lines_override: list[AddressShippingLinesOverride]
@@ -79,6 +74,14 @@ class AddressValidateBody(TypedDict, total=False):
     zipcode: str
 
 
+class AddressValidateResponse(TypedDict):
+    city: str
+    errors: dict
+    state: str
+    state_name: str
+    zipcode: str
+
+
 class AddressApplyDiscountCodeBody(TypedDict):
     discount_code: str
 
@@ -100,9 +103,10 @@ class AddressResource(RechargeResource):
     """
 
     object_list_key = "addresses"
+    object_dict_key = "address"
     recharge_version: RechargeVersion = "2021-01"
 
-    def create(self, customer_id: str, body: AddressCreateBody):
+    def create(self, customer_id: str, body: AddressCreateBody) -> Address:
         """Create an address for the customer.
         https://developer.rechargepayments.com/2021-01/addresses/create_address
         """
@@ -112,27 +116,38 @@ class AddressResource(RechargeResource):
         )
 
         url = f"{self.base_url}/customers/{customer_id}/{self.object_list_key}"
-        return self._http_post(url, body)
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def get(self, address_id: str):
+    def get(self, address_id: str) -> Address:
         """Get an address by ID.
         https://developer.rechargepayments.com/2021-01/addresses/retrieve_address
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(f"GET /{self.object_list_key}/:address_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{address_id}")
+        data = self._http_get(f"{self.url}/{address_id}")
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def update(self, address_id: str, body: Optional[AddressUpdateBody] = None):
+    def update(
+        self, address_id: str, body: Optional[AddressUpdateBody] = None
+    ) -> Address:
         """Update an address by ID.
         https://developer.rechargepayments.com/2021-01/addresses/update_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self.check_scopes(f"PUT /{self.object_list_key}/:id", required_scopes)
 
-        return self._http_put(f"{self.url}/{address_id}", body)
+        data = self._http_put(f"{self.url}/{address_id}", body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def delete(self, address_id: str):
+    def delete(self, address_id: str) -> dict:
         """Delete an address by ID.
         https://developer.rechargepayments.com/2021-01/addresses/delete_address
         """
@@ -141,9 +156,14 @@ class AddressResource(RechargeResource):
             f"DELETE /{self.object_list_key}/:address_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{address_id}")
+        data = self._http_delete(f"{self.url}/{address_id}")
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, customer_id: str, query: Optional[AddressListQuery] = None):
+    def list_(
+        self, customer_id: str, query: Optional[AddressListQuery] = None
+    ) -> list[Address]:
         """List all addresses for a customer.
         https://developer.rechargepayments.com/2021-01/addresses/list_addresses
         """
@@ -152,31 +172,41 @@ class AddressResource(RechargeResource):
             f"GET /customers/:customer_id/{self.object_list_key}", required_scopes
         )
 
-        return self._http_get(
-            f"{self.base_url}/customers/{customer_id}/{self.object_list_key}", query
-        )
+        url = f"{self.base_url}/customers/{customer_id}/{self.object_list_key}"
+        data = self._http_get(url, query, expected=list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Address(**item) for item in data]
 
-    def count(self, query: Optional[AddressCountQuery] = None):
+    def count(self, query: Optional[AddressCountQuery] = None) -> int:
         """Retrieve the count of addresses.
         https://developer.rechargepayments.com/2021-01/addresses/count_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        return self._http_get(f"{self.url}/count", query)
+        data = self._http_get(f"{self.url}/count", query)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        if "count" not in data:
+            raise RechargeAPIError(f"Expected key 'count' in response, got {data}")
+        return data["count"]
 
-    def validate(self, body: AddressValidateBody):
+    def validate(self, body: AddressValidateBody) -> AddressValidateResponse:
         """Validate an address.
         https://developer.rechargepayments.com/2021-01/addresses/validate_address
         """
 
-        return self._http_post(f"{self.url}/validate_address", body)
+        data = self._http_post(f"{self.url}/validate_address", body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return AddressValidateResponse(**data)
 
     def apply_discount(
         self,
         address_id: str,
         body: AddressApplyDiscountBody,
-    ):
+    ) -> Address:
         """Apply a discount code to an address.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_apply_address
         """
@@ -185,9 +215,13 @@ class AddressResource(RechargeResource):
             f"POST /{self.object_list_key}/:address_id/apply_discount", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{address_id}/apply_discount", body)
+        url = f"{self.url}/{address_id}/apply_discount"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def remove_discount(self, address_id: str):
+    def remove_discount(self, address_id: str) -> Address:
         """Remove a discount from an address.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_remove_from_address_or_charge
         """
@@ -196,4 +230,8 @@ class AddressResource(RechargeResource):
             f"POST /{self.object_list_key}/:address_id/remove_discount", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{address_id}/remove_discount")
+        url = f"{self.url}/{address_id}/remove_discount"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)

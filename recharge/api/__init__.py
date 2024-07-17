@@ -1,7 +1,7 @@
 import logging
 import time
 from enum import Enum
-from typing import Any, Literal, Mapping, Optional
+from typing import Any, Literal, Mapping, Optional, Union
 
 from requests import Request, Response
 from requests.exceptions import HTTPError, RequestException, JSONDecodeError
@@ -64,6 +64,7 @@ class RechargeResource:
 
     base_url = "https://api.rechargeapps.com"
     object_list_key = None
+    object_dict_key = None
     recharge_version: RechargeVersion = "2021-11"
 
     def __init__(
@@ -186,15 +187,25 @@ class RechargeResource:
             )
             raise RechargeRequestException("Request failed") from request_error
 
-    def _extract_data(self, response: Response) -> dict:
+    def _extract_data(
+        self, response: Response, expected: type[Union[dict, list]]
+    ) -> Union[dict, list]:
+        key = self.object_dict_key if expected is dict else self.object_list_key
         try:
-            data = response.json()
+            response_json = response.json()
         except JSONDecodeError:
             self._logger.error(
                 "Failed to decode JSON response, expect missing data",
                 extra={"response": response.text},
             )
-            return {}
+            return expected()
+
+        data = response_json.get(key, response_json)
+
+        if not isinstance(data, expected):
+            raise ValueError(
+                f"Expected data to be of type {expected.__name__}, got {type(data).__name__}"
+            )
 
         return data
 
@@ -236,32 +247,44 @@ class RechargeResource:
     def _update_headers(self):
         self._session.headers.update({"X-Recharge-Version": self.recharge_version})
 
-    def _http_delete(self, url: str, body: Optional[Mapping[str, Any]] = None) -> dict:
+    def _http_delete(
+        self,
+        url: str,
+        body: Optional[Mapping[str, Any]] = None,
+        expected: type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         self._update_headers()
         response = self._request(RequestMethod.DELETE, url, json=body)
-        return self._extract_data(response)
+        return self._extract_data(response, expected)
 
-    def _http_get(self, url: str, query: Optional[Mapping[str, Any]] = None) -> dict:
+    def _http_get(
+        self,
+        url: str,
+        query: Optional[Mapping[str, Any]] = None,
+        expected: type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         self._update_headers()
         response = self._request(RequestMethod.GET, url, query)
-        return self._extract_data(response)
+        return self._extract_data(response, expected)
 
     def _http_put(
         self,
         url: str,
         body: Optional[Mapping[str, Any]] = None,
         query: Optional[Mapping[str, Any]] = None,
-    ) -> dict:
+        expected: type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         self._update_headers()
         response = self._request(RequestMethod.PUT, url, query, body)
-        return self._extract_data(response)
+        return self._extract_data(response, expected)
 
     def _http_post(
         self,
         url: str,
         body: Optional[Mapping[str, Any]] = None,
         query: Optional[Mapping[str, Any]] = None,
-    ) -> dict:
+        expected: type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         self._update_headers()
         response = self._request(RequestMethod.POST, url, query, body)
-        return self._extract_data(response)
+        return self._extract_data(response, expected)

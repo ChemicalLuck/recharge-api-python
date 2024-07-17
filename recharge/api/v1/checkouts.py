@@ -1,93 +1,20 @@
-from typing import Literal, TypedDict
+from typing import TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-class CheckoutUtmParams(TypedDict, total=False):
-    utm_campaign: str
-    utm_content: str
-    utm_data_source: str
-    utm_source: str
-    utm_medium: str
-    utm_term: str
-    utm_timestamp: str
-
-
-class CheckoutAnalyticsData(TypedDict, total=False):
-    utm_params: list[CheckoutUtmParams]
-
-
-class CheckoutBillingAddress(TypedDict, total=False):
-    address1: str
-    address2: str
-    city: str
-    company: str
-    country: str
-    first_name: str
-    last_name: str
-    phone: str
-    province: str
-    zip: str
-
-
-CheckoutExternalCheckoutSource = Literal["big_commerce", "headless", "shopify"]
-
-CheckoutOrderIntervalUnit = Literal["day", "week", "month"]
-
-
-class CheckoutLineItemProperty(TypedDict):
-    name: str
-    value: str
-
-
-CheckoutLineItemType = Literal["SUBSCRIPTION", "ONETIME"]
-
-
-class CheckoutLineItem(TypedDict, total=False):
-    charge_interval_frequency: int
-    cutoff_day_of_month: int
-    cutoff_day_of_week: int
-    expire_after_specific_number_of_charges: int
-    first_recurring_charge_delay: int
-    fulfillment_service: str
-    grams: int
-    image: str
-    order_day_of_month: int
-    order_day_of_week: int
-    order_interval_frequency: int
-    order_interval_unit: CheckoutOrderIntervalUnit
-    original_price: str
-    price: str
-    product_id: int
-    product_type: str
-    properties: list[CheckoutLineItemProperty]
-    quantity: int
-    requires_shipping: bool
-    sku: str
-    tax_code: str
-    taxable: bool
-    title: str
-    type: CheckoutLineItemType
-    variant_id: int
-    variant_title: str
-
-
-class CheckoutNoteAttribute(TypedDict):
-    name: str
-    value: str
-
-
-class CheckoutShippingAddress(TypedDict, total=False):
-    address1: str
-    address2: str
-    city: str
-    company: str
-    country: str
-    first_name: str
-    last_name: str
-    phone: str
-    province: str
-    zip: str
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v1.checkout import (
+    Checkout,
+    CheckoutAnalyticsData,
+    CheckoutBillingAddress,
+    CheckoutExternalCheckoutSource,
+    CheckoutLineItem,
+    CheckoutNoteAttribute,
+    CheckoutPaymentProcessor,
+    CheckoutPaymentType,
+    CheckoutShippingAddress,
+    CheckoutShippingRate,
+    CheckoutCharge,
+)
 
 
 class CheckoutCreateBodyOptional(TypedDict, total=False):
@@ -128,11 +55,6 @@ class CheckoutUpdateBody(TypedDict, total=False):
     shipping_address: CheckoutShippingAddress
 
 
-CheckoutPaymentProcessor = Literal["stripe", "braintree", "mollie", "authorize"]
-
-CheckoutPaymentType = Literal["CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY"]
-
-
 class CheckoutProcessBodyOptional(TypedDict, total=False):
     payment_type: CheckoutPaymentType
 
@@ -148,36 +70,48 @@ class CheckoutResource(RechargeResource):
     """
 
     object_list_key = "checkouts"
+    object_dict_key = "checkout"
     recharge_version: RechargeVersion = "2021-01"
 
-    def create(self, body: CheckoutCreateBody):
+    def create(self, body: CheckoutCreateBody) -> Checkout:
         """Create a new checkout.
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_create
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
         self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        data = self._http_post(self.url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Checkout(**data)
 
-    def get(self, checkout_id: str):
+    def get(self, checkout_id: str) -> Checkout:
         """Get a checkout by ID.
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_checkouts"]
         self.check_scopes(f"GET /{self.object_list_key}/:checkout_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{checkout_id}")
+        url = f"{self.url}/{checkout_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Checkout(**data)
 
-    def update(self, checkout_id: str, body: CheckoutUpdateBody):
+    def update(self, checkout_id: str, body: CheckoutUpdateBody) -> Checkout:
         """Update a checkout.
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_update
         """
         required_scopes: list[RechargeScope] = ["write_checkouts"]
         self.check_scopes(f"PUT /{self.object_list_key}/:checkout_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{checkout_id}", body)
+        url = f"{self.url}/{checkout_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Checkout(**data)
 
-    def get_shipping(self, checkout_id: str):
+    def get_shipping(self, checkout_id: str) -> list[CheckoutShippingRate]:
         """Retrieve shipping rates for a checkout
         https://developer.rechargepayments.com/2021-01/checkouts/checkout_retrieve_shipping_address
         """
@@ -186,9 +120,15 @@ class CheckoutResource(RechargeResource):
             f"GET /{self.object_list_key}/:checkout_id/shipping_rates", required_scopes
         )
 
-        return self._http_get(f"{self.url}/{checkout_id}/shipping_rates")
+        url = f"{self.url}/{checkout_id}/shipping_rates"
+        self.object_list_key = "shipping_rates"
+        data = self._http_get(url, expected=list)
+        self.object_list_key = "checkouts"
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [CheckoutShippingRate(**item) for item in data]
 
-    def process(self, checkout_id: str, body: CheckoutProcessBody):
+    def process(self, checkout_id: str, body: CheckoutProcessBody) -> CheckoutCharge:
         """Process (charge) a checkout.
         https://developer.rechargepayments.com/2021-01/checkout/checkout_process
         """
@@ -197,4 +137,10 @@ class CheckoutResource(RechargeResource):
             f"POST /{self.object_list_key}/:checkout_id/charge", required_scopes
         )
 
-        return self._http_post(f"{self.url}/{checkout_id}/charge", body)
+        url = f"{self.url}/{checkout_id}/charge"
+        self.object_list_key = "checkout_charge"
+        data = self._http_post(url, body)
+        self.object_list_key = "checkouts"
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return CheckoutCharge(**data)

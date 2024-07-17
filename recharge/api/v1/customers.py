@@ -1,6 +1,8 @@
-from typing import Literal, TypedDict, Optional
+from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v1.customer import CustomerStatus, Customer
 
 
 class CustomerCreateBodyOptional(TypedDict, total=False):
@@ -45,9 +47,6 @@ class CustomerUpdateBody(TypedDict, total=False):
     shopify_customer_id: str
 
 
-CustomerStatus = Literal["ACTIVE", "INACTIVE"]
-
-
 class CustomerListQuery(TypedDict, total=False):
     email: str
     created_at_max: str
@@ -76,36 +75,48 @@ class CustomerResource(RechargeResource):
     """
 
     object_list_key = "customers"
+    object_dict_key = "customer"
     recharge_version: RechargeVersion = "2021-01"
 
-    def create(self, body: CustomerCreateBody):
+    def create(self, body: CustomerCreateBody) -> Customer:
         """Create a customer.
         https://developer.rechargepayments.com/2021-01/customers/customers_create
         """
         required_scopes: list[RechargeScope] = ["write_customers", "write_payments"]
         self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        data = self._http_post(self.url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Customer(**data)
 
-    def get(self, customer_id: str):
+    def get(self, customer_id: str) -> Customer:
         """Get a customer by ID.
         https://developer.rechargepayments.com/2021-01/customers/customers_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(f"GET /{self.object_list_key}/:customer_id", required_scopes)
 
-        return self._http_get(f"{self.url}/{customer_id}")
+        url = f"{self.url}/{customer_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Customer(**data)
 
-    def update(self, customer_id: str, body: CustomerUpdateBody):
+    def update(self, customer_id: str, body: CustomerUpdateBody) -> Customer:
         """Update a customer.
         https://developer.rechargepayments.com/2021-01/customers/customers_update
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self.check_scopes(f"PUT /{self.object_list_key}/:customer_id", required_scopes)
 
-        return self._http_put(f"{self.url}/{customer_id}", body)
+        url = f"{self.url}/{customer_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Customer(**data)
 
-    def delete(self, customer_id: str):
+    def delete(self, customer_id: str) -> dict:
         """Delete a customer.
         https://developer.rechargepayments.com/2021-01/customers/customers_delete
         """
@@ -114,9 +125,13 @@ class CustomerResource(RechargeResource):
             f"DELETE /{self.object_list_key}/:customer_id", required_scopes
         )
 
-        return self._http_delete(f"{self.url}/{customer_id}")
+        url = f"{self.url}/{customer_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, query: Optional[CustomerListQuery] = None):
+    def list_(self, query: Optional[CustomerListQuery] = None) -> list[Customer]:
         """List customers.
         https://developer.rechargepayments.com/2021-01/customers/customers_list
         """
@@ -124,13 +139,22 @@ class CustomerResource(RechargeResource):
         print(query)
         self.check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self.url, query)
+        data = self._http_get(self.url, query, expected=list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Customer(**item) for item in data]
 
-    def count(self, query: Optional[CustomerCountQuery] = None):
+    def count(self, query: Optional[CustomerCountQuery] = None) -> int:
         """Retrieve a count of customers.
         https://developer.rechargepayments.com/2021-01/customers/customers_count
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self.check_scopes(f"GET /{self.object_list_key}/count", required_scopes)
 
-        return self._http_get(f"{self.url}/count", query)
+        url = f"{self.url}/count"
+        data = self._http_get(url, query)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        if "count" not in data:
+            raise RechargeAPIError(f"Expected key 'count' in response, got {data}")
+        return data["count"]

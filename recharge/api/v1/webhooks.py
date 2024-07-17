@@ -1,76 +1,13 @@
-from typing import Literal, TypedDict
+from typing import TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-WebhookTopic = Literal[
-    "address/created",
-    "address/updated",
-    "async_batch/processed",
-    "bundle_selection/created",
-    "bundle_selection/updated",
-    "bundle_selection/deleted",
-    "customer/activated",
-    "customer/created",
-    "customer/deactivated",
-    "customer/payment_method_updated",
-    "customer/updated",
-    "customer/deleted",
-    "charge/created",
-    "charge/failed",
-    "charge/max_retries_reached",
-    "charge/paid",
-    "charge/refunded",
-    "charge/uncaptured",
-    "charge/upcoming",
-    "charge/updated",
-    "charge/deleted",
-    "checkout/created",
-    "checkout/completed",
-    "checkout/processed",
-    "checkout/updated",
-    "onetime/created",
-    "onetime/deleted",
-    "onetime/updated",
-    "order/cancelled",
-    "order/created",
-    "order/deleted",
-    "order/processed",
-    "order/payment_captured",
-    "order/upcoming",
-    "order/updated",
-    "order/success",
-    "plan/created",
-    "plan/deleted",
-    "plan/updated",
-    "subscription/activated",
-    "subscription/cancelled",
-    "subscription/created",
-    "subscription/deleted",
-    "subscription/skipped",
-    "subscription/updated",
-    "subscription/unskipped",
-    "subscription/swapped",
-    "subscription/paused",
-    "store/updated",
-    "recharge/uninstalled",
-]
-
-WebhookTopicMap: dict[str, RechargeScope] = {
-    "address": "read_customers",
-    "async_batch": "read_batches",
-    "bundle_selection": "read_subscriptions",
-    "customer": "read_customers",
-    "charge": "read_orders",
-    "checkout": "read_checkouts",
-    "onetime": "read_subscriptions",
-    "order": "read_orders",
-    "product": "read_products",
-    "subscription": "read_subscriptions",
-    "shop": "store_info",
-    "recharge": "store_info",
-}
-
-WebhookIncludedObject = Literal["addresses", "collections", "customer", "metafields"]
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v1.webhook import (
+    Webhook,
+    WebhookIncludedObject,
+    WebhookTopic,
+    WebhookTopicMap,
+)
 
 
 class WebhookCreateBodyOptional(TypedDict, total=False):
@@ -82,6 +19,12 @@ class WebhookCreateBody(WebhookCreateBodyOptional):
     topic: WebhookTopic
 
 
+class WebhookUpdateBody(TypedDict, total=False):
+    address: str
+    topic: WebhookTopic
+    included_objects: list[WebhookIncludedObject]
+
+
 class WebhookResource(RechargeResource):
     """
     https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_object
@@ -90,7 +33,7 @@ class WebhookResource(RechargeResource):
     object_list_key = "webhooks"
     recharge_version: RechargeVersion = "2021-01"
 
-    def create(self, body: WebhookCreateBody):
+    def create(self, body: WebhookCreateBody) -> Webhook:
         """Create a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_create
         """
@@ -98,28 +41,56 @@ class WebhookResource(RechargeResource):
         required_scopes: list[RechargeScope] = [WebhookTopicMap[resource]]
         self.check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self.url, body)
+        data = self._http_post(self.url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Webhook(**data)
 
-    def get(self, webhook_id: str):
+    def get(self, webhook_id: str) -> Webhook:
         """Get a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_retrieve
         """
-        return self._http_get(f"{self.url}/{webhook_id}")
+        url = f"{self.url}/{webhook_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Webhook(**data)
 
-    def update(self, webhook_id: str):
+    def update(self, webhook_id: str, body: WebhookUpdateBody) -> Webhook:
         """Update a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_update
         """
-        return self._http_delete(f"{self.url}/{webhook_id}")
+        url = f"{self.url}/{webhook_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Webhook(**data)
 
-    def list_(self):
+    def delete(self, webhook_id: str) -> dict:
+        """Delete a webhook.
+        https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_delete
+        """
+        url = f"{self.url}/{webhook_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
+
+    def list_(self) -> list[Webhook]:
         """List webhooks.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_list
         """
-        return self._http_get(self.url)
+        data = self._http_get(self.url, expected=list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Webhook(**item) for item in data]
 
-    def test(self, webhook_id: str):
+    def test(self, webhook_id: str) -> dict:
         """Test a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_test
         """
-        return self._http_post(f"{self.url}/{webhook_id}/test")
+        url = f"{self.url}/{webhook_id}/test"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data

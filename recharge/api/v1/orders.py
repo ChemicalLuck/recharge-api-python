@@ -1,47 +1,18 @@
-from typing import Literal, TypedDict, Optional
+from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-class OrderBillingAddress(TypedDict, total=False):
-    address1: str
-    province: str
-    address2: str
-    city: str
-    company: str
-    country: str
-    first_name: str
-    last_name: str
-    phone: str
-    zip: str
-
-
-class OrderShippingAddress(TypedDict, total=False):
-    address1: str
-    province: str
-    address2: str
-    city: str
-    company: str
-    country: str
-    first_name: str
-    last_name: str
-    phone: str
-    zip: str
-
-
-class OrderCustomer(TypedDict, total=False):
-    first_name: str
-    last_name: str
-    email: str
+from recharge.model.v1.order import (
+    OrderStatus,
+    OrderBillingAddress,
+    OrderShippingAddress,
+    OrderCustomer,
+)
 
 
 class OrderUpdateBody(TypedDict, total=False):
     billing_address: OrderBillingAddress
     shipping_address: OrderShippingAddress
     customer: OrderCustomer
-
-
-OrderStatus = Literal["SUCCESS", "QUEUED", "ERROR", "REFUNDED", "SKIPPED"]
 
 
 class OrderListQuery(TypedDict, total=False):
@@ -97,6 +68,7 @@ class OrderResource(RechargeResource):
     """
 
     object_list_key = "orders"
+    object_dict_key = "order"
     recharge_version: RechargeVersion = "2021-01"
 
     def get(self, order_id: str):
