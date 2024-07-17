@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -6,10 +6,12 @@ from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 class CustomerCreateExternalCustomerId(TypedDict, total=False):
     ecommerce: str
 
+
 class CustomerCreateBodyOptional(TypedDict, total=False):
     external_customer_id: CustomerCreateExternalCustomerId
     phone: str
     tax_exempt: bool
+
 
 class CustomerCreateBody(CustomerCreateBodyOptional):
     email: str
@@ -27,7 +29,7 @@ class CustomerUpdateBody(TypedDict, total=False):
     tax_exempt: bool
 
 
-CustomerStatus: TypeAlias = Literal["ACTIVE", "INACTIVE"]
+CustomerStatus = Literal["ACTIVE", "INACTIVE"]
 
 
 class CustomerListQuery(TypedDict, total=False):
@@ -98,7 +100,7 @@ class CustomerResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{customer_id}")
 
-    def list_(self, query: CustomerListQuery | None = None):
+    def list_(self, query: Optional[CustomerListQuery] = None):
         """List customers.
         https://developer.rechargepayments.com/2021-11/customers/customers_list
         """
@@ -108,7 +110,7 @@ class CustomerResource(RechargeResource):
         return self._http_get(self.url, query)
 
     def get_delivery_schedule(
-        self, customer_id: str, query: CustomerGetDeliveryScheduleQuery | None = None
+        self, customer_id: str, query: Optional[CustomerGetDeliveryScheduleQuery] = None
     ):
         """Get a customer's delivery schedule.
         https://developer.rechargepayments.com/2021-11/customers/customer_delivery_schedule

@@ -1,5 +1,7 @@
-from requests import Session
 import logging
+from typing import Optional
+
+from requests import Session
 
 import recharge.api.v1 as v1
 import recharge.api.v2 as v2
@@ -10,7 +12,7 @@ class RechargeAPIv1Helper:
     def __init__(
         self,
         session: Session,
-        logger: logging.Logger | None = None,
+        logger: Optional[logging.Logger] = None,
         scopes: list[RechargeScope] = [],
     ):
         kwargs = {
@@ -40,7 +42,7 @@ class RechargeAPIv2Helper:
     def __init__(
         self,
         session: Session,
-        logger: logging.Logger | None = None,
+        logger: Optional[logging.Logger] = None,
         scopes: list[RechargeScope] = [],
     ):
         kwargs = {
@@ -73,7 +75,7 @@ class RechargeAPIv2Helper:
 
 
 class RechargeAPI(object):
-    def __init__(self, access_token: str, logger: logging.Logger | None = None):
+    def __init__(self, access_token: str, logger: Optional[logging.Logger] = None):
         self.headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",

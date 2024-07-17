@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -44,7 +44,7 @@ class BundleSelectionResource(RechargeResource):
     object_list_key = "bundle_selections"
     recharge_version: RechargeVersion = "2021-11"
 
-    def list_(self, query: BundleSelectionListQuery | None = None):
+    def list_(self, query: Optional[BundleSelectionListQuery] = None):
         """List bundle selections.
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_list
         """

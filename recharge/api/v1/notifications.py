@@ -1,9 +1,9 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
-NotificationTemplateType: TypeAlias = Literal["upcoming_charge", "get_account_access"]
+NotificationTemplateType = Literal["upcoming_charge", "get_account_access"]
 
 
 class NotificationTemplateVars(TypedDict, total=False):

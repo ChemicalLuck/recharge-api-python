@@ -1,13 +1,15 @@
-from typing import TypedDict, TypeAlias, Literal
+from typing import TypedDict, Literal, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-CollectionCreateSortOrder: TypeAlias = Literal[
+CollectionCreateSortOrder = Literal[
     "id-asc", "id-desc", "title-asc", "title-desc", "created-asc", "created-desc"
 ]
 
+
 class CollectionCreateBodyOptional(TypedDict, total=False):
     sort_order: CollectionCreateSortOrder
+
 
 class CollectionCreateBody(CollectionCreateBodyOptional):
     description: str
@@ -90,7 +92,7 @@ class CollectionResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{collection_id}")
 
-    def list_(self, query: CollectionListQuery | None = None):
+    def list_(self, query: Optional[CollectionListQuery] = None):
         """List collections.
         https://developer.rechargepayments.com/2021-11/collections/collections_list
         """
@@ -99,7 +101,7 @@ class CollectionResource(RechargeResource):
 
         return self._http_get(self.url, query)
 
-    def list_products(self, query: CollectionListProductsQuery | None = None):
+    def list_products(self, query: Optional[CollectionListProductsQuery] = None):
         """List products in a collection.
         https://developer.rechargepayments.com/2021-11/collections/collection_products
         """

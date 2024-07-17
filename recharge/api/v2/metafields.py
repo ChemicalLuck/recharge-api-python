@@ -1,12 +1,13 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-MetafieldOwnerResource: TypeAlias = Literal[
+MetafieldOwnerResource = Literal[
     "address", "store", "customer", "subscription", "order", "charge"
 ]
 
-MetafieldValueType: TypeAlias = Literal["string", "json_string", "integer"]
+MetafieldValueType = Literal["string", "json_string", "integer"]
+
 
 class MetafieldCreateBodyOptional(TypedDict, total=False):
     description: str
@@ -20,20 +21,24 @@ class MetafieldCreateBody(MetafieldCreateBodyOptional):
     value: str
     value_type: MetafieldValueType
 
+
 class MetafieldUpdateBodyOptional(TypedDict, total=False):
     description: str
     owner_id: int
     value: str
     value_type: MetafieldValueType
 
+
 class MetafieldUpdateBody(MetafieldUpdateBodyOptional):
     owner_resource: MetafieldOwnerResource
+
 
 class MetafieldListQueryOptional(TypedDict, total=False):
     limit: str
     namespace: str
     owner_id: str
     page: str
+
 
 class MetafieldListQuery(MetafieldListQueryOptional):
     owner_resource: MetafieldOwnerResource
@@ -65,7 +70,7 @@ MetafieldOwnerResourceScopeMap: dict[str, dict[str, RechargeScope]] = {
     },
 }
 
-ScopeType: TypeAlias = Literal["read", "write"]
+ScopeType = Literal["read", "write"]
 
 
 def resource_scope(

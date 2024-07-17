@@ -1,4 +1,4 @@
-from typing import TypedDict, TypeAlias
+from typing import TypedDict, Optional, Union
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -12,6 +12,7 @@ class AddressShippingLinesOverride(TypedDict, total=False):
     code: str
     price: str
     title: str
+
 
 class AddressCreateBodyOptional(TypedDict, total=False):
     address2: str
@@ -86,11 +87,11 @@ class AddressApplyDiscountIdBody(TypedDict):
     discount_id: str
 
 
-AddressApplyDiscountBody: TypeAlias = (
-    AddressApplyDiscountCodeBody | AddressApplyDiscountIdBody
-)
+AddressApplyDiscountBody = Union[
+    AddressApplyDiscountCodeBody, AddressApplyDiscountIdBody
+]
 
-AddressRemoveDiscountBody: TypeAlias = AddressApplyDiscountBody
+AddressRemoveDiscountBody = AddressApplyDiscountBody
 
 
 class AddressResource(RechargeResource):
@@ -101,7 +102,7 @@ class AddressResource(RechargeResource):
     object_list_key = "addresses"
     recharge_version: RechargeVersion = "2021-01"
 
-    def create(self, customer_id, body: AddressCreateBody):
+    def create(self, customer_id: str, body: AddressCreateBody):
         """Create an address for the customer.
         https://developer.rechargepayments.com/2021-01/addresses/create_address
         """
@@ -122,7 +123,7 @@ class AddressResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{address_id}")
 
-    def update(self, address_id, body: AddressUpdateBody | None = None):
+    def update(self, address_id: str, body: Optional[AddressUpdateBody] = None):
         """Update an address by ID.
         https://developer.rechargepayments.com/2021-01/addresses/update_address
         """
@@ -131,7 +132,7 @@ class AddressResource(RechargeResource):
 
         return self._http_put(f"{self.url}/{address_id}", body)
 
-    def delete(self, address_id):
+    def delete(self, address_id: str):
         """Delete an address by ID.
         https://developer.rechargepayments.com/2021-01/addresses/delete_address
         """
@@ -142,7 +143,7 @@ class AddressResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{address_id}")
 
-    def list_(self, customer_id, query: AddressListQuery | None = None):
+    def list_(self, customer_id: str, query: Optional[AddressListQuery] = None):
         """List all addresses for a customer.
         https://developer.rechargepayments.com/2021-01/addresses/list_addresses
         """
@@ -155,7 +156,7 @@ class AddressResource(RechargeResource):
             f"{self.base_url}/customers/{customer_id}/{self.object_list_key}", query
         )
 
-    def count(self, query: AddressCountQuery | None = None):
+    def count(self, query: Optional[AddressCountQuery] = None):
         """Retrieve the count of addresses.
         https://developer.rechargepayments.com/2021-01/addresses/count_addresses
         """
@@ -173,7 +174,7 @@ class AddressResource(RechargeResource):
 
     def apply_discount(
         self,
-        address_id,
+        address_id: str,
         body: AddressApplyDiscountBody,
     ):
         """Apply a discount code to an address.

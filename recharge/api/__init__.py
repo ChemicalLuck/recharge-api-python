@@ -1,7 +1,7 @@
 import logging
 import time
 from enum import Enum
-from typing import Any, Literal, Mapping, TypeAlias
+from typing import Any, Literal, Mapping, Optional
 
 from requests import Request, Response
 from requests.exceptions import HTTPError, RequestException, JSONDecodeError
@@ -10,9 +10,9 @@ from requests.sessions import Session
 
 from ..exceptions import RechargeHTTPError, RechargeAPIError, RechargeRequestException
 
-RechargeVersion: TypeAlias = Literal["2021-01", "2021-11"]
+RechargeVersion = Literal["2021-01", "2021-11"]
 
-RechargeScope: TypeAlias = Literal[
+RechargeScope = Literal[
     "write_orders",
     "read_orders",
     "read_discounts",
@@ -69,7 +69,7 @@ class RechargeResource:
     def __init__(
         self,
         session: Session,
-        logger: logging.Logger | None = None,
+        logger: Optional[logging.Logger] = None,
         scopes: list[RechargeScope] = [],
         max_retries: int = 3,
         retry_delay: int = 10,
@@ -222,8 +222,8 @@ class RechargeResource:
         self,
         method: RequestMethod,
         url: str,
-        query: Mapping[str, Any] | None = None,
-        json: Mapping[str, Any] | None = None,
+        query: Optional[Mapping[str, Any]] = None,
+        json: Optional[Mapping[str, Any]] = None,
     ) -> Response:
         request = Request(method.value, url, params=query, json=json)
         prepared_request = self._session.prepare_request(request)
@@ -236,12 +236,12 @@ class RechargeResource:
     def _update_headers(self):
         self._session.headers.update({"X-Recharge-Version": self.recharge_version})
 
-    def _http_delete(self, url: str, body: Mapping[str, Any] | None = None) -> dict:
+    def _http_delete(self, url: str, body: Optional[Mapping[str, Any]] = None) -> dict:
         self._update_headers()
         response = self._request(RequestMethod.DELETE, url, json=body)
         return self._extract_data(response)
 
-    def _http_get(self, url: str, query: Mapping[str, Any] | None = None) -> dict:
+    def _http_get(self, url: str, query: Optional[Mapping[str, Any]] = None) -> dict:
         self._update_headers()
         response = self._request(RequestMethod.GET, url, query)
         return self._extract_data(response)
@@ -249,8 +249,8 @@ class RechargeResource:
     def _http_put(
         self,
         url: str,
-        body: Mapping[str, Any] | None = None,
-        query: Mapping[str, Any] | None = None,
+        body: Optional[Mapping[str, Any]] = None,
+        query: Optional[Mapping[str, Any]] = None,
     ) -> dict:
         self._update_headers()
         response = self._request(RequestMethod.PUT, url, query, body)
@@ -259,8 +259,8 @@ class RechargeResource:
     def _http_post(
         self,
         url: str,
-        body: Mapping[str, Any] | None = None,
-        query: Mapping[str, Any] | None = None,
+        body: Optional[Mapping[str, Any]] = None,
+        query: Optional[Mapping[str, Any]] = None,
     ) -> dict:
         self._update_headers()
         response = self._request(RequestMethod.POST, url, query, body)

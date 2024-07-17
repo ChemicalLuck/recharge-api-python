@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -7,12 +7,14 @@ class OnetimeProperty(TypedDict):
     name: str
     value: str
 
+
 class OnetimeCreateBodyOptional(TypedDict, total=False):
     add_to_next_charge: bool
     price: int
     product_title: str
     properties: list[OnetimeProperty]
     shopify_product_id: int
+
 
 class OnetimeCreateBody(OnetimeCreateBodyOptional):
     next_charge_scheduled_at: str
@@ -93,7 +95,7 @@ class OnetimeResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{onetime_id}")
 
-    def list_(self, query: OnetimeListQuery):
+    def list_(self, query: Optional[OnetimeListQuery] = None):
         """List Onetimes.
         https://developer.rechargepayments.com/2021-01/onetimes/onetimes_list
         """

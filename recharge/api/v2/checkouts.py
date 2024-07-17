@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -30,11 +30,9 @@ class CheckoutBillingAddress(TypedDict, total=False):
     zip: str
 
 
-CheckoutExternalCheckoutSource: TypeAlias = Literal[
-    "big_commerce", "headless", "shopify"
-]
+CheckoutExternalCheckoutSource = Literal["big_commerce", "headless", "shopify"]
 
-CheckoutOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
+CheckoutOrderIntervalUnit = Literal["day", "week", "month"]
 
 
 class CheckoutLineItemProperty(TypedDict):
@@ -42,7 +40,7 @@ class CheckoutLineItemProperty(TypedDict):
     value: str
 
 
-CheckoutLineItemType: TypeAlias = Literal["SUBSCRIPTION", "ONETIME"]
+CheckoutLineItemType = Literal["SUBSCRIPTION", "ONETIME"]
 
 
 class CheckoutLineItemExternalProductId(TypedDict):
@@ -60,7 +58,7 @@ class CheckoutLineItemImages(TypedDict):
     original: str
 
 
-CheckoutLineItemPurchaseItemType: TypeAlias = Literal["subscription", "onetime"]
+CheckoutLineItemPurchaseItemType = Literal["subscription", "onetime"]
 
 
 class CheckoutLineItemSubscriptionPreferences(TypedDict):
@@ -134,6 +132,7 @@ class CheckoutAppliedShippingLine(TypedDict):
     title: str
     taxable: bool
 
+
 class CheckoutCreateBodyOptional(TypedDict, total=False):
     get_shipping_rates: bool
     analytics_data: CheckoutAnalyticsData
@@ -150,8 +149,10 @@ class CheckoutCreateBodyOptional(TypedDict, total=False):
     order_attributes: list[CheckoutOrderAttribute]
     shipping_address: CheckoutShippingAddress
 
+
 class CheckoutCreateBody(CheckoutCreateBodyOptional):
     line_items: list[CheckoutLineItem]
+
 
 class CheckoutUpdateBody(TypedDict, total=False):
     get_shipping_rates: bool
@@ -173,14 +174,16 @@ class CheckoutUpdateBody(TypedDict, total=False):
     shipping_line: CheckoutAppliedShippingLine
 
 
-CheckoutPaymentProcessor: TypeAlias = Literal["stripe", "braintree", "authorize"]
+CheckoutPaymentProcessor = Literal["stripe", "braintree", "authorize"]
 
-CheckoutPaymentType: TypeAlias = Literal[
+CheckoutPaymentType = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"
 ]
 
+
 class CheckoutProcessBodyOptional(TypedDict, total=False):
     payment_type: CheckoutPaymentType
+
 
 class CheckoutProcessBody(TypedDict):
     payment_processor: CheckoutPaymentProcessor

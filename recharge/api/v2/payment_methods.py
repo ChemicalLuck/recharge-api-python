@@ -1,12 +1,12 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-PaymentMethodType: TypeAlias = Literal[
+PaymentMethodType = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"
 ]
 
-PaymentMethodProcessorName: TypeAlias = Literal[
+PaymentMethodProcessorName = Literal[
     "stripe", "braintree", "authorize", "shopify_payments", "mollie"
 ]
 
@@ -23,17 +23,20 @@ class PaymentMethodBillingAddress(TypedDict, total=False):
     province: str
     zip: str
 
+
 class PaymentMethodCreateBodyOptional(TypedDict, total=False):
     default: bool
     processor_payment_method_token: str
     billing_address: PaymentMethodBillingAddress
     retry_charges: bool
 
+
 class PaymentMethodCreateBody(PaymentMethodCreateBodyOptional):
     customer_id: int
     payment_type: PaymentMethodType
     processor_customer_token: str
     processor_name: PaymentMethodProcessorName
+
 
 class PaymentMethodUpdateBody(TypedDict, total=False):
     default: bool
@@ -95,7 +98,7 @@ class PaymentMethodResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{payment_method_id}")
 
-    def list_(self, query: PaymentMethodListQuery | None = None):
+    def list_(self, query: Optional[PaymentMethodListQuery] = None):
         """List payment methods.
         https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_list
         """

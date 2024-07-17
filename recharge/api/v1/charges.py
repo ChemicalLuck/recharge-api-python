@@ -1,9 +1,9 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict, Optional, Union
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
-ChargeStatus: TypeAlias = Literal[
+ChargeStatus = Literal[
     "SUCCESS", "QUEUED", "ERROR", "REFUNDED", "PARTIALLY_REFUNDED", "SKIPPED"
 ]
 
@@ -52,10 +52,12 @@ class ChargeSkupSubscriptionIds(TypedDict, total=True):
     subscription_ids: list[str]
 
 
-ChargeSkipBody: TypeAlias = ChargeSkipSubscriptionId | ChargeSkupSubscriptionIds
+ChargeSkipBody = Union[ChargeSkipSubscriptionId, ChargeSkupSubscriptionIds]
+
 
 class ChargeRefundBodyOptional(TypedDict, total=False):
     full_refund: bool
+
 
 class ChargeRefundBody(ChargeRefundBodyOptional):
     amount: str
@@ -69,9 +71,7 @@ class ChargeApplyDiscountIdBody(TypedDict):
     discount_id: str
 
 
-ChargeApplyDiscountBody: TypeAlias = (
-    ChargeApplyDiscountCodeBody | ChargeApplyDiscountIdBody
-)
+ChargeApplyDiscountBody = Union[ChargeApplyDiscountCodeBody, ChargeApplyDiscountIdBody]
 
 
 class ChargeResource(RechargeResource):
@@ -91,7 +91,7 @@ class ChargeResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{charge_id}")
 
-    def list_(self, query: ChargeListQuery | None = None):
+    def list_(self, query: Optional[ChargeListQuery] = None):
         """List charges.
         https://developer.rechargepayments.com/2021-01/charges/charge_list
         """
@@ -100,7 +100,7 @@ class ChargeResource(RechargeResource):
 
         return self._http_get(self.url, query)
 
-    def count(self, query: ChargeCountQuery | None = None):
+    def count(self, query: Optional[ChargeCountQuery] = None):
         """Count charges.
         https://developer.rechargepayments.com/2021-01/charges/charge_count
         """

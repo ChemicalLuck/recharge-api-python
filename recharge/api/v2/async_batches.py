@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, TypedDict, Optional, Union
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -11,7 +11,7 @@ from .plans import (
 from .onetimes import OnetimeCreateBody, OnetimeDeleteBody
 
 
-AsyncBatchType: TypeAlias = Literal[
+AsyncBatchType = Literal[
     "discount_create",
     "discount_delete",
     "discount_update",
@@ -27,16 +27,16 @@ class AsyncBatchCreateBody(TypedDict):
     batch_type: AsyncBatchType
 
 
-AsyncBatchBody: TypeAlias = (
-    DiscountCreateBody
-    | DiscountDeleteBody
-    | DiscountUpdateBody
-    | PlanCreateBody
-    | PlanUpdateBody
-    | PlanDeleteBody
-    | OnetimeCreateBody
-    | OnetimeDeleteBody
-)
+AsyncBatchBody = Union[
+    DiscountCreateBody,
+    DiscountDeleteBody,
+    DiscountUpdateBody,
+    PlanCreateBody,
+    PlanUpdateBody,
+    PlanDeleteBody,
+    OnetimeCreateBody,
+    OnetimeDeleteBody,
+]
 
 
 class AsyncBatchCreateTaskBody(TypedDict):
@@ -96,7 +96,7 @@ class AsyncBatchResource(RechargeResource):
     def list_tasks(
         self,
         batch_id: str,
-        query: AsyncBatchListTasksQuery,
+        query: Optional[AsyncBatchListTasksQuery] = None,
     ):
         """List tasks for an async batch.
         https://developer.rechargepayments.com/2021-11/async_batch_tasks/async_batch_tasks_retrieve

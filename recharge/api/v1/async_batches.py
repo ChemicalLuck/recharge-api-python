@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, TypedDict, Union
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -13,7 +13,7 @@ from .subscriptions import (
     SubscriptionCancelBody,
 )
 
-AsyncBatchType: TypeAlias = Literal[
+AsyncBatchType = Literal[
     "address_discount_apply",
     "address_discount_remove",
     "change_next_charge_date",
@@ -36,22 +36,22 @@ class AsyncBatchCreateBody(TypedDict):
     batch_type: AsyncBatchType
 
 
-AsyncBatchBody: TypeAlias = (
-    AddressApplyDiscountBody
-    | AddressRemoveDiscountBody
-    | DiscountCreateBody
-    | DiscountDeleteBody
-    | DiscountUpdateBody
-    | ProductCreateBody
-    | ProductUpdateBody
-    | ProductDeleteBody
-    | OnetimeCreateBody
-    | OnetimeDeleteBody
-    | SubscriptionBulkCreateBody
-    | SubscriptionBulkUpdateBody
-    | SubscriptionBulkDeleteBody
-    | SubscriptionCancelBody
-)
+AsyncBatchBody = Union[
+    AddressApplyDiscountBody,
+    AddressRemoveDiscountBody,
+    DiscountCreateBody,
+    DiscountDeleteBody,
+    DiscountUpdateBody,
+    ProductCreateBody,
+    ProductUpdateBody,
+    ProductDeleteBody,
+    OnetimeCreateBody,
+    OnetimeDeleteBody,
+    SubscriptionBulkCreateBody,
+    SubscriptionBulkUpdateBody,
+    SubscriptionBulkDeleteBody,
+    SubscriptionCancelBody,
+]
 
 
 class AsyncBatchCreateTaskBody(TypedDict):
@@ -75,7 +75,7 @@ class AsyncBatchResource(RechargeResource):
 
         return self._http_post(self.url, body)
 
-    def create_task(self, batch_id, body: AsyncBatchCreateTaskBody):
+    def create_task(self, batch_id: str, body: AsyncBatchCreateTaskBody):
         """Create a task for an async batch.
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
@@ -86,7 +86,7 @@ class AsyncBatchResource(RechargeResource):
 
         return self._http_post(f"{self.url}/{batch_id}/tasks", body)
 
-    def get(self, batch_id):
+    def get(self, batch_id: str):
         """Get an async batch.
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """
@@ -106,7 +106,7 @@ class AsyncBatchResource(RechargeResource):
 
     def list_tasks(
         self,
-        batch_id,
+        batch_id: str,
     ):
         """List tasks for an async batch.
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
@@ -118,7 +118,7 @@ class AsyncBatchResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{batch_id}/tasks")
 
-    def process(self, batch_id):
+    def process(self, batch_id: str):
         """Process an async batch.
         https://developer.rechargepayments.com/2021-01/async_batch_endpoints
         """

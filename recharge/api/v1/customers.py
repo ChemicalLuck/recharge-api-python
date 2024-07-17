@@ -1,6 +1,7 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+
 
 class CustomerCreateBodyOptional(TypedDict, total=False):
     accepts_marketing: bool
@@ -10,6 +11,7 @@ class CustomerCreateBodyOptional(TypedDict, total=False):
     phone: str
     processor_type: str
     shopify_customer_id: str
+
 
 class CustomerCreateBody(CustomerCreateBodyOptional):
     billing_address1: str
@@ -22,6 +24,7 @@ class CustomerCreateBody(CustomerCreateBodyOptional):
     email: str
     first_name: str
     last_name: str
+
 
 class CustomerUpdateBody(TypedDict, total=False):
     accepts_marketing: bool
@@ -42,7 +45,7 @@ class CustomerUpdateBody(TypedDict, total=False):
     shopify_customer_id: str
 
 
-CustomerStatus: TypeAlias = Literal["ACTIVE", "INACTIVE"]
+CustomerStatus = Literal["ACTIVE", "INACTIVE"]
 
 
 class CustomerListQuery(TypedDict, total=False):
@@ -113,7 +116,7 @@ class CustomerResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{customer_id}")
 
-    def list_(self, query: CustomerListQuery | None = None):
+    def list_(self, query: Optional[CustomerListQuery] = None):
         """List customers.
         https://developer.rechargepayments.com/2021-01/customers/customers_list
         """
@@ -123,7 +126,7 @@ class CustomerResource(RechargeResource):
 
         return self._http_get(self.url, query)
 
-    def count(self, query: CustomerCountQuery | None = None):
+    def count(self, query: Optional[CustomerCountQuery] = None):
         """Retrieve a count of customers.
         https://developer.rechargepayments.com/2021-01/customers/customers_count
         """

@@ -1,9 +1,9 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
-SubscriptionOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
+SubscriptionOrderIntervalUnit = Literal["day", "week", "month"]
 
 
 class SubscriptionProperty(TypedDict):
@@ -11,7 +11,8 @@ class SubscriptionProperty(TypedDict):
     value: str
 
 
-SubscriptionStatus: TypeAlias = Literal["ACTIVE", "CANCELLED", "EXPIRED"]
+SubscriptionStatus = Literal["ACTIVE", "CANCELLED", "EXPIRED"]
+
 
 class SubscriptionCreateBodyOptional(TypedDict, total=False):
     customer_id: str
@@ -22,6 +23,7 @@ class SubscriptionCreateBodyOptional(TypedDict, total=False):
     properties: list[SubscriptionProperty]
     product_title: str
     status: SubscriptionStatus
+
 
 class SubscriptionCreateBody(SubscriptionCreateBodyOptional):
     address_id: int
@@ -88,15 +90,19 @@ class SubscriptionCountQuery(TypedDict, total=False):
 class SubscriptionChangeDateBody(TypedDict, total=True):
     date: str
 
+
 class SubscriptionChangeAddressBodyOptional(TypedDict, total=False):
     next_charge_scheduled_at: str
+
 
 class SubscriptionChangeAddressBody(SubscriptionChangeAddressBodyOptional):
     address_id: str
 
+
 class SubscriptionCancelBodyOptional(TypedDict, total=False):
     cancellation_reason_comments: str
     send_email: bool
+
 
 class SubscriptionCancelBody(SubscriptionCancelBodyOptional):
     cancellation_reason: str
@@ -171,7 +177,7 @@ class SubscriptionResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{subscription_id}", body)
 
-    def list_(self, query: SubscriptionListQuery | None = None):
+    def list_(self, query: Optional[SubscriptionListQuery] = None):
         """List subscriptions.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_list
         """

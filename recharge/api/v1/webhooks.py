@@ -1,8 +1,8 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-WebhookTopic: TypeAlias = Literal[
+WebhookTopic = Literal[
     "address/created",
     "address/updated",
     "async_batch/processed",
@@ -70,12 +70,12 @@ WebhookTopicMap: dict[str, RechargeScope] = {
     "recharge": "store_info",
 }
 
-WebhookIncludedObject: TypeAlias = Literal[
-    "addresses", "collections", "customer", "metafields"
-]
+WebhookIncludedObject = Literal["addresses", "collections", "customer", "metafields"]
+
 
 class WebhookCreateBodyOptional(TypedDict, total=False):
     included_objects: list[WebhookIncludedObject]
+
 
 class WebhookCreateBody(WebhookCreateBodyOptional):
     address: str

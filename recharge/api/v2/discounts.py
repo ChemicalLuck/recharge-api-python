@@ -1,12 +1,10 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-DiscountProductType: TypeAlias = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
+DiscountProductType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
-DiscountAppliesToResource: TypeAlias = Literal[
-    "shopify_product", "shopify_collection_id"
-]
+DiscountAppliesToResource = Literal["shopify_product", "shopify_collection_id"]
 
 
 class DiscountChannelSettingsValue:
@@ -20,15 +18,15 @@ class DiscountChannelSettings(TypedDict, total=False):
     merchant_portal: DiscountChannelSettingsValue
 
 
-DiscountValueType: TypeAlias = Literal["percentage", "fixed_amount"]
+DiscountValueType = Literal["percentage", "fixed_amount"]
 
-DiscountFirstTimeCustomerRestriction: TypeAlias = Literal[
+DiscountFirstTimeCustomerRestriction = Literal[
     "null", "customer_must_not_exist_in_recharge"
 ]
 
-DiscountStatus: TypeAlias = Literal["enabled", "disabled", "fully_disabled"]
+DiscountStatus = Literal["enabled", "disabled", "fully_disabled"]
 
-DiscountAppliesToPurchaseItemType: TypeAlias = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
+DiscountAppliesToPurchaseItemType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
 
 class DiscountAppliesTo(TypedDict, total=False):
@@ -43,6 +41,7 @@ class DiscountUsageLimits(TypedDict, total=False):
     max_subsequent_redemptions: int
     redemptions: int
 
+
 class DiscountCreateBodyOptional(TypedDict, total=False):
     applies_to: DiscountAppliesTo
     channel_settings: DiscountChannelSettings
@@ -54,8 +53,10 @@ class DiscountCreateBodyOptional(TypedDict, total=False):
     value: str
     value_type: DiscountValueType
 
+
 class DiscountCreateBody(DiscountCreateBodyOptional):
     code: str
+
 
 class DiscountUpdateBody(TypedDict, total=False):
     applies_to: DiscountAppliesTo
@@ -133,7 +134,7 @@ class DiscountResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{discount_id}")
 
-    def list_(self, query: DiscountListQuery | None = None):
+    def list_(self, query: Optional[DiscountListQuery] = None):
         """List discounts.
         https://developer.rechargepayments.com/2021-11/discounts/discounts_list
         """

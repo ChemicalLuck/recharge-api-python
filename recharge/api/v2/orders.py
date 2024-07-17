@@ -1,4 +1,4 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -59,7 +59,7 @@ class OrderLineItemProperty(TypedDict):
     value: str
 
 
-OrderLineItemPurchaseItemType: TypeAlias = Literal["subscription", "onetime"]
+OrderLineItemPurchaseItemType = Literal["subscription", "onetime"]
 
 
 class OrderLineItemTaxLine(TypedDict):
@@ -95,7 +95,7 @@ class OrderExternalOrderId(TypedDict, total=False):
     ecommerce: str
 
 
-OrderStatus: TypeAlias = Literal["success", "error", "queued", "cancelled"]
+OrderStatus = Literal["success", "error", "queued", "cancelled"]
 
 
 class OrderUpdateBody(TypedDict, total=False):
@@ -108,7 +108,7 @@ class OrderUpdateBody(TypedDict, total=False):
     status: OrderStatus
 
 
-OrderType: TypeAlias = Literal["checkout", "recurring"]
+OrderType = Literal["checkout", "recurring"]
 
 
 class OrderListQuery(TypedDict, total=False):
@@ -189,7 +189,7 @@ class OrderResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{order_id}")
 
-    def list_(self, query: OrderListQuery | None = None):
+    def list_(self, query: Optional[OrderListQuery] = None):
         """List orders.
         https://developer.rechargepayments.com/2021-11/orders/orders_list
         """

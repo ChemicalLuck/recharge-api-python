@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -17,6 +17,7 @@ class AddressShippingLinesOverride(TypedDict, total=False):
 class AddressDiscounts(TypedDict):
     id: str
 
+
 class AddressCreateBodyOptional(TypedDict, total=False):
     company: str
     discounts: list[AddressDiscounts]
@@ -25,6 +26,7 @@ class AddressCreateBodyOptional(TypedDict, total=False):
     payment_method_id: int
     presentment_currency: str
     shipping_lines_override: list[AddressShippingLinesOverride]
+
 
 class AddressCreateBody(AddressCreateBodyOptional):
     customer_id: str
@@ -74,9 +76,11 @@ class AddressListQuery(TypedDict, total=False):
 class AddressMergeTargetAddress(TypedDict):
     id: str
 
+
 class AddressMergeBodyOptional(TypedDict, total=False):
     delete_source_address: bool
     next_charge_date: str
+
 
 class AddressMergeBody(AddressMergeBodyOptional):
     target_address: AddressMergeTargetAddress
@@ -114,7 +118,7 @@ class AddressResource(RechargeResource):
 
         return self._http_get(f"{self.url}/{address_id}")
 
-    def update(self, address_id: str, body: AddressUpdateBody | None = None):
+    def update(self, address_id: str, body: AddressUpdateBody):
         """Update an address by ID.
         https://developer.rechargepayments.com/2021-11/addresses/update_address
         """
@@ -134,7 +138,7 @@ class AddressResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{address_id}")
 
-    def list_(self, query: AddressListQuery | None = None):
+    def list_(self, query: Optional[AddressListQuery] = None):
         """List all addresses for a customer.
         https://developer.rechargepayments.com/2021-11/addresses/list_addresses
         """

@@ -1,12 +1,10 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-DiscountProductType: TypeAlias = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
+DiscountProductType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
-DiscountAppliesToResource: TypeAlias = Literal[
-    "shopify_product", "shopify_collection_id"
-]
+DiscountAppliesToResource = Literal["shopify_product", "shopify_collection_id"]
 
 
 class DiscountChannelSettingsValue:
@@ -20,13 +18,14 @@ class DiscountChannelSettings(TypedDict, total=False):
     merchant_portal: DiscountChannelSettingsValue
 
 
-DiscountType: TypeAlias = Literal["percentage", "fixed_amount"]
+DiscountType = Literal["percentage", "fixed_amount"]
 
-DiscountFirstTimeCustomerRestriction: TypeAlias = Literal[
+DiscountFirstTimeCustomerRestriction = Literal[
     "null", "customer_must_not_exist_in_recharge"
 ]
 
-DiscountStatus: TypeAlias = Literal["enabled", "disabled", "fully_disabled"]
+DiscountStatus = Literal["enabled", "disabled", "fully_disabled"]
+
 
 class DiscountCreateBodyOptional(TypedDict, total=False):
     applies_to_id: int
@@ -36,6 +35,7 @@ class DiscountCreateBodyOptional(TypedDict, total=False):
     once_per_customer: bool
     prerequisite_subtotal_min: int
     usage_limit: int
+
 
 class DiscountCreateBody(DiscountCreateBodyOptional):
     applies_to_product_type: DiscountProductType
@@ -47,6 +47,7 @@ class DiscountCreateBody(DiscountCreateBodyOptional):
     starts_at: str
     status: DiscountStatus
     value: str
+
 
 class DiscountUpdateBody(TypedDict, total=False):
     channel_settings: DiscountChannelSettings
@@ -128,7 +129,7 @@ class DiscountResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{discount_id}")
 
-    def list_(self, query: DiscountListQuery | None = None):
+    def list_(self, query: Optional[DiscountListQuery] = None):
         """List discounts.
         https://developer.rechargepayments.com/2021-01/discounts/discounts_list
         """
@@ -137,7 +138,7 @@ class DiscountResource(RechargeResource):
 
         return self._http_get(self.url, query)
 
-    def count(self, query: DiscountCountQuery | None = None):
+    def count(self, query: Optional[DiscountCountQuery] = None):
         """Receive a count of all discounts.
         https://developer.rechargepayments.com/v1#count-discounts
         """

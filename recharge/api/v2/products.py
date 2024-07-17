@@ -1,8 +1,8 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-ProductDiscountType: TypeAlias = Literal["percentage"]
+ProductDiscountType = Literal["percentage"]
 
 
 class ProductExternalProductId(TypedDict):
@@ -54,6 +54,7 @@ class ProductVariant(TypedDict):
     taxable: bool
     title: str
 
+
 class ProductCreateBodyOptional(TypedDict, total=False):
     brand: str
     external_created_at: str
@@ -61,6 +62,7 @@ class ProductCreateBodyOptional(TypedDict, total=False):
     images: ProductImages
     published_at: str
     requires_shipping: bool
+
 
 class ProductCreateBody(ProductCreateBodyOptional):
     external_product_id: ProductExternalProductId
@@ -70,7 +72,7 @@ class ProductCreateBody(ProductCreateBodyOptional):
     vendor: str
 
 
-ProductOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
+ProductOrderIntervalUnit = Literal["day", "week", "month"]
 
 
 class ProductUpdateBody(TypedDict, total=False):
@@ -137,7 +139,7 @@ class ProductResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{product_id}")
 
-    def list_(self, query: ProductListQuery | None = None):
+    def list_(self, query: Optional[ProductListQuery] = None):
         """List products.
         https://developer.rechargepayments.com/2021-11/products/products_list
         """

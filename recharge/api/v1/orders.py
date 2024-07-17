@@ -1,4 +1,4 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -41,7 +41,7 @@ class OrderUpdateBody(TypedDict, total=False):
     customer: OrderCustomer
 
 
-OrderStatus: TypeAlias = Literal["SUCCESS", "QUEUED", "ERROR", "REFUNDED", "SKIPPED"]
+OrderStatus = Literal["SUCCESS", "QUEUED", "ERROR", "REFUNDED", "SKIPPED"]
 
 
 class OrderListQuery(TypedDict, total=False):
@@ -126,7 +126,7 @@ class OrderResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{order_id}")
 
-    def list_(self, query: OrderListQuery):
+    def list_(self, query: Optional[OrderListQuery] = None):
         """List orders.
         https://developer.rechargepayments.com/2021-01/orders/orders_list
         """
@@ -135,7 +135,7 @@ class OrderResource(RechargeResource):
 
         return self._http_get(self.url, query)
 
-    def count(self, query: OrderCountQuery):
+    def count(self, query: Optional[OrderCountQuery] = None):
         """Count orders.
         https://developer.rechargepayments.com/2021-01/orders/orders_count
         """

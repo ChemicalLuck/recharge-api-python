@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, TypeAlias
+from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -30,11 +30,9 @@ class CheckoutBillingAddress(TypedDict, total=False):
     zip: str
 
 
-CheckoutExternalCheckoutSource: TypeAlias = Literal[
-    "big_commerce", "headless", "shopify"
-]
+CheckoutExternalCheckoutSource = Literal["big_commerce", "headless", "shopify"]
 
-CheckoutOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
+CheckoutOrderIntervalUnit = Literal["day", "week", "month"]
 
 
 class CheckoutLineItemProperty(TypedDict):
@@ -42,7 +40,7 @@ class CheckoutLineItemProperty(TypedDict):
     value: str
 
 
-CheckoutLineItemType: TypeAlias = Literal["SUBSCRIPTION", "ONETIME"]
+CheckoutLineItemType = Literal["SUBSCRIPTION", "ONETIME"]
 
 
 class CheckoutLineItem(TypedDict, total=False):
@@ -91,6 +89,7 @@ class CheckoutShippingAddress(TypedDict, total=False):
     province: str
     zip: str
 
+
 class CheckoutCreateBodyOptional(TypedDict, total=False):
     analytics_data: CheckoutAnalyticsData
     billing_address: CheckoutBillingAddress
@@ -105,6 +104,7 @@ class CheckoutCreateBodyOptional(TypedDict, total=False):
     note_attributes: list[CheckoutNoteAttribute]
     phone: str
     shipping_address: CheckoutShippingAddress
+
 
 class CheckoutCreateBody(CheckoutCreateBodyOptional):
     line_items: list[CheckoutLineItem]
@@ -128,13 +128,10 @@ class CheckoutUpdateBody(TypedDict, total=False):
     shipping_address: CheckoutShippingAddress
 
 
-CheckoutPaymentProcessor: TypeAlias = Literal[
-    "stripe", "braintree", "mollie", "authorize"
-]
+CheckoutPaymentProcessor = Literal["stripe", "braintree", "mollie", "authorize"]
 
-CheckoutPaymentType: TypeAlias = Literal[
-    "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY"
-]
+CheckoutPaymentType = Literal["CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY"]
+
 
 class CheckoutProcessBodyOptional(TypedDict, total=False):
     payment_type: CheckoutPaymentType
@@ -143,6 +140,7 @@ class CheckoutProcessBodyOptional(TypedDict, total=False):
 class CheckoutProcessBody(CheckoutProcessBodyOptional):
     payment_processor: CheckoutPaymentProcessor
     payment_token: str
+
 
 class CheckoutResource(RechargeResource):
     """

@@ -1,4 +1,4 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
@@ -19,14 +19,14 @@ class PlanChannelSettingsCheckoutPage(TypedDict):
     display: bool
 
 
-PlanDiscountType: TypeAlias = Literal["percentage", "fixed_amount"]
+PlanDiscountType = Literal["percentage", "fixed_amount"]
 
 
 class PlanExternalProductId(TypedDict):
     ecommerce: str
 
 
-PlanIntervalUnit: TypeAlias = Literal["day", "week", "month"]
+PlanIntervalUnit = Literal["day", "week", "month"]
 
 
 class PlanSubscriptionPreferences(TypedDict):
@@ -48,13 +48,15 @@ class PlanChannelSettings(TypedDict, total=False):
     checkout_page: PlanChannelSettingsCheckoutPage
 
 
-PlanType: TypeAlias = Literal["subscription", "prepaid", "onetime"]
+PlanType = Literal["subscription", "prepaid", "onetime"]
+
 
 class PlanCreateBodyOptional(TypedDict, total=False):
     channel_settings: PlanChannelSettings
     discount_amount: str
     discount_type: PlanDiscountType
     sort_order: int
+
 
 class PlanCreateBody(PlanCreateBodyOptional):
     external_product_id: PlanExternalProductId
@@ -134,7 +136,7 @@ class PlanResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{plan_id}")
 
-    def list_(self, query: PlanListQuery | None = None):
+    def list_(self, query: Optional[PlanListQuery] = None):
         """List plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_list
         """

@@ -1,17 +1,19 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
-RetentionStrategyCancellationFlowType: TypeAlias = Literal["subscription", "membership"]
+RetentionStrategyCancellationFlowType = Literal["subscription", "membership"]
 
-RetentionStrategyIncentiveType: TypeAlias = Literal[
+RetentionStrategyIncentiveType = Literal[
     "delay_subscription", "discount", "skip_charge", "swap_product"
 ]
+
 
 class RetentionStrategyCreateBodyOptional(TypedDict, total=False):
     cancellation_flow_type: RetentionStrategyCancellationFlowType
     incentive_type: RetentionStrategyIncentiveType
     discount_code: str
+
 
 class RetentionStrategyCreateBody(RetentionStrategyCreateBodyOptional):
     prevention_text: str

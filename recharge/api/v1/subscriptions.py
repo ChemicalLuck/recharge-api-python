@@ -1,9 +1,9 @@
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 
 
-SubscriptionOrderIntervalUnit: TypeAlias = Literal["day", "week", "month"]
+SubscriptionOrderIntervalUnit = Literal["day", "week", "month"]
 
 
 class SubscriptionProperty(TypedDict):
@@ -11,7 +11,8 @@ class SubscriptionProperty(TypedDict):
     value: str
 
 
-SubscriptionStatus: TypeAlias = Literal["ACTIVE", "CANCELLED", "EXPIRED"]
+SubscriptionStatus = Literal["ACTIVE", "CANCELLED", "EXPIRED"]
+
 
 class SubscriptionCreateBodyOptional(TypedDict, total=False):
     customer_id: str
@@ -23,6 +24,7 @@ class SubscriptionCreateBodyOptional(TypedDict, total=False):
     product_title: str
     status: SubscriptionStatus
 
+
 class SubscriptionCreateBody(SubscriptionCreateBodyOptional):
     address_id: int
     charge_interval_frequency: int
@@ -32,6 +34,7 @@ class SubscriptionCreateBody(SubscriptionCreateBodyOptional):
     quantity: str
     shopify_product_id: str
     shopify_variant_id: str
+
 
 class SubscriptionUpdateBody(TypedDict, total=False):
     charge_interval_frequency: str
@@ -88,15 +91,19 @@ class SubscriptionCountQuery(TypedDict, total=False):
 class SubscriptionChangeDateBody(TypedDict, total=True):
     date: str
 
+
 class SubscriptionChangeAddressBodyOptional(TypedDict, total=False):
     next_charge_scheduled_at: str
+
 
 class SubscriptionChangeAddressBody(SubscriptionChangeAddressBodyOptional):
     address_id: str
 
+
 class SubscriptionCancelBodyOptional(TypedDict, total=False):
     cancellation_reason_comments: str
     send_email: bool
+
 
 class SubscriptionCancelBody(SubscriptionCancelBodyOptional):
     cancellation_reason: str
@@ -109,8 +116,10 @@ class SubscriptionBulkCreateBody(TypedDict):
 class SubscriptionBulkUpdateBody(TypedDict):
     subscriptions: list[SubscriptionUpdateBody]
 
+
 class SubscriptionBulkDeleteBodyInnerOptional(TypedDict, total=False):
     send_email: bool
+
 
 class SubscriptionBulkDeleteBodyInner(SubscriptionBulkDeleteBodyInnerOptional):
     id: str
@@ -170,7 +179,7 @@ class SubscriptionResource(RechargeResource):
 
         return self._http_delete(f"{self.url}/{subscription_id}", body)
 
-    def list_(self, query: SubscriptionListQuery | None = None):
+    def list_(self, query: Optional[SubscriptionListQuery] = None):
         """List subscriptions.
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_list
         """
@@ -179,7 +188,7 @@ class SubscriptionResource(RechargeResource):
 
         return self._http_get(self.url, query)
 
-    def count(self, query: SubscriptionCountQuery):
+    def count(self, query: Optional[SubscriptionCountQuery] = None):
         """Count subscriptions.
         https://developer.rechargepayments.com/2021-01/subscriptions/subscriptions_count
         """
