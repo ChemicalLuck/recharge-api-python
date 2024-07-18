@@ -66,6 +66,7 @@ class RechargeResource:
         query: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
+        self._client.set_version(self.recharge_version)
         return self._client.get(url, query, self._get_response_key(expected), expected)
 
     def _http_post(
@@ -75,6 +76,7 @@ class RechargeResource:
         query: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
+        self._client.set_version(self.recharge_version)
         return self._client.post(
             url, body, query, self._get_response_key(expected), expected
         )
@@ -86,6 +88,7 @@ class RechargeResource:
         query: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
+        self._client.set_version(self.recharge_version)
         return self._client.put(
             url, body, query, self._get_response_key(expected), expected
         )
@@ -96,6 +99,7 @@ class RechargeResource:
         body: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
+        self._client.set_version(self.recharge_version)
         return self._client.delete(
             url, body, self._get_response_key(expected), expected
         )
