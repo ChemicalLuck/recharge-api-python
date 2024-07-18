@@ -69,6 +69,14 @@ class RechargeResource:
         self._client.set_version(self.recharge_version)
         return self._client.get(url, query, self._get_response_key(expected), expected)
 
+    def _paginate(
+        self,
+        url: str,
+        query: Optional[Mapping[str, Any]] = None,
+    ) -> list:
+        self._client.set_version(self.recharge_version)
+        return self._client.paginate(url, query, self.object_list_key)
+
     def _http_post(
         self,
         url: str,

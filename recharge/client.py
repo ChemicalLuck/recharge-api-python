@@ -49,6 +49,7 @@ RechargeScope = Literal[
     "read_credit_summary",
 ]
 
+REDACTED_HEADERS = ["Cookie", "X-Recharge-Access-Token"]
 
 class RequestMethod(Enum):
     GET = "GET"
@@ -119,7 +120,9 @@ class RechargeClient:
         """Redacts the Authorization header from a request."""
 
         temp_request = request.copy()
-        temp_request.headers["X-Recharge-Access-Token"] = "REDACTED"
+        for header in REDACTED_HEADERS:
+            if header in temp_request.headers:
+                temp_request.headers[header] = "REDACTED"
         return temp_request
 
     def _retry(self, request: PreparedRequest) -> Response:
@@ -267,9 +270,78 @@ class RechargeClient:
         prepared_request = self._session.prepare_request(request)
         return self._send(prepared_request)
 
+    def _get_next_page_url(self, response: Response) -> Optional[str]:
+        version = self._session.headers.get("X-Recharge-Version")
+
+        if version == "2021-01":
+            return response.links.get("next", {}).get("url")
+        
+        if version == "2021-11":
+            try:
+                data = response.json()
+                cursor = data.get("next_cursor")
+                if cursor:
+                    parsed_url = urlparse(response.url)
+                    query_params = parse_qs(parsed_url.query)
+                    query_params["cursor"] = [cursor]
+                    query_params = {k: v for k, v in query_params.items() if k in ["cursor", "limit"]}
+                    new_query_string = urlencode(query_params, doseq=True)
+                    return urlunparse(parsed_url._replace(query=new_query_string))
+            except JSONDecodeError:
+                self._logger.error(
+                    "Failed to decode JSON response, expect missing data",
+                    extra={"response": response.text},
+                )
+
+        return None
+
     def set_version(self, version: RechargeVersion):
         self._session.headers.update({"X-Recharge-Version": version})
         return self
+
+    def paginate(
+        self,
+        url: str,
+        query: Optional[Mapping[str, Any]] = None,
+        response_key: Optional[str] = None
+    ) -> list:
+        pages = 0
+        data = []
+        while True:
+            pages += 1
+            self._logger.debug("Fetching page", extra={"page": pages, "url": url, "query": query})
+            response = self._request(RequestMethod.GET, url, query)
+            if not isinstance(response, Response):
+                return data
+            
+            try:
+                response_data = response.json()
+            except JSONDecodeError:
+                self._logger.error(
+                    "Failed to decode JSON response, expect missing data",
+                    extra={
+                        "response_key": response_key,
+                        "response": response.text
+                    },
+                )
+                break
+            data.extend(response_data.get(response_key, []))
+
+            new_url = self._get_next_page_url(response)
+            if new_url is None:
+                break
+            query = None
+            url = new_url
+
+        self._logger.debug(
+            "Fetched all pages",
+            extra={
+                "pages": pages,
+                "records": len(data)
+            },
+        )
+
+        return data
 
     def delete(
         self,
