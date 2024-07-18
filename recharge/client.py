@@ -1,7 +1,9 @@
 import logging
 import time
+import json
 from enum import Enum
 from typing import Any, Literal, Mapping, Optional, Union
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from requests import Request, Response, Session
 from requests.exceptions import HTTPError, RequestException, JSONDecodeError
@@ -54,6 +56,29 @@ class RequestMethod(Enum):
     PUT = "PUT"
     DELETE = "DELETE"
 
+class RechargeCustomFormatter(logging.Formatter):
+    # List of standard log record attributes
+    standard_attributes = {
+        'name', 'msg', 'args', 'levelname', 'levelno', 'pathname', 'filename', 'module', 
+        'exc_info', 'exc_text', 'stack_info', 'lineno', 'funcName', 'created', 'msecs', 
+        'relativeCreated', 'thread', 'threadName', 'processName', 'process', 'message', 
+        'asctime'
+    }
+
+    def format(self, record):
+        # Start with the base message
+        base_message = super().format(record)
+        
+        # Get the extra fields
+        extra_fields = {key: value for key, value in record.__dict__.items() if key not in self.standard_attributes}
+        
+        # Combine base message with extra fields
+        if extra_fields:
+            extra_message = json.dumps(extra_fields, indent=4)
+            return f'{base_message}\n{extra_message}'
+        else:
+            return base_message
+
 
 class RechargeClient:
     def __init__(
@@ -63,11 +88,14 @@ class RechargeClient:
         retry_delay: int = 10,
         session: Optional[Session] = None,
         logger: Optional[logging.Logger] = None,
+        logging_level: int = logging.DEBUG,
     ):
         self._max_retries = max_retries
         self._retry_delay = retry_delay
         self._retries = 0
         self._logger = logger or logging.getLogger(__name__)
+        if logger is None:
+            self._default_logging_setup(logging_level)
 
         self._session = session or Session()
         self._session.headers.update(
@@ -77,6 +105,15 @@ class RechargeClient:
                 "X-Recharge-Access-Token": access_token,
             }
         )
+
+    def _default_logging_setup(self, logging_level: int = logging.DEBUG):
+        handler = logging.StreamHandler()
+        formatter = RechargeCustomFormatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+        handler.setFormatter(formatter)
+        self._logger.addHandler(handler)
+        self._logger.setLevel(logging_level)
 
     def _redact_auth(self, request: PreparedRequest) -> PreparedRequest:
         """Redacts the Authorization header from a request."""
@@ -130,17 +167,21 @@ class RechargeClient:
 
     def _send(self, request: PreparedRequest) -> Response:
         """Sends a request and handles retries and errors."""
+        redacted_request = self._redact_auth(request)
 
         self._logger.debug(
-            "Sending request", extra={"url": self._redact_auth(request).url}
+            "Sending request",
+            extra={
+                "url": redacted_request.url,
+                "body": redacted_request.body,
+                "headers": dict(redacted_request.headers)
+            },
         )
         try:
             response = self._session.send(request)
 
             if response.status_code == 429:
-                self._logger.warning(
-                    "Rate limited, retrying...", extra={"response": response.text}
-                )
+                self._logger.warning("Rate limited, retrying...")
                 return self._retry(request)
 
             if response.status_code >= 500:
@@ -160,7 +201,7 @@ class RechargeClient:
             return response
 
         except HTTPError as http_error:
-            self._logger.error(
+            self._logger.critical(
                 "HTTP error",
                 extra={
                     "error": http_error.response.text,
@@ -171,7 +212,7 @@ class RechargeClient:
                 self._extract_error_message(http_error.response)
             ) from http_error
         except RequestException as request_error:
-            self._logger.error(
+            self._logger.critical(
                 "Request failed",
                 extra={
                     "error": "An ambiguous error occured",
@@ -201,6 +242,14 @@ class RechargeClient:
         data = response_json.get(key, response_json)
 
         if not isinstance(data, expected):
+            self._logger.error(
+                "Invalid data type",
+                extra={
+                    "expected": expected.__name__,
+                    "got": type(data).__name__,
+                    "response": response.text,
+                },
+            )
             raise ValueError(
                 f"Expected data to be of type {expected.__name__}, got {type(data).__name__}"
             )
