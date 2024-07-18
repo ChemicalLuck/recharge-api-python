@@ -96,7 +96,7 @@ class RechargeClient:
                     "max_retries": self._max_retries,
                     "url": redacted_request.url,
                     "body": redacted_request.body,
-                    "headers": (redacted_request.headers),
+                    "headers": dict(redacted_request.headers),
                 },
             )
             raise RechargeAPIError("Max retries reached")
