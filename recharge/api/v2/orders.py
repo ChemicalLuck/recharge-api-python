@@ -1,101 +1,21 @@
-from typing import Literal, TypedDict, Optional
+from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.order import (
+    Order,
+    OrderBillingAddress,
+    OrderCustomer,
+    OrderExternalOrderId,
+    OrderLineItem,
+    OrderShippingAddress,
+    OrderStatus,
+    OrderType,
+)
 
 
 class OrderCloneBody(TypedDict, total=False):
     scheduled_at: str
-
-
-class OrderBillingAddress(TypedDict, total=False):
-    address1: str
-    province: str
-    address2: str
-    city: str
-    company: str
-    country: str
-    first_name: str
-    last_name: str
-    phone: str
-    zip: str
-
-
-class OrderShippingAddress(TypedDict, total=False):
-    address1: str
-    province: str
-    address2: str
-    city: str
-    company: str
-    country: str
-    first_name: str
-    last_name: str
-    phone: str
-    zip: str
-
-
-class OrderCustomer(TypedDict, total=False):
-    first_name: str
-    last_name: str
-    email: str
-
-
-class OrderLineItemExternalProductId(TypedDict, total=False):
-    ecommerce: str
-
-
-class OrderLineItemExternalVariantId(TypedDict, total=False):
-    ecommerce: str
-
-
-class OrderLineItemImages(TypedDict, total=False):
-    large: str
-    medium: str
-    small: str
-    original: str
-
-
-class OrderLineItemProperty(TypedDict):
-    name: str
-    value: str
-
-
-OrderLineItemPurchaseItemType = Literal["subscription", "onetime"]
-
-
-class OrderLineItemTaxLine(TypedDict):
-    price: str
-    rate: str
-    title: str
-
-
-class OrderLineItem(TypedDict, total=False):
-    purchase_item_id: int
-    external_product_id: OrderLineItemExternalProductId
-    external_variant_id: OrderLineItemExternalVariantId
-    grams: int
-    handle: str
-    images: OrderLineItemImages
-    original_price: str
-    properties: list[OrderLineItemProperty]
-    purchase_item_type: OrderLineItemPurchaseItemType
-    quantity: int
-    sku: str
-    tax_due: str
-    tax_lines: list[OrderLineItemTaxLine]
-    taxable: bool
-    taxable_amount: str
-    title: str
-    total_price: str
-    unit_price: str
-    unit_price_includes_tax: bool
-    variant_title: str
-
-
-class OrderExternalOrderId(TypedDict, total=False):
-    ecommerce: str
-
-
-OrderStatus = Literal["success", "error", "queued", "cancelled"]
 
 
 class OrderUpdateBody(TypedDict, total=False):
@@ -106,9 +26,6 @@ class OrderUpdateBody(TypedDict, total=False):
     scheduled_at: str
     shipping_address: OrderShippingAddress
     status: OrderStatus
-
-
-OrderType = Literal["checkout", "recurring"]
 
 
 class OrderListQuery(TypedDict, total=False):
@@ -138,18 +55,23 @@ class OrderResource(RechargeResource):
     """
 
     object_list_key = "orders"
+    object_key_dict = "order"
     recharge_version: RechargeVersion = "2021-11"
 
-    def get(self, order_id: str):
+    def get(self, order_id: str) -> Order:
         """Get an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
         self._check_scopes(f"GET /{self.object_list_key}/:order_id", required_scopes)
 
-        return self._http_get(f"{self._url}/{order_id}")
+        url = f"{self._url}/{order_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Order(**data)
 
-    def clone(self, order_id: str, body: OrderCloneBody):
+    def clone(self, order_id: str, body: OrderCloneBody) -> Order:
         """Clone an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_clone
         """
@@ -158,9 +80,13 @@ class OrderResource(RechargeResource):
             f"POST /{self.object_list_key}/:order_id/clone", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{order_id}/clone", body)
+        url = f"{self._url}/{order_id}/clone"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Order(**data)
 
-    def delay(self, order_id: str):
+    def delay(self, order_id: str) -> Order:
         """Delay an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_delay
         """
@@ -169,31 +95,46 @@ class OrderResource(RechargeResource):
             f"POST /{self.object_list_key}/:order_id/delay", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{order_id}/delay")
+        url = f"{self._url}/{order_id}/delay"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Order(**data)
 
-    def update(self, order_id: str, body: OrderUpdateBody):
+    def update(self, order_id: str, body: OrderUpdateBody) -> Order:
         """Update an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_update
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self._check_scopes(f"PUT /{self.object_list_key}/:order_id", required_scopes)
 
-        return self._http_put(f"{self._url}/{order_id}", body)
+        url = f"{self._url}/{order_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Order(**data)
 
-    def delete(self, order_id: str):
+    def delete(self, order_id: str) -> dict:
         """Delete an order.
         https://developer.rechargepayments.com/2021-11/orders/orders_delete
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self._check_scopes(f"DELETE /{self.object_list_key}/:order_id", required_scopes)
 
-        return self._http_delete(f"{self._url}/{order_id}")
+        url = f"{self._url}/{order_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, query: Optional[OrderListQuery] = None):
+    def list_(self, query: Optional[OrderListQuery] = None) -> list[Order]:
         """List orders.
         https://developer.rechargepayments.com/2021-11/orders/orders_list
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Order(**order) for order in data]

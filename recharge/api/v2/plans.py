@@ -1,54 +1,15 @@
-from typing import Literal, Optional, TypedDict
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-class PlanChannelSettingsApi(TypedDict):
-    display: bool
-
-
-class PlanChannelSettingsCustomerPortal(TypedDict):
-    display: bool
-
-
-class PlanChannelSettingsMerchantPortal(TypedDict):
-    display: bool
-
-
-class PlanChannelSettingsCheckoutPage(TypedDict):
-    display: bool
-
-
-PlanDiscountType = Literal["percentage", "fixed_amount"]
-
-
-class PlanExternalProductId(TypedDict):
-    ecommerce: str
-
-
-PlanIntervalUnit = Literal["day", "week", "month"]
-
-
-class PlanSubscriptionPreferences(TypedDict):
-    apply_cutoff_date_to_checkout: bool
-    charge_interval_frequency: int
-    cutoff_day_of_month: int
-    cutoff_day_of_week: int
-    expire_after_specific_number_of_charges: int
-    order_day_of_month: int
-    order_day_of_week: int
-    order_interval_frequency: int
-    interval_unit: PlanIntervalUnit
-
-
-class PlanChannelSettings(TypedDict, total=False):
-    api: PlanChannelSettingsApi
-    customer_portal: PlanChannelSettingsCustomerPortal
-    merchant_portal: PlanChannelSettingsMerchantPortal
-    checkout_page: PlanChannelSettingsCheckoutPage
-
-
-PlanType = Literal["subscription", "prepaid", "onetime"]
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.plan import (
+    Plan,
+    PlanChannelSettings,
+    PlanDiscountType,
+    PlanExternalProductId,
+    PlanSubscriptionPreferences,
+    PlanType,
+)
 
 
 class PlanCreateBodyOptional(TypedDict, total=False):
@@ -107,45 +68,62 @@ class PlanResource(RechargeResource):
     """
 
     object_list_key = "plans"
+    object_key_dict = "plan"
     recharge_version: RechargeVersion = "2021-11"
 
-    def create(self, body: PlanCreateBody):
+    def create(self, body: PlanCreateBody) -> Plan:
         """Create a plan.
         https://developer.rechargepayments.com/2021-11/plans/plans_create
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self._url, body)
+        data = self._http_post(self._url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Plan(**data)
 
-    def update(self, plan_id: int, body: PlanUpdateBody):
+    def update(self, plan_id: int, body: PlanUpdateBody) -> Plan:
         """Update a plan.
         https://developer.rechargepayments.com/2021-11/plans/plans_update
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self._check_scopes(f"PUT /{self.object_list_key}/:plan_id", required_scopes)
 
-        return self._http_put(f"{self._url}/{plan_id}", body)
+        url = f"{self._url}/{plan_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Plan(**data)
 
-    def delete(self, plan_id: int):
+    def delete(self, plan_id: int) -> dict:
         """Delete a plan.
         https://developer.rechargepayments.com/2021-11/plans/plans_delete
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self._check_scopes(f"DELETE /{self.object_list_key}/:plan_id", required_scopes)
 
-        return self._http_delete(f"{self._url}/{plan_id}")
+        url = f"{self._url}/{plan_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, query: Optional[PlanListQuery] = None):
+    def list_(self, query: Optional[PlanListQuery] = None) -> list[Plan]:
         """List plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_list
         """
         required_scopes: list[RechargeScope] = ["read_products"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Plan(**item) for item in data]
 
-    def bulk_create(self, external_product_id: str, body: PlanBulkCreateBody):
+    def bulk_create(
+        self, external_product_id: str, body: PlanBulkCreateBody
+    ) -> list[Plan]:
         """Bulk create plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_bulk_create
         """
@@ -154,11 +132,15 @@ class PlanResource(RechargeResource):
             "POST /products/:external_product_id/plans-bulk", required_scopes
         )
 
-        return self._http_post(
-            f"{self.base_url}/products/{external_product_id}/plans-bulk", body
-        )
+        url = f"{self.base_url}/products/{external_product_id}/plans-bulk"
+        data = self._http_post(url, body, expected=list)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return [Plan(**item) for item in data]
 
-    def bulk_update(self, external_product_id: str, body: PlanBulkUpdateBody):
+    def bulk_update(
+        self, external_product_id: str, body: PlanBulkUpdateBody
+    ) -> list[Plan]:
         """Bulk update plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_bulk_update
         """
@@ -167,11 +149,13 @@ class PlanResource(RechargeResource):
             "PUT /products/:external_product_id/plans-bulk", required_scopes
         )
 
-        return self._http_put(
-            f"{self.base_url}/products/{external_product_id}/plans-bulk", body
-        )
+        url = f"{self.base_url}/products/{external_product_id}/plans-bulk"
+        data = self._http_put(url, body, expected=list)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return [Plan(**item) for item in data]
 
-    def bulk_delete(self, external_product_id: str, body: PlanBulkDeleteBody):
+    def bulk_delete(self, external_product_id: str, body: PlanBulkDeleteBody) -> dict:
         """Bulk delete plans.
         https://developer.rechargepayments.com/2021-11/plans/plans_bulk_delete
         """
@@ -180,6 +164,8 @@ class PlanResource(RechargeResource):
             "DELETE /products/:external_product_id/plans-bulk", required_scopes
         )
 
-        return self._http_delete(
-            f"{self.base_url}/products/{external_product_id}/plans-bulk", body
-        )
+        url = f"{self.base_url}/products/{external_product_id}/plans-bulk"
+        data = self._http_delete(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data

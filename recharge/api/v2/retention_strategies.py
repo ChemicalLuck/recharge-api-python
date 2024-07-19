@@ -1,12 +1,12 @@
-from typing import Literal, TypedDict
+from typing import TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-RetentionStrategyCancellationFlowType = Literal["subscription", "membership"]
-
-RetentionStrategyIncentiveType = Literal[
-    "delay_subscription", "discount", "skip_charge", "swap_product"
-]
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.retention_strategy import (
+    RetentionStrategyCancellationFlowType,
+    RetentionStrategyIncentiveType,
+    RetentionStrategy,
+)
 
 
 class RetentionStrategyCreateBodyOptional(TypedDict, total=False):
@@ -34,18 +34,22 @@ class RetentionStrategyResource(RechargeResource):
     """
 
     object_list_key = "retention_strategies"
+    object_dict_key = "retention_strategy"
     recharge_version: RechargeVersion = "2021-11"
 
-    def create(self, body: RetentionStrategyCreateBody):
+    def create(self, body: RetentionStrategyCreateBody) -> RetentionStrategy:
         """Create a retention strategy.
         https://developer.rechargepayments.com/2021-11/retention_strategies/retention_strategies_create
         """
         required_scopes: list[RechargeScope] = ["write_retention_strategies"]
         self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self._url, body)
+        data = self._http_post(self._url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return RetentionStrategy(**data)
 
-    def get(self, retention_strategy_id: int):
+    def get(self, retention_strategy_id: int) -> RetentionStrategy:
         """Get a retention strategy.
         https://developer.rechargepayments.com/2021-11/retention_strategies/retention_strategies_retrieve
         """
@@ -54,9 +58,15 @@ class RetentionStrategyResource(RechargeResource):
             f"GET /{self.object_list_key}/:retention_strategy_id", required_scopes
         )
 
-        return self._http_get(f"{self._url}/{retention_strategy_id}")
+        url = f"{self._url}/{retention_strategy_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return RetentionStrategy(**data)
 
-    def update(self, retention_strategy_id: int, body: RetentionStrategyUpdateBody):
+    def update(
+        self, retention_strategy_id: int, body: RetentionStrategyUpdateBody
+    ) -> RetentionStrategy:
         """Update a retention strategy.
         https://developer.rechargepayments.com/2021-11/retention_strategies/retention_strategies_update
         """
@@ -65,9 +75,13 @@ class RetentionStrategyResource(RechargeResource):
             f"PUT /{self.object_list_key}/:retention_strategy_id", required_scopes
         )
 
-        return self._http_put(f"{self._url}/{retention_strategy_id}", body)
+        url = f"{self._url}/{retention_strategy_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return RetentionStrategy(**data)
 
-    def delete(self, retention_strategy_id: int):
+    def delete(self, retention_strategy_id: int) -> dict:
         """Delete a retention strategy.
         https://developer.rechargepayments.com/2021-11/retention_strategies/retention_strategies_delete
         """
@@ -76,13 +90,20 @@ class RetentionStrategyResource(RechargeResource):
             f"DELETE /{self.object_list_key}/:retention_strategy_id", required_scopes
         )
 
-        return self._http_delete(f"{self._url}/{retention_strategy_id}")
+        url = f"{self._url}/{retention_strategy_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self):
+    def list_(self) -> list[RetentionStrategy]:
         """List retention strategies.
         https://developer.rechargepayments.com/2021-11/retention_strategies/retention_strategies_list
         """
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url)
+        data = self._http_get(self._url, expected=list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [RetentionStrategy(**item) for item in data]

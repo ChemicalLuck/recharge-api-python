@@ -1,11 +1,8 @@
 from typing import Literal, TypedDict, Union, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-ChargeStatus = Literal[
-    "SUCCESS", "QUEUED", "ERROR", "REFUNDED", "PARTIALLY_REFUNDED", "SKIPPED"
-]
+from recharge.model.v2.charge import ChargeStatus, Charge
+from recharge.exceptions import RechargeAPIError
 
 ChargeListSortBy = Literal[
     "id-asc",
@@ -58,11 +55,11 @@ class ChargeSkipSubscriptionId(TypedDict, total=True):
     subscription_id: str
 
 
-class ChargeSkupSubscriptionIds(TypedDict, total=True):
+class ChargeSkipSubscriptionIds(TypedDict, total=True):
     subscription_ids: list[str]
 
 
-ChargeSkipBody = Union[ChargeSkipSubscriptionId, ChargeSkupSubscriptionIds]
+ChargeSkipBody = Union[ChargeSkipSubscriptionId, ChargeSkipSubscriptionIds]
 
 
 class ChargeRefundBodyOptional(TypedDict, total=False):
@@ -82,27 +79,35 @@ class ChargeResource(RechargeResource):
     """
 
     object_list_key = "charges"
+    object_dict_key = "charge"
     recharge_version: RechargeVersion = "2021-11"
 
-    def get(self, charge_id: str):
+    def get(self, charge_id: str) -> Charge:
         """Get a charge by id.
         https://developer.rechargepayments.com/2021-11/charges/charge_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
         self._check_scopes(f"GET /{self.object_list_key}/:charge_id", required_scopes)
 
-        return self._http_get(f"{self._url}/{charge_id}")
+        url = f"{self._url}/{charge_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
-    def list_(self, query: Optional[ChargeListQuery] = None):
+    def list_(self, query: Optional[ChargeListQuery] = None) -> list[Charge]:
         """List charges.
         https://developer.rechargepayments.com/2021-11/charges/charge_list
         """
         required_scopes: list[RechargeScope] = ["read_orders"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Charge(**item) for item in data]
 
-    def apply_discount(self, charge_id: str, body: ChargeDiscountApplyBody):
+    def apply_discount(self, charge_id: str, body: ChargeDiscountApplyBody) -> Charge:
         """Apply a discount to a charge.
         https://developer.rechargepayments.com/2021-11/charges/apply_discount
         """
@@ -111,9 +116,13 @@ class ChargeResource(RechargeResource):
             f"POST /{self.object_list_key}/:charge_id/apply_discount", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{charge_id}/apply_discount", body)
+        url = f"{self._url}/{charge_id}/apply_discount"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
-    def remove_discount(self, charge_id: str):
+    def remove_discount(self, charge_id: str) -> Charge:
         """Remove a discount from a charge.
         https://developer.rechargepayments.com/2021-11/charges/remove_discount
         """
@@ -122,9 +131,13 @@ class ChargeResource(RechargeResource):
             f"POST /{self.object_list_key}/:charge_id/remove_discount", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{charge_id}/remove_discount", None)
+        url = f"{self._url}/{charge_id}/remove_discount"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
-    def skip(self, charge_id: str, body: ChargeSkipBody):
+    def skip(self, charge_id: str, body: ChargeSkipBody) -> Charge:
         """Skip a charge.
         https://developer.rechargepayments.com/2021-11/charges/charge_skip
         """
@@ -133,9 +146,13 @@ class ChargeResource(RechargeResource):
             f"POST /{self.object_list_key}/:charge_id/skip", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{charge_id}/skip", body)
+        url = f"{self._url}/{charge_id}/skip"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
-    def unskip(self, charge_id: str, body: ChargeSkipBody):
+    def unskip(self, charge_id: str, body: ChargeSkipBody) -> Charge:
         """Unskip a charge.
         https://developer.rechargepayments.com/2021-11/charges/charge_unskip
         """
@@ -144,9 +161,13 @@ class ChargeResource(RechargeResource):
             f"POST /{self.object_list_key}/:charge_id/unskip", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{charge_id}/unskip", body)
+        url = f"{self._url}/{charge_id}/unskip"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
-    def refund(self, charge_id: str, body: ChargeRefundBody):
+    def refund(self, charge_id: str, body: ChargeRefundBody) -> Charge:
         """Refund a charge.
         https://developer.rechargepayments.com/2021-11/charges/charge_refund
         """
@@ -155,9 +176,13 @@ class ChargeResource(RechargeResource):
             f"POST /{self.object_list_key}/:charge_id/refund", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{charge_id}/refund", body)
+        url = f"{self._url}/{charge_id}/refund"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
-    def process(self, charge_id: str):
+    def process(self, charge_id: str) -> Charge:
         """Process a charge.
         https://developer.rechargepayments.com/2021-11/charges/charge_process
         """
@@ -166,9 +191,13 @@ class ChargeResource(RechargeResource):
             f"POST /{self.object_list_key}/:charge_id/process", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{charge_id}/process", None)
+        url = f"{self._url}/{charge_id}/process"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
-    def capture(self, charge_id: str):
+    def capture(self, charge_id: str) -> Charge:
         """Capture a charge.
         https://developer.rechargepayments.com/2021-11/charges/charge_capture
         """
@@ -182,4 +211,8 @@ class ChargeResource(RechargeResource):
             f"POST /{self.object_list_key}/:charge_id/capture", required_scopes
         )
 
-        return self._http_post(f"{self._url}/{charge_id}/capture_payment", None)
+        url = f"{self._url}/{charge_id}/capture_payment"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)

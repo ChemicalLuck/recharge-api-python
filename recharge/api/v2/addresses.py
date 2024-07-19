@@ -1,27 +1,19 @@
 from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-class AddressOrderAttributes(TypedDict):
-    name: str
-    value: str
-
-
-class AddressShippingLinesOverride(TypedDict, total=False):
-    code: str
-    price: str
-    title: str
-
-
-class AddressDiscounts(TypedDict):
-    id: str
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.address import (
+    Address,
+    AddressShippingLinesOverride,
+    AddressOrderAttribute,
+    AddressDiscount,
+)
 
 
 class AddressCreateBodyOptional(TypedDict, total=False):
     company: str
-    discounts: list[AddressDiscounts]
-    order_attributes: list[AddressOrderAttributes]
+    discounts: list[AddressDiscount]
+    order_attributes: list[AddressOrderAttribute]
     order_note: str
     payment_method_id: int
     presentment_currency: str
@@ -47,10 +39,10 @@ class AddressUpdateBody(TypedDict, total=False):
     city: str
     company: str
     country_code: str
-    discounts: list[AddressDiscounts]
+    discounts: list[AddressDiscount]
     first_name: str
     last_name: str
-    order_attributes: list[AddressOrderAttributes]
+    order_attributes: list[AddressOrderAttribute]
     order_note: str
     payment_method_id: int
     phone: str
@@ -98,36 +90,48 @@ class AddressResource(RechargeResource):
     """
 
     object_list_key = "addresses"
+    object_dict_key = "address"
     recharge_version: RechargeVersion = "2021-11"
 
-    def create(self, body: AddressCreateBody):
+    def create(self, body: AddressCreateBody) -> Address:
         """Create an address for the customer.
         https://developer.rechargepayments.com/2021-11/addresses/create_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self._url, body)
+        data = self._http_post(self._url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def get(self, address_id: str):
+    def get(self, address_id: str) -> Address:
         """Get an address by ID.
         https://developer.rechargepayments.com/2021-11/addresses/retrieve_address
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self._check_scopes(f"GET /{self.object_list_key}/:address_id", required_scopes)
 
-        return self._http_get(f"{self._url}/{address_id}")
+        url = f"{self._url}/{address_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def update(self, address_id: str, body: AddressUpdateBody):
+    def update(self, address_id: str, body: AddressUpdateBody) -> Address:
         """Update an address by ID.
         https://developer.rechargepayments.com/2021-11/addresses/update_address
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self._check_scopes(f"PUT /{self.object_list_key}/:address_id", required_scopes)
 
-        return self._http_put(f"{self._url}/{address_id}", body)
+        url = f"{self._url}/{address_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def delete(self, address_id: str):
+    def delete(self, address_id: str) -> dict:
         """Delete an address by ID.
         https://developer.rechargepayments.com/2021-11/addresses/delete_address
         """
@@ -136,31 +140,46 @@ class AddressResource(RechargeResource):
             f"DELETE /{self.object_list_key}/:address_id", required_scopes
         )
 
-        return self._http_delete(f"{self._url}/{address_id}")
+        url = f"{self._url}/{address_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, query: Optional[AddressListQuery] = None):
+    def list_(self, query: Optional[AddressListQuery] = None) -> list[Address]:
         """List all addresses for a customer.
         https://developer.rechargepayments.com/2021-11/addresses/list_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Address(**address) for address in data]
 
-    def merge(self, body: AddressMergeBody):
+    def merge(self, body: AddressMergeBody) -> Address:
         """Merge two addresses.
         https://developer.rechargepayments.com/2021-11/addresses/merge
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self._check_scopes(f"POST /{self.object_list_key}/merge", required_scopes)
 
-        return self._http_post(f"{self.base_url}/merge", body)
+        url = f"{self.base_url}/merge"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)
 
-    def skip(self, address_id: str, body: AddressSkipBody):
+    def skip(self, address_id: str, body: AddressSkipBody) -> Address:
         """Skip an address.
         https://developer.rechargepayments.com/2021-11/addresses/skip_future_charge
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
         self._check_scopes(f"POST /{self.object_list_key}/skip", required_scopes)
 
-        return self._http_post(f"{self.base_url}/{address_id}/charges/skip", body)
+        url = f"{self.base_url}/{address_id}/charges/skip"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Address(**data)

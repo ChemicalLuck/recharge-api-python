@@ -1,16 +1,11 @@
 from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-
-NotificationTemplateType = Literal[
-    "upcoming_charge", "get_account_access", "shopify_update_payment_information"
-]
-
-
-class NotificationTemplateVars(TypedDict, total=False):
-    address_id: int
-    charge_id: int
+from recharge.model.v2.notification import (
+    NotificationTemplateType,
+    NotificationTemplateVars,
+)
+from recharge.exceptions import RechargeAPIError
 
 
 class NotificationSendEmailBody(TypedDict):
@@ -25,9 +20,10 @@ class NotificationResource(RechargeResource):
     """
 
     object_list_key = "notifications"
+    object_dict_key = "notification"
     recharge_version: RechargeVersion = "2021-11"
 
-    def send_email(self, customer_id: str, body: NotificationSendEmailBody):
+    def send_email(self, customer_id: str, body: NotificationSendEmailBody) -> dict:
         """
         Send an email notification to a customer.
         https://developer.rechargepayments.com/2021-11/notifications/notifications_send
@@ -37,6 +33,8 @@ class NotificationResource(RechargeResource):
             f"POST /customers/:customer_id/{self.object_list_key}", required_scopes
         )
 
-        return self._http_post(
-            f"{self.base_url}/customers/{customer_id}/{self.object_list_key}", body
-        )
+        url = f"{self.base_url}/customers/{customer_id}/{self.object_list_key}"
+        data = self._http_post(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data

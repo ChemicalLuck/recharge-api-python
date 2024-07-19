@@ -1,6 +1,8 @@
 from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.event import Event
 
 
 class EventListQuery(TypedDict, total=False):
@@ -19,13 +21,17 @@ class EventResource(RechargeResource):
     """
 
     object_list_key = "events"
+    object_dict_key = "event"
     recharge_version: RechargeVersion = "2021-11"
 
-    def list_(self, query: Optional[EventListQuery] = None):
+    def list_(self, query: Optional[EventListQuery] = None) -> list[Event]:
         """List events.
         https://developer.rechargepayments.com/2021-11/events/events_list
         """
         required_scopes: list[RechargeScope] = ["read_events"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Event(**event) for event in data]

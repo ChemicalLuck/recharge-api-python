@@ -1,27 +1,13 @@
-from typing import Literal, Optional, TypedDict
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-PaymentMethodType = Literal[
-    "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"
-]
-
-PaymentMethodProcessorName = Literal[
-    "stripe", "braintree", "authorize", "shopify_payments", "mollie"
-]
-
-
-class PaymentMethodBillingAddress(TypedDict, total=False):
-    address1: str
-    address2: str
-    city: str
-    company: str
-    country_code: str
-    first_name: str
-    last_name: str
-    phone: str
-    province: str
-    zip: str
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.payment_method import (
+    PaymentMethod,
+    PaymentMethodBillingAddress,
+    PaymentMethodProcessorName,
+    PaymentMethodType,
+)
 
 
 class PaymentMethodCreateBodyOptional(TypedDict, total=False):
@@ -56,16 +42,19 @@ class PaymentMethodResource(RechargeResource):
     object_list_key = "payment_methods"
     recharge_version: RechargeVersion = "2021-11"
 
-    def create(self, body: PaymentMethodCreateBody):
+    def create(self, body: PaymentMethodCreateBody) -> PaymentMethod:
         """Create a payment method.
         https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_create
         """
         required_scopes: list[RechargeScope] = ["write_payment_methods"]
         self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self._url, body)
+        data = self._http_post(self._url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return PaymentMethod(**data)
 
-    def get(self, payment_method_id: int):
+    def get(self, payment_method_id: int) -> PaymentMethod:
         """Get a payment method.
         https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_get
         """
@@ -74,9 +63,15 @@ class PaymentMethodResource(RechargeResource):
             f"GET /{self.object_list_key}/:payment_method_id", required_scopes
         )
 
-        return self._http_get(f"/{self._url}/{payment_method_id}")
+        url = f"{self._url}/{payment_method_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return PaymentMethod(**data)
 
-    def update(self, payment_method_id: int, body: PaymentMethodUpdateBody):
+    def update(
+        self, payment_method_id: int, body: PaymentMethodUpdateBody
+    ) -> PaymentMethod:
         """Update a payment method.
         https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_update
         """
@@ -85,9 +80,13 @@ class PaymentMethodResource(RechargeResource):
             f"PUT /{self.object_list_key}/:payment_method_id", required_scopes
         )
 
-        return self._http_put(f"{self._url}/{payment_method_id}", body)
+        url = f"{self._url}/{payment_method_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return PaymentMethod(**data)
 
-    def delete(self, payment_method_id: int):
+    def delete(self, payment_method_id: int) -> dict:
         """Delete a payment method.
         https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_delete
         """
@@ -96,13 +95,22 @@ class PaymentMethodResource(RechargeResource):
             f"DELETE /{self.object_list_key}/:payment_method_id", required_scopes
         )
 
-        return self._http_delete(f"{self._url}/{payment_method_id}")
+        url = f"{self._url}/{payment_method_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, query: Optional[PaymentMethodListQuery] = None):
+    def list_(
+        self, query: Optional[PaymentMethodListQuery] = None
+    ) -> list[PaymentMethod]:
         """List payment methods.
         https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_list
         """
         required_scopes: list[RechargeScope] = ["read_payment_methods"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [PaymentMethod(**item) for item in data]

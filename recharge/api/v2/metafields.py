@@ -1,12 +1,12 @@
 from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-MetafieldOwnerResource = Literal[
-    "address", "store", "customer", "subscription", "order", "charge"
-]
-
-MetafieldValueType = Literal["string", "json_string", "integer"]
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.metafield import (
+    Metafield,
+    MetafieldOwnerResource,
+    MetafieldValueType,
+)
 
 
 class MetafieldCreateBodyOptional(TypedDict, total=False):
@@ -85,9 +85,10 @@ class MetafieldResource(RechargeResource):
     """
 
     object_list_key = "metafields"
+    object_dict_key = "metafield"
     recharge_version: RechargeVersion = "2021-11"
 
-    def create(self, body: MetafieldCreateBody):
+    def create(self, body: MetafieldCreateBody) -> Metafield:
         """Create a metafield.
         https://developer.rechargepayments.com/2021-11/metafields/metafields_create
         """
@@ -96,9 +97,12 @@ class MetafieldResource(RechargeResource):
         required_scopes: list[RechargeScope] = [resource_scope(resource, "write")]
         self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self._url, body)
+        data = self._http_post(self._url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Metafield(**data)
 
-    def get(self, metafield_id: str, resource: MetafieldOwnerResource):
+    def get(self, metafield_id: str, resource: MetafieldOwnerResource) -> Metafield:
         """Get a metafield by ID.
         https://developer.rechargepayments.com/2021-11/metafields/metafields_retrieve
         """
@@ -107,9 +111,13 @@ class MetafieldResource(RechargeResource):
             f"GET /{self.object_list_key}/:metafield_id", required_scopes
         )
 
-        return self._http_get(f"{self._url}/{metafield_id}")
+        url = f"{self._url}/{metafield_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Metafield(**data)
 
-    def update(self, metafield_id: str, body: MetafieldUpdateBody):
+    def update(self, metafield_id: str, body: MetafieldUpdateBody) -> Metafield:
         """Update a metafield.
         https://developer.rechargepayments.com/2021-11/metafields/metafields_update
         """
@@ -119,9 +127,13 @@ class MetafieldResource(RechargeResource):
             f"PUT /{self.object_list_key}/:metafield_id", required_scopes
         )
 
-        return self._http_put(f"{self._url}/{metafield_id}", body)
+        url = f"{self._url}/{metafield_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Metafield(**data)
 
-    def delete(self, metafield_id: str, resource: MetafieldOwnerResource):
+    def delete(self, metafield_id: str, resource: MetafieldOwnerResource) -> dict:
         """Delete a metafield.
         https://developer.rechargepayments.com/2021-11/metafields/metafields_delete
         """
@@ -130,9 +142,13 @@ class MetafieldResource(RechargeResource):
             f"DELETE /{self.object_list_key}/:metafield_id", required_scopes
         )
 
-        return self._http_delete(f"{self._url}/{metafield_id}")
+        url = f"{self._url}/{metafield_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, query: MetafieldListQuery):
+    def list_(self, query: MetafieldListQuery) -> list[Metafield]:
         """List metafields.
         https://developer.rechargepayments.com/2021-11/metafields/metafields_list
         """
@@ -140,4 +156,7 @@ class MetafieldResource(RechargeResource):
         required_scopes: list[RechargeScope] = [resource_scope(resource, "read")]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Metafield(**metafield) for metafield in data]

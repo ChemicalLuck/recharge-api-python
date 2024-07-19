@@ -1,65 +1,21 @@
-from typing import Literal, Optional, TypedDict
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-
-ProductDiscountType = Literal["percentage"]
-
-
-class ProductExternalProductId(TypedDict):
-    ecommerce: str
-
-
-class ProductImages(TypedDict, total=False):
-    large: str
-    medium: str
-    original: str
-    small: str
-    sort_order: int
-
-
-class ProductOptionValue(TypedDict):
-    label: str
-    position: str
-
-
-class ProductOption(TypedDict):
-    name: str
-    position: str
-    values: list[ProductOptionValue]
-
-
-class ProductVariantDimensions(TypedDict):
-    weight: int
-    weight_unit: str
-
-
-class ProductVariantOptionValue(TypedDict):
-    label: str
-
-
-class ProductVariantPrices(TypedDict):
-    compare_at_price: str
-    unit_price: str
-
-
-class ProductVariant(TypedDict):
-    dimensions: ProductVariantDimensions
-    external_variant_id: str
-    image: ProductImages
-    option_values: list[ProductVariantOptionValue]
-    prices: ProductVariantPrices
-    requires_shipping: bool
-    sku: str
-    tax_code: str
-    taxable: bool
-    title: str
+from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.product import (
+    Product,
+    ProductExternalProductId,
+    ProductImage,
+    ProductOption,
+    ProductVariant,
+)
 
 
 class ProductCreateBodyOptional(TypedDict, total=False):
     brand: str
     external_created_at: str
     external_updated_at: str
-    images: ProductImages
+    images: ProductImage
     published_at: str
     requires_shipping: bool
 
@@ -72,12 +28,9 @@ class ProductCreateBody(ProductCreateBodyOptional):
     vendor: str
 
 
-ProductOrderIntervalUnit = Literal["day", "week", "month"]
-
-
 class ProductUpdateBody(TypedDict, total=False):
     brand: str
-    images: ProductImages
+    images: ProductImage
     options: list[ProductOption]
     requires_shipping: bool
     title: str
@@ -101,34 +54,45 @@ class ProductResource(RechargeResource):
     object_list_key = "products"
     recharge_version: RechargeVersion = "2021-11"
 
-    def create(self, body: ProductCreateBody):
+    def create(self, body: ProductCreateBody) -> Product:
         """Create a product.
         https://developer.rechargepayments.com/2021-11/products/products_create
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self._check_scopes(f"POST /{self.object_list_key}", required_scopes)
 
-        return self._http_post(self._url, body)
+        data = self._http_post(self._url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Product(**data)
 
-    def get(self, product_id: str):
+    def get(self, product_id: str) -> Product:
         """Get a product.
         https://developer.rechargepayments.com/2021-11/products/products_retrieve
         """
         required_scopes: list[RechargeScope] = ["read_products"]
         self._check_scopes(f"GET /{self.object_list_key}/:product_id", required_scopes)
 
-        return self._http_get(f"{self._url}/{product_id}")
+        url = f"{self._url}/{product_id}"
+        data = self._http_get(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Product(**data)
 
-    def update(self, product_id: str, body: ProductUpdateBody):
+    def update(self, product_id: str, body: ProductUpdateBody) -> Product:
         """Update a product.
         https://developer.rechargepayments.com/2021-11/products/products_update
         """
         required_scopes: list[RechargeScope] = ["write_products"]
         self._check_scopes(f"PUT /{self.object_list_key}/:product_id", required_scopes)
 
-        return self._http_put(f"{self._url}/{product_id}", body)
+        url = f"{self._url}/{product_id}"
+        data = self._http_put(url, body)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Product(**data)
 
-    def delete(self, product_id: str):
+    def delete(self, product_id: str) -> dict:
         """Delete a product.
         https://developer.rechargepayments.com/2021-11/products/products_delete
         """
@@ -137,13 +101,20 @@ class ProductResource(RechargeResource):
             f"DELETE /{self.object_list_key}/:product_id", required_scopes
         )
 
-        return self._http_delete(f"{self._url}/{product_id}")
+        url = f"{self._url}/{product_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
-    def list_(self, query: Optional[ProductListQuery] = None):
+    def list_(self, query: Optional[ProductListQuery] = None) -> list[Product]:
         """List products.
         https://developer.rechargepayments.com/2021-11/products/products_list
         """
         required_scopes: list[RechargeScope] = ["read_products"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        return self._http_get(self._url, query)
+        data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Product(**item) for item in data]
