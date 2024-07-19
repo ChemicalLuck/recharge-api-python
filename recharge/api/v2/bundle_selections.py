@@ -61,6 +61,18 @@ class BundleSelectionResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [BundleSelection(**item) for item in data]
 
+    def list_all(self) -> list[BundleSelection]:
+        """List all bundle selections.
+        https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_list
+        """
+        required_scopes: list[RechargeScope] = ["read_subscriptions"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [BundleSelection(**item) for item in data]
+
     def get(self, bundle_selection_id: str) -> BundleSelection:
         """Get a bundle selection.
         https://developer.rechargepayments.com/2021-11/bundle_selections/bundle_selections_retrieve

@@ -147,13 +147,25 @@ class AddressResource(RechargeResource):
         return data
 
     def list_(self, query: Optional[AddressListQuery] = None) -> list[Address]:
-        """List all addresses for a customer.
+        """List addresses for a customer.
         https://developer.rechargepayments.com/2021-11/addresses/list_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         data = self._http_get(self._url, query, list)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Address(**address) for address in data]
+
+    def list_all(self, query: Optional[AddressListQuery] = None) -> list[Address]:
+        """List all addresses for a customer.
+        https://developer.rechargepayments.com/2021-11/addresses/list_addresses
+        """
+        required_scopes: list[RechargeScope] = ["read_customers"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Address(**address) for address in data]

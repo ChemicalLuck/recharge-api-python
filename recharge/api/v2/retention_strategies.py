@@ -107,3 +107,15 @@ class RetentionStrategyResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [RetentionStrategy(**item) for item in data]
+
+    def list_all(self) -> list[RetentionStrategy]:
+        """List all retention strategies.
+        https://developer.rechargepayments.com/2021-11/retention_strategies/retention_strategies_list
+        """
+        required_scopes: list[RechargeScope] = ["read_subscriptions"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [RetentionStrategy(**item) for item in data]

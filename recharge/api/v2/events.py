@@ -35,3 +35,15 @@ class EventResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Event(**event) for event in data]
+
+    def list_all(self, query: Optional[EventListQuery] = None) -> list[Event]:
+        """List all events.
+        https://developer.rechargepayments.com/2021-11/events/events_list
+        """
+        required_scopes: list[RechargeScope] = ["read_events"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Event(**event) for event in data]

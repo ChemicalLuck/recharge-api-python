@@ -114,3 +114,17 @@ class PaymentMethodResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [PaymentMethod(**item) for item in data]
+
+    def list_all(
+        self, query: Optional[PaymentMethodListQuery] = None
+    ) -> list[PaymentMethod]:
+        """List all payment methods.
+        https://developer.rechargepayments.com/2021-11/payment_methods/payment_methods_list
+        """
+        required_scopes: list[RechargeScope] = ["read_payment_methods"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [PaymentMethod(**item) for item in data]

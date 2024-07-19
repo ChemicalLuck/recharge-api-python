@@ -206,6 +206,20 @@ class SubscriptionResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Subscription(**item) for item in data]
 
+    def list_all(
+        self, query: Optional[SubscriptionListQuery] = None
+    ) -> list[Subscription]:
+        """List all subscriptions.
+        https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_list
+        """
+        required_scopes: list[RechargeScope] = ["read_subscriptions"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Subscription(**item) for item in data]
+
     def change_date(
         self, subscription_id: str, body: SubscriptionChangeDateBody
     ) -> Subscription:

@@ -121,6 +121,18 @@ class PlanResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Plan(**item) for item in data]
 
+    def list_all(self, query: Optional[PlanListQuery] = None) -> list[Plan]:
+        """List all plans.
+        https://developer.rechargepayments.com/2021-11/plans/plans_list
+        """
+        required_scopes: list[RechargeScope] = ["read_products"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Plan(**item) for item in data]
+        
     def bulk_create(
         self, external_product_id: str, body: PlanBulkCreateBody
     ) -> list[Plan]:

@@ -36,3 +36,15 @@ class AccountResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Account(**item) for item in data]
+
+    def list_all(self) -> list[Account]:
+        """List all accounts.
+        https://developer.rechargepayments.com/2021-11/accounts/accounts_list
+        """
+        required_scopes: list[RechargeScope] = ["read_accounts"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Account(**item) for item in data]

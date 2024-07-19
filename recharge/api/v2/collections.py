@@ -122,6 +122,18 @@ class CollectionResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Collection(**item) for item in data]
 
+    def list_all(self, query: Optional[CollectionListQuery] = None) -> list[Collection]:
+        """List all collections.
+        https://developer.rechargepayments.com/2021-11/collections/collections_list
+        """
+        required_scopes: list[RechargeScope] = ["read_products"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Collection(**item) for item in data]
+
     def list_products(
         self, query: Optional[CollectionListProductsQuery] = None
     ) -> list[CollectionProduct]:

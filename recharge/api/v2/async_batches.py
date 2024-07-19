@@ -100,6 +100,18 @@ class AsyncBatchResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [AsyncBatch(**item) for item in data]
 
+    def list_all(self) -> list[AsyncBatch]:
+        """List all async batches.
+        https://developer.rechargepayments.com/2021-11/async_batch_endpoints/async_batch_endpoints_list
+        """
+        required_scopes: list[RechargeScope] = ["read_batches"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [AsyncBatch(**item) for item in data]
+
     def list_tasks(
         self,
         batch_id: str,
