@@ -167,7 +167,7 @@ class AddressResource(RechargeResource):
     def list_(
         self, customer_id: str, query: Optional[AddressListQuery] = None
     ) -> list[Address]:
-        """List all addresses for a customer.
+        """List addresses for a customer.
         https://developer.rechargepayments.com/2021-01/addresses/list_addresses
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
@@ -180,6 +180,22 @@ class AddressResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Address(**item) for item in data]
+
+    def list_all(self, customer_id: str, query: Optional[AddressListQuery] = None) -> list[Address]:
+        """List all addresses for a customer.
+        https://developer.rechargepayments.com/2021-01/addresses/list_addresses
+        """
+        required_scopes: list[RechargeScope] = ["read_customers"]
+        self._check_scopes(
+            f"GET /customers/:customer_id/{self.object_list_key}", required_scopes
+        )
+
+        url = f"{self.base_url}/customers/{customer_id}/{self.object_list_key}"
+        data = self._paginate(url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Address(**item) for item in data]
+
 
     def count(self, query: Optional[AddressCountQuery] = None) -> int:
         """Retrieve the count of addresses.

@@ -1,11 +1,13 @@
 from typing import TypedDict, Optional
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
 from recharge.model.v1.order import (
     OrderStatus,
     OrderBillingAddress,
     OrderShippingAddress,
     OrderCustomer,
+    Order,
 )
 
 
@@ -106,6 +108,19 @@ class OrderResource(RechargeResource):
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         return self._http_get(self._url, query)
+
+    def list_all(self, query: Optional[OrderListQuery] = None) -> list[Order]:
+        """List all orders.
+        https://developer.rechargepayments.com/2021-01/orders/orders_list
+        """
+        required_scopes: list[RechargeScope] = ["read_orders"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Order(**item) for item in data]
+
 
     def count(self, query: Optional[OrderCountQuery] = None):
         """Count orders.

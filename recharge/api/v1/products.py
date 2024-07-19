@@ -154,6 +154,18 @@ class ProductResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Product(**item) for item in data]
 
+    def list_all(self, query: Optional[ProductListQuery] = None) -> list[Product]:
+        """List all products.
+        https://developer.rechargepayments.com/2021-01/products/products_list
+        """
+        required_scopes: list[RechargeScope] = ["read_products"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Product(**item) for item in data]
+
     def count(self) -> int:
         """Count products.
         https://developer.rechargepayments.com/2021-01/products/products_count

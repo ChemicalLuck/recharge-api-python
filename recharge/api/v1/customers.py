@@ -144,6 +144,18 @@ class CustomerResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Customer(**item) for item in data]
 
+    def list_all(self, query: Optional[CustomerListQuery] = None) -> list[Customer]:
+        """List all customers.
+        https://developer.rechargepayments.com/2021-01/customers/customers_list
+        """
+        required_scopes: list[RechargeScope] = ["read_customers"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Customer(**item) for item in data]
+
     def count(self, query: Optional[CustomerCountQuery] = None) -> int:
         """Retrieve a count of customers.
         https://developer.rechargepayments.com/2021-01/customers/customers_count

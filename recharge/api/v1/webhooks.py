@@ -85,6 +85,15 @@ class WebhookResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Webhook(**item) for item in data]
 
+    def list_all(self) -> list[Webhook]:
+        """List all webhooks.
+        https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_list
+        """
+        data = self._paginate(self._url)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Webhook(**item) for item in data]
+
     def test(self, webhook_id: str) -> dict:
         """Test a webhook.
         https://developer.rechargepayments.com/2021-01/webhooks_endpoints/webhooks_test

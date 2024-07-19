@@ -143,6 +143,18 @@ class DiscountResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Discount(**item) for item in data]
 
+    def list_all(self, query: Optional[DiscountListQuery] = None) -> list[Discount]:
+        """List all discounts.
+        https://developer.rechargepayments.com/2021-01/discounts/discounts_list
+        """
+        required_scopes: list[RechargeScope] = ["read_discounts"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Discount(**item) for item in data]
+
     def count(self, query: Optional[DiscountCountQuery] = None) -> int:
         """Receive a count of all discounts.
         https://developer.rechargepayments.com/v1#count-discounts

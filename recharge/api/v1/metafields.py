@@ -170,6 +170,19 @@ class MetafieldResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Metafield(**item) for item in data]
 
+    def list_all(self, query: MetafieldListQuery) -> list[Metafield]:
+        """List all metafields.
+        https://developer.rechargepayments.com/2021-01/metafields/metafields_list
+        """
+        resource = query["owner_resource"]
+        required_scopes: list[RechargeScope] = [resource_scope(resource, "read")]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Metafield(**item) for item in data]
+
     def count(self, query: MetafieldCountQuery) -> int:
         """Retrieve a count of metafields.
         https://developer.rechargepayments.com/2021-01/metafields/metafields_count

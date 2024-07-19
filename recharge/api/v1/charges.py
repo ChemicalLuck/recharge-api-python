@@ -106,6 +106,18 @@ class ChargeResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Charge(**item) for item in data]
 
+    def list_all(self, query: Optional[ChargeListQuery] = None) -> list[Charge]:
+        """List all charges.
+        https://developer.rechargepayments.com/2021-01/charges/charge_list
+        """
+        required_scopes: list[RechargeScope] = ["read_orders"]
+        self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
+
+        data = self._paginate(self._url, query)
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Charge(**item) for item in data]
+
     def count(self, query: Optional[ChargeCountQuery] = None) -> int:
         """Count charges.
         https://developer.rechargepayments.com/2021-01/charges/charge_count
