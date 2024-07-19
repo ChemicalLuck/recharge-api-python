@@ -51,32 +51,56 @@ RechargeScope = Literal[
 
 REDACTED_HEADERS = ["Cookie", "X-Recharge-Access-Token"]
 
+
 class RequestMethod(Enum):
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
     DELETE = "DELETE"
 
+
 class RechargeCustomFormatter(logging.Formatter):
     # List of standard log record attributes
     standard_attributes = {
-        'name', 'msg', 'args', 'levelname', 'levelno', 'pathname', 'filename', 'module', 
-        'exc_info', 'exc_text', 'stack_info', 'lineno', 'funcName', 'created', 'msecs', 
-        'relativeCreated', 'thread', 'threadName', 'processName', 'process', 'message', 
-        'asctime'
+        "name",
+        "msg",
+        "args",
+        "levelname",
+        "levelno",
+        "pathname",
+        "filename",
+        "module",
+        "exc_info",
+        "exc_text",
+        "stack_info",
+        "lineno",
+        "funcName",
+        "created",
+        "msecs",
+        "relativeCreated",
+        "thread",
+        "threadName",
+        "processName",
+        "process",
+        "message",
+        "asctime",
     }
 
     def format(self, record):
         # Start with the base message
         base_message = super().format(record)
-        
+
         # Get the extra fields
-        extra_fields = {key: value for key, value in record.__dict__.items() if key not in self.standard_attributes}
-        
+        extra_fields = {
+            key: value
+            for key, value in record.__dict__.items()
+            if key not in self.standard_attributes
+        }
+
         # Combine base message with extra fields
         if extra_fields:
             extra_message = json.dumps(extra_fields, indent=4)
-            return f'{base_message}\n{extra_message}'
+            return f"{base_message}\n{extra_message}"
         else:
             return base_message
 
@@ -177,7 +201,7 @@ class RechargeClient:
             extra={
                 "url": redacted_request.url,
                 "body": redacted_request.body,
-                "headers": dict(redacted_request.headers)
+                "headers": dict(redacted_request.headers),
             },
         )
         try:
@@ -275,7 +299,7 @@ class RechargeClient:
 
         if version == "2021-01":
             return response.links.get("next", {}).get("url")
-        
+
         if version == "2021-11":
             try:
                 data = response.json()
@@ -284,7 +308,11 @@ class RechargeClient:
                     parsed_url = urlparse(response.url)
                     query_params = parse_qs(parsed_url.query)
                     query_params["cursor"] = [cursor]
-                    query_params = {k: v for k, v in query_params.items() if k in ["cursor", "limit"]}
+                    query_params = {
+                        k: v
+                        for k, v in query_params.items()
+                        if k in ["cursor", "limit"]
+                    }
                     new_query_string = urlencode(query_params, doseq=True)
                     return urlunparse(parsed_url._replace(query=new_query_string))
             except JSONDecodeError:
@@ -303,26 +331,25 @@ class RechargeClient:
         self,
         url: str,
         query: Optional[Mapping[str, Any]] = None,
-        response_key: Optional[str] = None
+        response_key: Optional[str] = None,
     ) -> list:
         pages = 0
         data = []
         while True:
             pages += 1
-            self._logger.debug("Fetching page", extra={"page": pages, "url": url, "query": query})
+            self._logger.debug(
+                "Fetching page", extra={"page": pages, "url": url, "query": query}
+            )
             response = self._request(RequestMethod.GET, url, query)
             if not isinstance(response, Response):
                 return data
-            
+
             try:
                 response_data = response.json()
             except JSONDecodeError:
                 self._logger.error(
                     "Failed to decode JSON response, expect missing data",
-                    extra={
-                        "response_key": response_key,
-                        "response": response.text
-                    },
+                    extra={"response_key": response_key, "response": response.text},
                 )
                 break
             data.extend(response_data.get(response_key, []))
@@ -335,10 +362,7 @@ class RechargeClient:
 
         self._logger.debug(
             "Fetched all pages",
-            extra={
-                "pages": pages,
-                "records": len(data)
-            },
+            extra={"pages": pages, "records": len(data)},
         )
 
         return data
