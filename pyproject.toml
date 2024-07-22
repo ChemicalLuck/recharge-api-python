@@ -19,6 +19,9 @@ classifiers = [
 ]
 dependencies = ["requests"]
 
+[project.optional-dependencies]
+dev = ["ruff", "pre-commit"]
+
 [project.urls]
 Homepage = "http://github.com/ChemicalLuck/recharge-api"
 
