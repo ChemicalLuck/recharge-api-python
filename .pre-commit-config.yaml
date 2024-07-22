@@ -1,7 +1,17 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0 # Use the ref you want to point at
+    hooks:
+      - id: check-ast
+      - id: check-toml
+      - id: check-yaml
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.4
     hooks:
       - id: ruff
-        args: [--fix]
+        name: "ruff-lint"
+        args: ["--fix"]
+      - id: ruff
+        name: "ruff-sort-imports"
+        args: ["check", "--select", "I", "--fix"]
       - id: ruff-format
