@@ -119,7 +119,6 @@ class ChargeResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Charge(**item) for item in data]
 
-
     def apply_discount(self, charge_id: str, body: ChargeDiscountApplyBody) -> Charge:
         """Apply a discount to a charge.
         https://developer.rechargepayments.com/2021-11/charges/apply_discount

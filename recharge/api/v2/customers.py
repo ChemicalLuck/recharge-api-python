@@ -159,9 +159,7 @@ class CustomerResource(RechargeResource):
         )
 
         url = f"{self._url}/{customer_id}/delivery_schedule"
-        self.object_dict_key = "deliverySchedule"
-        data = self._http_get(url, query)
-        self.object_dict_key = "customer"
+        data = self._http_get(url, query, response_key="deliverySchedule")
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return CustomerDeliverySchedule(**data)
@@ -176,9 +174,7 @@ class CustomerResource(RechargeResource):
         )
 
         url = f"{self._url}/{customer_id}/credit_summary"
-        self.object_dict_key = "credit_summary"
-        data = self._http_get(url)
-        self.object_dict_key = "customer"
+        data = self._http_get(url, response_key="credit_summary")
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return CustomerCreditSummary(**data)

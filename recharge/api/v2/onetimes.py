@@ -142,4 +142,3 @@ class OnetimeResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Onetime(**item) for item in data]
-

@@ -136,7 +136,6 @@ class OrderResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Order(**item) for item in data]
 
-
     def count(self, query: Optional[OrderCountQuery] = None) -> int:
         """Count orders.
         https://developer.rechargepayments.com/2021-01/orders/orders_count
@@ -191,7 +190,8 @@ class OrderResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_orders"]
         self._check_scopes(
-            f"POST /{self.object_list_key}/clone_order_on_success_charge/:order_id/charge/:charge_id", required_scopes
+            f"POST /{self.object_list_key}/clone_order_on_success_charge/:order_id/charge/:charge_id",
+            required_scopes,
         )
 
         url = f"{self._url}/clone_order_on_success_charge/{order_id}/charge/{charge_id}"

@@ -1,5 +1,6 @@
 from typing import TypedDict
 
+
 class EventSource(TypedDict):
     account_id: str
     api_token_id: str

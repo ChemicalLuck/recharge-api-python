@@ -65,17 +65,21 @@ class RechargeResource:
         url: str,
         query: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
+        response_key: Optional[str] = None,
     ) -> Union[dict, list]:
         self._client.set_version(self.recharge_version)
-        return self._client.get(url, query, self._get_response_key(expected), expected)
+        response_key = response_key or self._get_response_key(expected)
+        return self._client.get(url, query, response_key, expected)
 
     def _paginate(
         self,
         url: str,
         query: Optional[Mapping[str, Any]] = None,
+        response_key: Optional[str] = None,
     ) -> list:
         self._client.set_version(self.recharge_version)
-        return self._client.paginate(url, query, self.object_list_key)
+        response_key = response_key or self.object_list_key
+        return self._client.paginate(url, query, response_key)
 
     def _http_post(
         self,
@@ -83,11 +87,11 @@ class RechargeResource:
         body: Optional[Mapping[str, Any]] = None,
         query: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
+        response_key: Optional[str] = None,
     ) -> Union[dict, list]:
         self._client.set_version(self.recharge_version)
-        return self._client.post(
-            url, body, query, self._get_response_key(expected), expected
-        )
+        response_key = response_key or self._get_response_key(expected)
+        return self._client.post(url, body, query, response_key, expected)
 
     def _http_put(
         self,
@@ -95,19 +99,19 @@ class RechargeResource:
         body: Optional[Mapping[str, Any]] = None,
         query: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
+        response_key: Optional[str] = None,
     ) -> Union[dict, list]:
         self._client.set_version(self.recharge_version)
-        return self._client.put(
-            url, body, query, self._get_response_key(expected), expected
-        )
+        response_key = response_key or self._get_response_key(expected)
+        return self._client.put(url, body, query, response_key, expected)
 
     def _http_delete(
         self,
         url: str,
         body: Optional[Mapping[str, Any]] = None,
         expected: type[Union[dict, list]] = dict,
+        response_key: Optional[str] = None,
     ) -> Union[dict, list]:
         self._client.set_version(self.recharge_version)
-        return self._client.delete(
-            url, body, self._get_response_key(expected), expected
-        )
+        response_key = response_key or self._get_response_key(expected)
+        return self._client.delete(url, body, response_key, expected)

@@ -132,7 +132,7 @@ class PlanResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Plan(**item) for item in data]
-        
+
     def bulk_create(
         self, external_product_id: str, body: PlanBulkCreateBody
     ) -> list[Plan]:

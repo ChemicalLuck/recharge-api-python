@@ -143,4 +143,3 @@ class DiscountResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Discount(**item) for item in data]
-

@@ -126,9 +126,9 @@ class AsyncBatchResource(RechargeResource):
         )
 
         url = f"{self._url}/{batch_id}/tasks"
-        self.object_list_key = "async_batch_tasks"
-        data = self._http_get(url, query, expected=list)
-        self.object_list_key = "async_batches"
+        data = self._http_get(
+            url, query, expected=list, response_key="async_batch_tasks"
+        )
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [AsyncBatchTask(**item) for item in data]

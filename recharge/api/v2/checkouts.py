@@ -252,9 +252,7 @@ class CheckoutResource(RechargeResource):
         )
 
         url = f"{self._url}/{checkout_id}/shipping_rates"
-        self.object_list_key = "shipping_rates"
-        data = self._http_get(url, expected=list)
-        self.object_list_key = "checkouts"
+        data = self._http_get(url, expected=list, response_key="shipping_rates")
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [CheckoutShippingRate(**item) for item in data]
@@ -269,9 +267,7 @@ class CheckoutResource(RechargeResource):
         )
 
         url = f"{self._url}/{checkout_id}/charge"
-        self.object_list_key = "checkout_charge"
-        data = self._http_post(url, body)
-        self.object_list_key = "checkouts"
+        data = self._http_post(url, body, response_key="checkout_charge")
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Checkout(**data)

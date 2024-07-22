@@ -294,9 +294,7 @@ class SubscriptionResource(RechargeResource):
         self._check_scopes(f"POST /{self.object_list_key}/skip_gift", required_scopes)
 
         url = f"{self._url}/skip_gift"
-        self.object_list_key = "onetimes"
-        data = self._http_post(url, body, expected=list)
-        self.object_list_key = "subscriptions"
+        data = self._http_post(url, body, expected=list, response_key="onetimes")
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Onetime(**item) for item in data]

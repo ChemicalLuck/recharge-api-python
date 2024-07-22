@@ -144,9 +144,7 @@ class CollectionResource(RechargeResource):
         self._check_scopes("GET /collection_products", required_scopes)
 
         url = f"{self.base_url}/collection_products"
-        self.object_list_key = "collection_products"
-        data = self._http_get(url, query, list)
-        self.object_list_key = "collections"
+        data = self._http_get(url, query, list, response_key="collection_products")
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [CollectionProduct(**item) for item in data]
@@ -164,9 +162,9 @@ class CollectionResource(RechargeResource):
         )
 
         url = f"{self._url}/{collection_id}/products"
-        self.object_list_key = "collection_products"
-        data = self._http_post(url, body, expected=list)
-        self.object_list_key = "collections"
+        data = self._http_post(
+            url, body, expected=list, response_key="collection_products"
+        )
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [CollectionProduct(**item) for item in data]

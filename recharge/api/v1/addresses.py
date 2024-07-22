@@ -181,7 +181,9 @@ class AddressResource(RechargeResource):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Address(**item) for item in data]
 
-    def list_all(self, customer_id: str, query: Optional[AddressListQuery] = None) -> list[Address]:
+    def list_all(
+        self, customer_id: str, query: Optional[AddressListQuery] = None
+    ) -> list[Address]:
         """List all addresses for a customer.
         https://developer.rechargepayments.com/2021-01/addresses/list_addresses
         """
@@ -195,7 +197,6 @@ class AddressResource(RechargeResource):
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Address(**item) for item in data]
-
 
     def count(self, query: Optional[AddressCountQuery] = None) -> int:
         """Retrieve the count of addresses.
