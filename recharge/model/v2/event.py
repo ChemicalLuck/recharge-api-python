@@ -1,8 +1,5 @@
 from typing import TypedDict
 
-from recharge.api.v2.events import EventResource
-
-
 class EventSource(TypedDict):
     account_id: str
     api_token_id: str
@@ -26,5 +23,5 @@ class Event(TypedDict):
     verb: str
     description: str
     updated_attributes: dict
-    source: EventResource
+    source: EventSource
     custom_attributes: EventCustomAttributes
