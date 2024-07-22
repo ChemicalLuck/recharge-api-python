@@ -4,6 +4,7 @@ import json
 from enum import Enum
 from typing import Any, Literal, Mapping, Optional, Union
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+import random
 
 from requests import Request, Response, Session
 from requests.exceptions import HTTPError, RequestException, JSONDecodeError
@@ -84,6 +85,7 @@ class RechargeCustomFormatter(logging.Formatter):
         "process",
         "message",
         "asctime",
+        "taskName",
     }
 
     def format(self, record):
@@ -110,18 +112,16 @@ class RechargeClient:
         self,
         access_token: str,
         max_retries: int = 3,
-        retry_delay: int = 10,
+        retry_delay: int = 2,
         session: Optional[Session] = None,
         logger: Optional[logging.Logger] = None,
         logging_level: int = logging.DEBUG,
     ):
         self._max_retries = max_retries
+        self._base_retry_delay = retry_delay
         self._retry_delay = retry_delay
         self._retries = 0
-        self._logger = logger or logging.getLogger(__name__)
-        if logger is None:
-            self._default_logging_setup(logging_level)
-
+        self._logger = logger or self._create_default_logger(logging_level)
         self._session = session or Session()
         self._session.headers.update(
             {
@@ -131,18 +131,18 @@ class RechargeClient:
             }
         )
 
-    def _default_logging_setup(self, logging_level: int = logging.DEBUG):
+    def _create_default_logger(self, logging_level: int = logging.DEBUG):
+        logger = logging.getLogger(__name__)
         handler = logging.StreamHandler()
         formatter = RechargeCustomFormatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
         handler.setFormatter(formatter)
-        self._logger.addHandler(handler)
-        self._logger.setLevel(logging_level)
+        logger.addHandler(handler)
+        logger.setLevel(logging_level)
+        return logger
 
     def _redact_auth(self, request: PreparedRequest) -> PreparedRequest:
-        """Redacts the Authorization header from a request."""
-
         temp_request = request.copy()
         for header in REDACTED_HEADERS:
             if header in temp_request.headers:
@@ -150,7 +150,6 @@ class RechargeClient:
         return temp_request
 
     def _retry(self, request: PreparedRequest) -> Response:
-        """Retries a request."""
         redacted_request = self._redact_auth(request)
         if self._retries >= self._max_retries:
             self._logger.error(
@@ -163,9 +162,9 @@ class RechargeClient:
                     "headers": dict(redacted_request.headers),
                 },
             )
+            self._reset_retry_logic()
             raise RechargeAPIError("Max retries reached")
-
-        self._retries += 1
+        self._increase_retry_logic()
         self._logger.info(
             "Retrying",
             extra={
@@ -180,12 +179,18 @@ class RechargeClient:
         time.sleep(self._retry_delay)
         return self._send(request)
 
-    def _extract_error_message(self, response: Response):
-        """Extracts an error message from a response."""
+    def _increase_retry_logic(self):
+        self._retries += 1
+        self._retry_delay *= 2
+        self._retry_delay += random.uniform(0, 1)
 
+    def _reset_retry_logic(self):
+        self._retries = 0
+        self._retry_delay = self._base_retry_delay
+
+    def _extract_error_message(self, response: Response):
         try:
-            error_response = response.json()
-            return error_response
+            return response.json()
         except JSONDecodeError:
             self._logger.error(
                 "Failed to decode JSON response", extra={"response": response.text}
@@ -193,9 +198,7 @@ class RechargeClient:
             return response.text
 
     def _send(self, request: PreparedRequest) -> Response:
-        """Sends a request and handles retries and errors."""
         redacted_request = self._redact_auth(request)
-
         self._logger.debug(
             "Sending request",
             extra={
@@ -206,11 +209,9 @@ class RechargeClient:
         )
         try:
             response = self._session.send(request)
-
             if response.status_code == 429:
                 self._logger.warning("Rate limited, retrying...")
                 return self._retry(request)
-
             if response.status_code >= 500:
                 self._logger.error(
                     "Server error, retrying...",
@@ -220,13 +221,10 @@ class RechargeClient:
                     },
                 )
                 return self._retry(request)
-
-            self._retries = 0
+            self._reset_retry_logic()
             response.raise_for_status()
-
             self._logger.debug("Request successful", extra={"response": response.text})
             return response
-
         except HTTPError as http_error:
             self._logger.critical(
                 "HTTP error",
@@ -262,12 +260,7 @@ class RechargeClient:
                 extra={"response": response.text},
             )
             return expected()
-
-        if key is None:
-            return response_json
-
-        data = response_json.get(key, response_json)
-
+        data = response_json if key is None else response_json.get(key, response_json)
         if not isinstance(data, expected):
             self._logger.error(
                 "Invalid data type",
@@ -277,10 +270,9 @@ class RechargeClient:
                     "response": response.text,
                 },
             )
-            raise ValueError(
-                f"Expected data to be of type {expected.__name__}, got {type(data).__name__}"
+            raise RechargeAPIError(
+                f"Expected {expected.__name__}, got {type(data).__name__}"
             )
-
         return data
 
     def _request(
@@ -294,12 +286,10 @@ class RechargeClient:
         prepared_request = self._session.prepare_request(request)
         return self._send(prepared_request)
 
-    def _get_next_page_url(self, response: Response) -> Optional[str]:
+    def _get_next_page_url(self, response: Response) -> str:
         version = self._session.headers.get("X-Recharge-Version")
-
         if version == "2021-01":
             return response.links.get("next", {}).get("url")
-
         if version == "2021-11":
             try:
                 data = response.json()
@@ -320,8 +310,7 @@ class RechargeClient:
                     "Failed to decode JSON response, expect missing data",
                     extra={"response": response.text},
                 )
-
-        return None
+        return ""
 
     def set_version(self, version: RechargeVersion):
         self._session.headers.update({"X-Recharge-Version": version})
@@ -333,9 +322,8 @@ class RechargeClient:
         query: Optional[Mapping[str, Any]] = None,
         response_key: Optional[str] = None,
     ) -> list:
-        pages = 0
-        data = []
-        while True:
+        pages, data = 0, []
+        while url:
             pages += 1
             self._logger.debug(
                 "Fetching page", extra={"page": pages, "url": url, "query": query}
@@ -343,28 +331,21 @@ class RechargeClient:
             response = self._request(RequestMethod.GET, url, query)
             if not isinstance(response, Response):
                 return data
-
             try:
                 response_data = response.json()
+                data.extend(response_data.get(response_key, []))
             except JSONDecodeError:
                 self._logger.error(
                     "Failed to decode JSON response, expect missing data",
                     extra={"response_key": response_key, "response": response.text},
                 )
                 break
-            data.extend(response_data.get(response_key, []))
-
-            new_url = self._get_next_page_url(response)
-            if new_url is None:
-                break
+            url = self._get_next_page_url(response)
             query = None
-            url = new_url
-
         self._logger.debug(
             "Fetched all pages",
             extra={"pages": pages, "records": len(data)},
         )
-
         return data
 
     def delete(
