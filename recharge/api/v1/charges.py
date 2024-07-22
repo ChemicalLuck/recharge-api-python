@@ -1,8 +1,7 @@
-from typing import TypedDict, Optional, Union
-
-from recharge.exceptions import RechargeAPIError
+from typing import Optional, TypedDict, Union
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
 from recharge.model.v1.charge import Charge, ChargeStatus
 
 

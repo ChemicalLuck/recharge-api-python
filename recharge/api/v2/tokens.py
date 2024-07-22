@@ -1,6 +1,6 @@
 from recharge.api import RechargeResource, RechargeVersion
-from recharge.model.v2.token import TokenInformation
 from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.token import TokenInformation
 
 
 class TokenResource(RechargeResource):

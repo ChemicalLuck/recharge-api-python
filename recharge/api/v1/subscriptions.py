@@ -1,13 +1,13 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
 from recharge.model.v1.subscription import (
+    Subscription,
     SubscriptionOrderIntervalUnit,
     SubscriptionProperty,
     SubscriptionStatus,
-    Subscription,
 )
-from recharge.exceptions import RechargeAPIError
 
 
 class SubscriptionCreateBodyOptional(TypedDict, total=False):

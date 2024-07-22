@@ -1,4 +1,4 @@
-from typing import TypedDict, Optional, Literal
+from typing import Literal, Optional, TypedDict
 
 
 class AddressOrderAttribute(TypedDict):

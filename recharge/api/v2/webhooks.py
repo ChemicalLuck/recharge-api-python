@@ -1,13 +1,13 @@
 from typing import TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
 from recharge.model.v2.webhook import (
+    Webhook,
     WebhookIncludedObject,
     WebhookTopic,
     WebhookTopicMap,
-    Webhook,
 )
-from recharge.exceptions import RechargeAPIError
 
 
 class WebhookCreateBodyOptional(TypedDict, total=False):

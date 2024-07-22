@@ -1,6 +1,6 @@
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-from recharge.model.v2.store import Store
 from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.store import Store
 
 
 class StoreResource(RechargeResource):

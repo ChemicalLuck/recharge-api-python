@@ -1,5 +1,4 @@
-from typing import TypedDict, Optional, Literal
-
+from typing import Literal, Optional, TypedDict
 
 ChargeStatus = Literal[
     "SUCCESS", "QUEUED", "ERROR", "REFUNDED", "PARTIALLY_REFUNDED", "SKIPPED"

@@ -1,11 +1,11 @@
 from typing import Literal, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
 from recharge.model.v2.notification import (
     NotificationTemplateType,
     NotificationTemplateVars,
 )
-from recharge.exceptions import RechargeAPIError
 
 
 class NotificationSendEmailBody(TypedDict):

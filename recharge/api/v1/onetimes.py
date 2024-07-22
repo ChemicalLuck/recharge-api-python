@@ -1,8 +1,8 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-from recharge.model.v1.onetime import Onetime, OnetimeProperty
 from recharge.exceptions import RechargeAPIError
+from recharge.model.v1.onetime import Onetime, OnetimeProperty
 
 
 class OnetimeCreateBodyOptional(TypedDict, total=False):

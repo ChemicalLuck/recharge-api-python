@@ -1,18 +1,18 @@
-import logging
-import time
 import json
+import logging
+import random
+import time
 from enum import Enum
 from typing import Any, Literal, Mapping, Optional, Union
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
-import random
 
 from requests import Request, Response, Session
-from requests.exceptions import HTTPError, RequestException, JSONDecodeError
+from requests.exceptions import HTTPError, JSONDecodeError, RequestException
 from requests.models import PreparedRequest
 
 from recharge.exceptions import (
-    RechargeHTTPError,
     RechargeAPIError,
+    RechargeHTTPError,
     RechargeRequestException,
 )
 

@@ -1,13 +1,13 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 from recharge.exceptions import RechargeAPIError
 from recharge.model.v1.order import (
-    OrderStatus,
-    OrderBillingAddress,
-    OrderShippingAddress,
-    OrderCustomer,
     Order,
+    OrderBillingAddress,
+    OrderCustomer,
+    OrderShippingAddress,
+    OrderStatus,
 )
 
 

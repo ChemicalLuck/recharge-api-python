@@ -1,8 +1,8 @@
-from typing import Literal, TypedDict, Union, Optional
+from typing import Literal, Optional, TypedDict, Union
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-from recharge.model.v2.charge import ChargeStatus, Charge
 from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.charge import Charge, ChargeStatus
 
 ChargeListSortBy = Literal[
     "id-asc",

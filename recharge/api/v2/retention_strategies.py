@@ -3,9 +3,9 @@ from typing import TypedDict
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 from recharge.exceptions import RechargeAPIError
 from recharge.model.v2.retention_strategy import (
+    RetentionStrategy,
     RetentionStrategyCancellationFlowType,
     RetentionStrategyIncentiveType,
-    RetentionStrategy,
 )
 
 

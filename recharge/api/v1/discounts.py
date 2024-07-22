@@ -1,15 +1,15 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 from recharge.exceptions import RechargeAPIError
 from recharge.model.v1.discount import (
-    DiscountProductType,
+    Discount,
     DiscountAppliesToResource,
     DiscountChannelSettings,
-    DiscountType,
     DiscountFirstTimeCustomerRestriction,
+    DiscountProductType,
     DiscountStatus,
-    Discount,
+    DiscountType,
 )
 
 

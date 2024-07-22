@@ -3,9 +3,9 @@ from typing import Literal, TypedDict
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 from recharge.exceptions import RechargeAPIError
 from recharge.model.v1.metafield import (
+    Metafield,
     MetafieldOwnerResource,
     MetafieldValueType,
-    Metafield,
 )
 
 

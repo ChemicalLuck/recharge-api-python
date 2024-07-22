@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal
+from typing import Literal, TypedDict
 
 CollectionSortOrder = Literal[
     "id-asc", "id-desc", "title-asc", "title-desc", "created-asc", "created-desc"

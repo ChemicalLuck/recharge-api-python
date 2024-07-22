@@ -1,12 +1,12 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 from recharge.exceptions import RechargeAPIError
 from recharge.model.v2.address import (
     Address,
-    AddressShippingLinesOverride,
-    AddressOrderAttribute,
     AddressDiscount,
+    AddressOrderAttribute,
+    AddressShippingLinesOverride,
 )
 
 

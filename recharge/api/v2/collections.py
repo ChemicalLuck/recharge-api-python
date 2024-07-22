@@ -1,12 +1,12 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
+from recharge.exceptions import RechargeAPIError
 from recharge.model.v2.collection import (
     Collection,
     CollectionProduct,
     CollectionSortOrder,
 )
-from recharge.exceptions import RechargeAPIError
 
 
 class CollectionCreateBodyOptional(TypedDict, total=False):

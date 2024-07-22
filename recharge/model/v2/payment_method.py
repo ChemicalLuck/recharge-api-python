@@ -1,4 +1,4 @@
-from typing import TypedDict, Optional, Literal
+from typing import Literal, Optional, TypedDict
 
 PaymentMethodType = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"

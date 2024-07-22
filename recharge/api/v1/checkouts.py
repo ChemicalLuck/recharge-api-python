@@ -6,6 +6,7 @@ from recharge.model.v1.checkout import (
     Checkout,
     CheckoutAnalyticsData,
     CheckoutBillingAddress,
+    CheckoutCharge,
     CheckoutExternalCheckoutSource,
     CheckoutLineItem,
     CheckoutNoteAttribute,
@@ -13,7 +14,6 @@ from recharge.model.v1.checkout import (
     CheckoutPaymentType,
     CheckoutShippingAddress,
     CheckoutShippingRate,
-    CheckoutCharge,
 )
 
 

@@ -1,15 +1,15 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
-from recharge.model.v2.discount import (
-    DiscountValueType,
-    DiscountStatus,
-    DiscountChannelSettings,
-    Discount,
-    DiscountUsageLimits,
-    DiscountAppliesTo,
-)
 from recharge.exceptions import RechargeAPIError
+from recharge.model.v2.discount import (
+    Discount,
+    DiscountAppliesTo,
+    DiscountChannelSettings,
+    DiscountStatus,
+    DiscountUsageLimits,
+    DiscountValueType,
+)
 
 
 class DiscountCreateBodyOptional(TypedDict, total=False):

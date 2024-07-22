@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict, Optional
+from typing import Literal, Optional, TypedDict
 
 SubscriptionOrderIntervalUnit = Literal["day", "week", "month"]
 

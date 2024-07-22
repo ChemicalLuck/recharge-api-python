@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal, Optional
+from typing import Literal, Optional, TypedDict
 
 DiscountProductType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 

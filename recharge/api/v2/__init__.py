@@ -1,10 +1,13 @@
+from .accounts import AccountResource
 from .addresses import AddressResource
+from .async_batches import AsyncBatchResource
 from .bundle_selections import BundleSelectionResource
 from .charges import ChargeResource
 from .checkouts import CheckoutResource
 from .collections import CollectionResource
 from .customers import CustomerResource
 from .discounts import DiscountResource
+from .events import EventResource
 from .metafields import MetafieldResource
 from .notifications import NotificationResource
 from .onetimes import OnetimeResource
@@ -15,12 +18,8 @@ from .products import ProductResource
 from .retention_strategies import RetentionStrategyResource
 from .store import StoreResource
 from .subscriptions import SubscriptionResource
-from .webhooks import WebhookResource
-from .async_batches import AsyncBatchResource
 from .tokens import TokenResource
-from .accounts import AccountResource
-from .events import EventResource
-
+from .webhooks import WebhookResource
 
 __all__ = [
     "AddressResource",

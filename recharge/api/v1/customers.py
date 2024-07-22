@@ -1,8 +1,8 @@
-from typing import TypedDict, Optional
+from typing import Optional, TypedDict
 
 from recharge.api import RechargeResource, RechargeScope, RechargeVersion
 from recharge.exceptions import RechargeAPIError
-from recharge.model.v1.customer import CustomerStatus, Customer
+from recharge.model.v1.customer import Customer, CustomerStatus
 
 
 class CustomerCreateBodyOptional(TypedDict, total=False):
