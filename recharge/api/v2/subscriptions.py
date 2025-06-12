@@ -5,6 +5,8 @@ from recharge.exceptions import RechargeAPIError
 from recharge.model.v2.onetime import Onetime
 from recharge.model.v2.subscription import (
     Subscription,
+    SubscriptionExternalProductId,
+    SubscriptionExternalVariantId,
     SubscriptionOrderIntervalUnit,
     SubscriptionProperty,
     SubscriptionStatus,
@@ -13,12 +15,14 @@ from recharge.model.v2.subscription import (
 
 class SubscriptionCreateBodyOptional(TypedDict, total=False):
     customer_id: str
-    expire_after_specific_number_of_charges: str
-    order_day_of_month: str
-    order_day_of_week: str
+    expire_after_specific_number_of_charges: int
+    order_day_of_month: int
+    order_day_of_week: int
+    plan_id: int
     price: str
-    properties: list[SubscriptionProperty]
     product_title: str
+    properties: list[SubscriptionProperty]
+    external_product_id: SubscriptionExternalProductId
     status: SubscriptionStatus
 
 
@@ -26,26 +30,27 @@ class SubscriptionCreateBody(SubscriptionCreateBodyOptional):
     address_id: int
     charge_interval_frequency: int
     next_charge_scheduled_at: str
-    order_interval_frequency: str
+    order_interval_frequency: int
+    quantity: int
     order_interval_unit: SubscriptionOrderIntervalUnit
-    shopify_product_id: str
-    shopify_variant_id: str
+    external_variant_id: SubscriptionExternalVariantId
 
 
 class SubscriptionUpdateBody(TypedDict, total=False):
-    charge_interval_frequency: str
-    commit_update: bool
-    expire_after_specific_number_of_charges: str
+    commit: bool
+    force_update: bool
+    charge_interval_frequency: int
+    expire_after_specific_number_of_charges: int
+    external_variant_id: SubscriptionExternalVariantId
     order_day_of_month: str
     order_day_of_week: str
     order_interval_frequency: str
     order_interval_unit: SubscriptionOrderIntervalUnit
-    override: str
+    plan_id: int
     price: str
     product_title: str
     properties: list[SubscriptionProperty]
     quantity: str
-    shopify_variant_id: str
     sku: str
     sku_override: str
     use_shopify_variant_defaults: bool
@@ -58,27 +63,15 @@ class SubscriptionDeleteBody(TypedDict):
 
 class SubscriptionListQuery(TypedDict, total=False):
     address_id: str
+    address_ids: str
     created_at_max: str
     created_at_min: str
+    cursor: str
     customer_id: str
+    external_variant_id: str
     ids: str
-    include_onetimes: str
     limit: str
-    page: str
-    shopify_customer_id: str
-    shopify_variant_id: str
-    status: SubscriptionStatus
-    updated_at_max: str
-    updated_at_min: str
-
-
-class SubscriptionCountQuery(TypedDict, total=False):
-    address_id: str
-    created_at_max: str
-    created_at_min: str
-    customer_id: str
-    shopify_customer_id: str
-    shopify_variant_id: str
+    page: str  # deprecated
     status: SubscriptionStatus
     updated_at_max: str
     updated_at_min: str
@@ -93,7 +86,7 @@ class SubscriptionChangeAddressBodyOptional(TypedDict, total=False):
 
 
 class SubscriptionChangeAddressBody(SubscriptionChangeAddressBodyOptional):
-    address_id: str
+    address_id: int
 
 
 class SubscriptionCancelBodyOptional(TypedDict, total=False):

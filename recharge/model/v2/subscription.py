@@ -41,7 +41,7 @@ class Subscription(TypedDict):
     cancellation_reason: Optional[str]
     cancellation_reason_comment: Optional[str]
     cancelled_at: Optional[str]
-    charge_interval_frequency: str
+    charge_interval_frequency: int
     created_at: str
     expire_after_specific_number_of_charges: Optional[int]
     external_product_id: SubscriptionExternalProductId
