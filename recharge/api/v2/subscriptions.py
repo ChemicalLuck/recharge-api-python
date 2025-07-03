@@ -221,11 +221,11 @@ class SubscriptionResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self._check_scopes(
-            f"POST /{self.object_list_key}/:subscription_id/set_next_change_date",
+            f"POST /{self.object_list_key}/:subscription_id/set_next_charge_date",
             required_scopes,
         )
 
-        url = f"{self._url}/{subscription_id}/set_next_change_date"
+        url = f"{self._url}/{subscription_id}/set_next_charge_date"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
