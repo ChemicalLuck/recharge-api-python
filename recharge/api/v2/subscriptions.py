@@ -249,7 +249,9 @@ class SubscriptionResource(RechargeResource):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Subscription(**data)
 
-    def cancel(self, subscription_id: str) -> Subscription:
+    def cancel(
+        self, subscription_id: str, body: SubscriptionCancelBody
+    ) -> Subscription:
         """Cancel a subscription.
         https://developer.rechargepayments.com/2021-11/subscriptions/subscriptions_cancel
         """
@@ -259,7 +261,7 @@ class SubscriptionResource(RechargeResource):
         )
 
         url = f"{self._url}/{subscription_id}/cancel"
-        data = self._http_post(url)
+        data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Subscription(**data)
