@@ -52,11 +52,11 @@ ChargeDiscountApplyBody = Union[
 
 
 class ChargeSkipSubscriptionId(TypedDict, total=True):
-    subscription_id: str
+    purchase_item_id: str
 
 
 class ChargeSkipSubscriptionIds(TypedDict, total=True):
-    subscription_ids: list[str]
+    purchase_item_ids: list[str]
 
 
 ChargeSkipBody = Union[ChargeSkipSubscriptionId, ChargeSkipSubscriptionIds]
