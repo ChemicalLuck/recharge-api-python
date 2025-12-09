@@ -240,7 +240,25 @@ class ChargeResource(RechargeResource):
         return Charge(**data)
 
     def add_freegift(self, charge_id: str, body: ChargeAddFreegiftBody) -> Charge:
-        pass
+        required_scopes: list[RechargeScope] = ["write_free_gifts"]
+        self._check_scopes(
+            f"POST /{self.object_list_key}/:charge_id/add_free_gift", required_scopes
+        )
+
+        url = f"{self._url}/{charge_id}/add_free_gift"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
 
     def remove_freegift(self, charge_id: str, body: ChargeRemoveFreegiftBody) -> Charge:
-        pass
+        required_scopes: list[RechargeScope] = ["write_free_gifts"]
+        self._check_scopes(
+            f"POST /{self.object_list_key}/:charge_id/remove_free_gift", required_scopes
+        )
+
+        url = f"{self._url}/{charge_id}/remove_free_gift"
+        data = self._http_post(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return Charge(**data)
