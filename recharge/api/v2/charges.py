@@ -72,6 +72,16 @@ class ChargeRefundBodyOptional(TypedDict, total=False):
 class ChargeRefundBody(ChargeRefundBodyOptional):
     amount: str
 
+class FreeGift(TypedDict):
+    external_variant_id: str
+    quantity: int
+
+class ChargeAddFreegiftBody(TypedDict):
+    free_gifts: list[FreeGift]
+    conserve_on_skip: bool
+
+class ChargeRemoveFreegiftBody(TypedDict):
+    external_variant_ids: list[str]
 
 class ChargeResource(RechargeResource):
     """
@@ -228,3 +238,9 @@ class ChargeResource(RechargeResource):
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Charge(**data)
+
+    def add_freegift(self, charge_id: str, body: ChargeAddFreegiftBody) -> Charge:
+        pass
+
+    def remove_freegift(self, charge_id: str, body: ChargeRemoveFreegiftBody) -> Charge:
+        pass
