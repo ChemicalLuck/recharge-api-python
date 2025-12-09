@@ -48,6 +48,7 @@ RechargeScope = Literal[
     "write_gift_purchases",
     "read_bundle_products",
     "read_credit_summary",
+    "write_free_gifts",
 ]
 
 REDACTED_HEADERS = ["Cookie", "X-Recharge-Access-Token"]

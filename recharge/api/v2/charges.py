@@ -246,7 +246,7 @@ class ChargeResource(RechargeResource):
         )
 
         url = f"{self._url}/{charge_id}/add_free_gift"
-        data = self._http_post(url)
+        data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Charge(**data)
@@ -258,7 +258,7 @@ class ChargeResource(RechargeResource):
         )
 
         url = f"{self._url}/{charge_id}/remove_free_gift"
-        data = self._http_post(url)
+        data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Charge(**data)
