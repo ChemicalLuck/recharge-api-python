@@ -244,7 +244,7 @@ class SubscriptionResource(RechargeResource):
         """
         required_scopes: list[RechargeScope] = ["write_subscriptions"]
         self._check_scopes(
-            f"POST /{self.object_list_key}/:subscription_id/change_date",
+            f"POST /{self.object_list_key}/:subscription_id/set_next_charge_date",
             required_scopes,
         )
 
