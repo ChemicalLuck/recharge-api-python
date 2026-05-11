@@ -8,6 +8,7 @@ from recharge.model.v2.customer import (
     CustomerDeliverySchedule,
 )
 
+CustomerIncludes = Literal["addresses", "announcements", "gift_purchases", "metafields", "payment_methods", "punch_card_progress", "referral_info", "subscriptions"]
 
 class CustomerCreateExternalCustomerId(TypedDict, total=False):
     ecommerce: str
@@ -81,7 +82,7 @@ class CustomerResource(RechargeResource):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Customer(**data)
 
-    def get(self, customer_id: str) -> Customer:
+    def get(self, customer_id: str, includes: Optional[list[CustomerIncludes]] = None) -> Customer:
         """Get a customer by ID.
         https://developer.rechargepayments.com/2021-11/customers/customers_retrieve
         """
@@ -89,7 +90,8 @@ class CustomerResource(RechargeResource):
         self._check_scopes(f"GET /{self.object_list_key}/:customer_id", required_scopes)
 
         url = f"{self._url}/{customer_id}"
-        data = self._http_get(url)
+        query = {"includes": includes} if includes else None
+        data = self._http_get(url, query)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
         return Customer(**data)
