@@ -119,7 +119,7 @@ class AddressResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def get(self, address_id: str) -> Address:
         """Get an address by ID.
@@ -132,7 +132,7 @@ class AddressResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def update(
         self, address_id: str, body: Optional[AddressUpdateBody] = None
@@ -147,7 +147,7 @@ class AddressResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def delete(self, address_id: str) -> dict:
         """Delete an address by ID.
@@ -179,7 +179,7 @@ class AddressResource(RechargeResource):
         data = self._http_get(url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Address(**item) for item in data]
+        return [Address.model_validate(item) for item in data]
 
     def list_all(
         self, customer_id: str, query: Optional[AddressListQuery] = None
@@ -196,7 +196,7 @@ class AddressResource(RechargeResource):
         data = self._paginate(url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Address(**item) for item in data]
+        return [Address.model_validate(item) for item in data]
 
     def count(self, query: Optional[AddressCountQuery] = None) -> int:
         """Retrieve the count of addresses.
@@ -222,7 +222,7 @@ class AddressResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return AddressValidateResponse(**data)
+        return AddressValidateResponse.model_validate(data)
 
     def apply_discount(
         self,
@@ -241,7 +241,7 @@ class AddressResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def remove_discount(self, address_id: str) -> Address:
         """Remove a discount from an address.
@@ -256,4 +256,4 @@ class AddressResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)

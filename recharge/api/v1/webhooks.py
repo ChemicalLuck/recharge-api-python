@@ -31,6 +31,7 @@ class WebhookResource(RechargeResource):
     """
 
     object_list_key = "webhooks"
+    object_dict_key = "webhook"
     recharge_version: RechargeVersion = "2021-01"
 
     def create(self, body: WebhookCreateBody) -> Webhook:
@@ -44,7 +45,7 @@ class WebhookResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Webhook(**data)
+        return Webhook.model_validate(data)
 
     def get(self, webhook_id: str) -> Webhook:
         """Get a webhook.
@@ -54,7 +55,7 @@ class WebhookResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Webhook(**data)
+        return Webhook.model_validate(data)
 
     def update(self, webhook_id: str, body: WebhookUpdateBody) -> Webhook:
         """Update a webhook.
@@ -64,7 +65,7 @@ class WebhookResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Webhook(**data)
+        return Webhook.model_validate(data)
 
     def delete(self, webhook_id: str) -> dict:
         """Delete a webhook.
@@ -83,7 +84,7 @@ class WebhookResource(RechargeResource):
         data = self._http_get(self._url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Webhook(**item) for item in data]
+        return [Webhook.model_validate(item) for item in data]
 
     def list_all(self) -> list[Webhook]:
         """List all webhooks.
@@ -92,7 +93,7 @@ class WebhookResource(RechargeResource):
         data = self._paginate(self._url)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Webhook(**item) for item in data]
+        return [Webhook.model_validate(item) for item in data]
 
     def test(self, webhook_id: str) -> dict:
         """Test a webhook.

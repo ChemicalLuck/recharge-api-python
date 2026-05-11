@@ -1,7 +1,9 @@
-from typing import TypedDict
+from pydantic import BaseModel, ConfigDict
 
 
-class Account(TypedDict):
+class Account(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     user_id: int
     created_at: str

@@ -23,7 +23,7 @@ class AccountResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Account(**data)
+        return Account.model_validate(data)
 
     def list_(self) -> list[Account]:
         """List accounts.
@@ -35,7 +35,7 @@ class AccountResource(RechargeResource):
         data = self._http_get(self._url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Account(**item) for item in data]
+        return [Account.model_validate(item) for item in data]
 
     def list_all(self) -> list[Account]:
         """List all accounts.
@@ -47,4 +47,4 @@ class AccountResource(RechargeResource):
         data = self._paginate(self._url)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Account(**item) for item in data]
+        return [Account.model_validate(item) for item in data]

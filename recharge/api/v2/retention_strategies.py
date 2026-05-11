@@ -47,7 +47,7 @@ class RetentionStrategyResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return RetentionStrategy(**data)
+        return RetentionStrategy.model_validate(data)
 
     def get(self, retention_strategy_id: int) -> RetentionStrategy:
         """Get a retention strategy.
@@ -62,7 +62,7 @@ class RetentionStrategyResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return RetentionStrategy(**data)
+        return RetentionStrategy.model_validate(data)
 
     def update(
         self, retention_strategy_id: int, body: RetentionStrategyUpdateBody
@@ -79,7 +79,7 @@ class RetentionStrategyResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return RetentionStrategy(**data)
+        return RetentionStrategy.model_validate(data)
 
     def delete(self, retention_strategy_id: int) -> dict:
         """Delete a retention strategy.
@@ -106,7 +106,7 @@ class RetentionStrategyResource(RechargeResource):
         data = self._http_get(self._url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [RetentionStrategy(**item) for item in data]
+        return [RetentionStrategy.model_validate(item) for item in data]
 
     def list_all(self) -> list[RetentionStrategy]:
         """List all retention strategies.
@@ -118,4 +118,4 @@ class RetentionStrategyResource(RechargeResource):
         data = self._paginate(self._url)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [RetentionStrategy(**item) for item in data]
+        return [RetentionStrategy.model_validate(item) for item in data]

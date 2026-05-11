@@ -214,7 +214,7 @@ class CheckoutResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Checkout(**data)
+        return Checkout.model_validate(data)
 
     def get(self, checkout_id: str) -> Checkout:
         """Get a checkout by ID.
@@ -227,7 +227,7 @@ class CheckoutResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Checkout(**data)
+        return Checkout.model_validate(data)
 
     def update(self, checkout_id: str, body: CheckoutUpdateBody) -> Checkout:
         """Update a checkout.
@@ -240,7 +240,7 @@ class CheckoutResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Checkout(**data)
+        return Checkout.model_validate(data)
 
     def get_shipping(self, checkout_id: str) -> list[CheckoutShippingRate]:
         """Retrieve shipping rates for a checkout
@@ -255,7 +255,7 @@ class CheckoutResource(RechargeResource):
         data = self._http_get(url, expected=list, response_key="shipping_rates")
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [CheckoutShippingRate(**item) for item in data]
+        return [CheckoutShippingRate.model_validate(item) for item in data]
 
     def process(self, checkout_id: str, body: CheckoutProcessBody) -> Checkout:
         """Process (charge) a checkout.
@@ -270,4 +270,4 @@ class CheckoutResource(RechargeResource):
         data = self._http_post(url, body, response_key="checkout_charge")
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Checkout(**data)
+        return Checkout.model_validate(data)

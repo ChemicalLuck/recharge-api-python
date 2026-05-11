@@ -61,7 +61,7 @@ class AsyncBatchResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return AsyncBatch(**data)
+        return AsyncBatch.model_validate(data)
 
     def create_task(self, batch_id: str, body: AsyncBatchCreateTaskBody) -> int:
         """Create a task for an async batch.
@@ -91,7 +91,7 @@ class AsyncBatchResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return AsyncBatch(**data)
+        return AsyncBatch.model_validate(data)
 
     def list_(self) -> list[AsyncBatch]:
         """List async batches.
@@ -103,7 +103,7 @@ class AsyncBatchResource(RechargeResource):
         data = self._http_get(self._url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [AsyncBatch(**batch) for batch in data]
+        return [AsyncBatch.model_validate(batch) for batch in data]
 
     def list_all(self) -> list[AsyncBatch]:
         """List all async batches.
@@ -116,7 +116,7 @@ class AsyncBatchResource(RechargeResource):
         data = self._paginate(url)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [AsyncBatch(**batch) for batch in data]
+        return [AsyncBatch.model_validate(batch) for batch in data]
 
     def list_tasks(
         self,
@@ -134,7 +134,7 @@ class AsyncBatchResource(RechargeResource):
         data = self._http_get(url, expected=list, response_key="async_batch_tasks")
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [AsyncBatchTask(**task) for task in data]
+        return [AsyncBatchTask.model_validate(task) for task in data]
 
     def process(self, batch_id: str) -> AsyncBatch:
         """Process an async batch.
@@ -149,4 +149,4 @@ class AsyncBatchResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return AsyncBatch(**data)
+        return AsyncBatch.model_validate(data)

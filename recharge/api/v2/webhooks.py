@@ -12,12 +12,19 @@ from recharge.model.v2.webhook import (
 
 class WebhookCreateBodyOptional(TypedDict, total=False):
     included_objects: list[WebhookIncludedObject]
-    verion: str
+    version: str
 
 
 class WebhookCreateBody(WebhookCreateBodyOptional):
     address: str
     topic: WebhookTopic
+
+
+class WebhookUpdateBody(TypedDict, total=False):
+    address: str
+    included_objects: list[WebhookIncludedObject]
+    topic: WebhookTopic
+    version: str
 
 
 class WebhookResource(RechargeResource):
@@ -40,7 +47,7 @@ class WebhookResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Webhook(**data)
+        return Webhook.model_validate(data)
 
     def get(self, webhook_id: str) -> Webhook:
         """Get a webhook.
@@ -51,17 +58,32 @@ class WebhookResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Webhook(**data)
+        return Webhook.model_validate(data)
 
-    def update(self, webhook_id: str) -> Webhook:
+    def update(self, webhook_id: str, body: WebhookUpdateBody) -> Webhook:
         """Update a webhook.
         https://developer.rechargepayments.com/2021-11/webhooks_endpoints/webhooks_update
         """
         url = f"{self._url}/{webhook_id}"
-        data = self._http_put(url)
+        data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Webhook(**data)
+        return Webhook.model_validate(data)
+
+    def delete(self, webhook_id: str) -> dict:
+        """Delete a webhook.
+        https://developer.rechargepayments.com/2021-11/webhooks_endpoints/webhooks_delete
+        """
+        required_scopes: list[RechargeScope] = ["write_customers"]
+        self._check_scopes(
+            f"DELETE /{self.object_list_key}/:webhook_id", required_scopes
+        )
+
+        url = f"{self._url}/{webhook_id}"
+        data = self._http_delete(url)
+        if not isinstance(data, dict):
+            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        return data
 
     def list_(self) -> list[Webhook]:
         """List webhooks.
@@ -71,7 +93,7 @@ class WebhookResource(RechargeResource):
         data = self._http_get(self._url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Webhook(**item) for item in data]
+        return [Webhook.model_validate(item) for item in data]
 
     def list_all(self) -> list[Webhook]:
         """List all webhooks.
@@ -81,7 +103,7 @@ class WebhookResource(RechargeResource):
         data = self._paginate(self._url)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Webhook(**item) for item in data]
+        return [Webhook.model_validate(item) for item in data]
 
     def test(self, webhook_id: str) -> dict:
         """Test a webhook.

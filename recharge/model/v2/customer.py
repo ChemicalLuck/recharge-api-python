@@ -1,77 +1,99 @@
-from typing import Literal, Optional, TypedDict
+from typing import Literal, Optional
+
+from pydantic import BaseModel, ConfigDict
 
 CustomerStatus = Literal["ACTIVE", "INACTIVE"]
 
 
-class CustomerAnalyticsDataUtmParams(TypedDict, total=False):
-    utm_campaign: str
-    utm_content: str
-    utm_data_source: str
-    utm_source: str
-    utm_medium: str
-    utm_term: str
-    utm_timestamp: str
+class CustomerAnalyticsDataUtmParams(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    utm_campaign: Optional[str] = None
+    utm_content: Optional[str] = None
+    utm_data_source: Optional[str] = None
+    utm_source: Optional[str] = None
+    utm_medium: Optional[str] = None
+    utm_term: Optional[str] = None
+    utm_timestamp: Optional[str] = None
 
 
-class CustomerAnalyticsData(TypedDict, total=False):
-    utm_params: list[CustomerAnalyticsDataUtmParams]
+class CustomerAnalyticsData(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    utm_params: Optional[list[CustomerAnalyticsDataUtmParams]] = None
 
 
-class CustomerExternalCustomerId(TypedDict, total=False):
-    ecommerce: str
+class CustomerExternalCustomerId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
 
 
-class Customer(TypedDict):
+class Customer(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
-    analytics_data: CustomerAnalyticsData
+    analytics_data: Optional[CustomerAnalyticsData] = None
     apply_credit_to_next_recurring_charge: bool
     created_at: str
     email: str
-    external_customer_id: CustomerExternalCustomerId
-    first_charge_processed_at: Optional[str]
+    external_customer_id: Optional[CustomerExternalCustomerId] = None
+    first_charge_processed_at: Optional[str] = None
     first_name: str
     has_payment_method_in_dunning: bool
     has_valid_payment_method: bool
     hash: str
     last_name: str
-    phone: str
+    phone: Optional[str] = None
     subscriptions_active_count: int
     subscriptions_total_count: int
     tax_exempt: bool
     updated_at: str
 
 
-class CustomerCreditSummary(TypedDict):
+class CustomerCreditSummary(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     customer_id: int
     total_available_balance: str
     currency_code: str
 
 
-class CustomerDeliveryOrderLineItemExternalProductId(TypedDict):
+class CustomerDeliveryOrderLineItemExternalProductId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     ecommerce: str
 
 
-class CustomerDeliveryOrderLineItemExternalVariantId(TypedDict):
+class CustomerDeliveryOrderLineItemExternalVariantId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     ecommerce: str
 
 
-class CustomerDeliveryOrderLineItemImage(TypedDict, total=False):
-    large: str
-    medium: str
-    small: str
-    original: str
-    sort_order: int
+class CustomerDeliveryOrderLineItemImage(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    large: Optional[str] = None
+    medium: Optional[str] = None
+    small: Optional[str] = None
+    original: Optional[str] = None
+    sort_order: Optional[int] = None
 
 
 CustomerDeliveryOrderLineItemPlanType = Literal["subscription", "onetime"]
 
 
-class CustomerDeliveryOrderLineItemProperty(TypedDict):
+class CustomerDeliveryOrderLineItemProperty(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     name: str
     value: str
 
 
-class CustomerDeliveryOrderLineItem(TypedDict):
+class CustomerDeliveryOrderLineItem(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     subscription_id: int
     external_product_id: CustomerDeliveryOrderLineItemExternalProductId
     external_variant_id: CustomerDeliveryOrderLineItemExternalVariantId
@@ -89,51 +111,61 @@ class CustomerDeliveryOrderLineItem(TypedDict):
     variant_title: str
 
 
-class CustomerPaymentDetails(TypedDict, total=False):
-    brand: str
-    exp_month: int
-    exp_year: int
-    last4: str
-    paypal_email: str
-    paypal_payer_id: str
-    wallet_type: str
-    funding_type: str
+class CustomerPaymentDetails(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    brand: Optional[str] = None
+    exp_month: Optional[int] = None
+    exp_year: Optional[int] = None
+    last4: Optional[str] = None
+    paypal_email: Optional[str] = None
+    paypal_payer_id: Optional[str] = None
+    wallet_type: Optional[str] = None
+    funding_type: Optional[str] = None
 
 
-class CustomerBillingAddress(TypedDict, total=False):
-    address1: str
-    address2: str
-    city: str
-    company: str
-    country_code: str
-    first_name: str
-    last_name: str
-    phone: str
-    province: str
-    zip: str
+class CustomerBillingAddress(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    address1: Optional[str] = None
+    address2: Optional[str] = None
+    city: Optional[str] = None
+    company: Optional[str] = None
+    country_code: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
+    province: Optional[str] = None
+    zip: Optional[str] = None
 
 
-class CustomerDeliveryOrderPaymentMethod(TypedDict):
+class CustomerDeliveryOrderPaymentMethod(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     billing_address: CustomerBillingAddress
     payment_details: CustomerPaymentDetails
 
 
-class CustomerDeliveryOrderShippingAddress(TypedDict, total=False):
-    address1: str
-    address2: str
-    city: str
-    company: str
-    country: str
-    first_name: str
-    last_name: str
-    phone: str
-    province: str
-    zip: str
+class CustomerDeliveryOrderShippingAddress(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    address1: Optional[str] = None
+    address2: Optional[str] = None
+    city: Optional[str] = None
+    company: Optional[str] = None
+    country: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
+    province: Optional[str] = None
+    zip: Optional[str] = None
 
 
-class CustomerDeliveryOrder(TypedDict):
-    id: Optional[int]
+class CustomerDeliveryOrder(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    id: Optional[int] = None
     address_id: int
     charge_id: int
     line_items: list[CustomerDeliveryOrderLineItem]
@@ -142,18 +174,24 @@ class CustomerDeliveryOrder(TypedDict):
     shipping_address: CustomerDeliveryOrderShippingAddress
 
 
-class CustomerDeliveryScheduleDelivery(TypedDict):
+class CustomerDeliveryScheduleDelivery(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     date: str
     orders: list[CustomerDeliveryOrder]
 
 
-class CustomerDeliveryScheduleCustomer(TypedDict):
+class CustomerDeliveryScheduleCustomer(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     email: str
     first_name: str
     last_name: str
 
 
-class CustomerDeliverySchedule(TypedDict):
+class CustomerDeliverySchedule(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     customer: CustomerDeliveryScheduleCustomer
-    delvieries: list[CustomerDeliveryScheduleDelivery]
+    deliveries: list[CustomerDeliveryScheduleDelivery]  # fixed: was 'delvieries'

@@ -15,7 +15,7 @@ class CollectionCreateBodyOptional(TypedDict, total=False):
 
 class CollectionCreateBody(CollectionCreateBodyOptional):
     description: str
-    titel: str
+    title: str
 
 
 class CollectionUpdateBody(TypedDict, total=False):
@@ -63,7 +63,7 @@ class CollectionResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Collection(**data)
+        return Collection.model_validate(data)
 
     def get(self, collection_id: str) -> Collection:
         """Get a collection by ID.
@@ -78,7 +78,7 @@ class CollectionResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Collection(**data)
+        return Collection.model_validate(data)
 
     def update(self, collection_id: str, body: CollectionUpdateBody) -> Collection:
         """Update a collection.
@@ -93,7 +93,7 @@ class CollectionResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Collection(**data)
+        return Collection.model_validate(data)
 
     def delete(self, collection_id: str) -> dict:
         """Delete a collection.
@@ -120,7 +120,7 @@ class CollectionResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Collection(**item) for item in data]
+        return [Collection.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[CollectionListQuery] = None) -> list[Collection]:
         """List all collections.
@@ -132,7 +132,7 @@ class CollectionResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Collection(**item) for item in data]
+        return [Collection.model_validate(item) for item in data]
 
     def list_products(
         self, query: Optional[CollectionListProductsQuery] = None
@@ -147,7 +147,7 @@ class CollectionResource(RechargeResource):
         data = self._http_get(url, query, list, response_key="collection_products")
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [CollectionProduct(**item) for item in data]
+        return [CollectionProduct.model_validate(item) for item in data]
 
     def add_products(
         self, collection_id: str, body: CollectionAddProductsBody
@@ -167,7 +167,7 @@ class CollectionResource(RechargeResource):
         )
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [CollectionProduct(**item) for item in data]
+        return [CollectionProduct.model_validate(item) for item in data]
 
     def delete_products(
         self, collection_id: str, body: CollectionDeleteProductsBody

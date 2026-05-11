@@ -55,7 +55,7 @@ class OrderResource(RechargeResource):
     """
 
     object_list_key = "orders"
-    object_key_dict = "order"
+    object_dict_key = "order"
     recharge_version: RechargeVersion = "2021-11"
 
     def get(self, order_id: str) -> Order:
@@ -69,7 +69,7 @@ class OrderResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def clone(self, order_id: str, body: OrderCloneBody) -> Order:
         """Clone an order.
@@ -84,7 +84,7 @@ class OrderResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def delay(self, order_id: str) -> Order:
         """Delay an order.
@@ -99,7 +99,7 @@ class OrderResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def update(self, order_id: str, body: OrderUpdateBody) -> Order:
         """Update an order.
@@ -112,7 +112,7 @@ class OrderResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def delete(self, order_id: str) -> dict:
         """Delete an order.
@@ -137,7 +137,7 @@ class OrderResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Order(**order) for order in data]
+        return [Order.model_validate(order) for order in data]
 
     def list_all(self, query: Optional[OrderListQuery] = None) -> list[Order]:
         """List all orders.
@@ -149,4 +149,4 @@ class OrderResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Order(**order) for order in data]
+        return [Order.model_validate(order) for order in data]

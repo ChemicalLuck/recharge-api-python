@@ -1,29 +1,37 @@
-from typing import TypedDict
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 
-class Store(TypedDict):
+class Store(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
-    created_at: str
-    currency: str
-    domain: str
-    iana_timezone: str
-    my_shopify_domain: str
-    name: str
-    shop_phone: str
-    shop_email: str
-    timezone: str
-    updated_at: str
+    created_at: Optional[str] = None
+    currency: Optional[str] = None
+    domain: Optional[str] = None
+    iana_timezone: Optional[str] = None
+    my_shopify_domain: Optional[str] = None
+    name: Optional[str] = None
+    shop_phone: Optional[str] = None
+    shop_email: Optional[str] = None
+    timezone: Optional[str] = None
+    updated_at: Optional[str] = None
 
 
-class ShippingCountryProvince(TypedDict):
+class ShippingCountryProvince(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
-    code: str
-    name: str
+    code: Optional[str] = None
+    name: Optional[str] = None
 
 
-class ShippingCountry(TypedDict):
+class ShippingCountry(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
-    code: str
-    country_id: str
-    name: str
-    provinces: list[ShippingCountryProvince]
+    code: Optional[str] = None
+    country_id: Optional[str] = None
+    name: Optional[str] = None
+    provinces: list[ShippingCountryProvince] = []

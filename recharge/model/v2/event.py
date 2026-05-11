@@ -1,7 +1,9 @@
-from typing import TypedDict
+from pydantic import BaseModel, ConfigDict
 
 
-class EventSource(TypedDict):
+class EventSource(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     account_id: str
     api_token_id: str
     api_token_name: str
@@ -10,12 +12,16 @@ class EventSource(TypedDict):
     user_type: str
 
 
-class EventCustomAttributes(TypedDict):
+class EventCustomAttributes(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     key: str
     value: str
 
 
-class Event(TypedDict):
+class Event(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     object_id: int
     customer_id: int

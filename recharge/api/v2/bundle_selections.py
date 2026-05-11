@@ -59,7 +59,7 @@ class BundleSelectionResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [BundleSelection(**item) for item in data]
+        return [BundleSelection.model_validate(item) for item in data]
 
     def list_all(self) -> list[BundleSelection]:
         """List all bundle selections.
@@ -71,7 +71,7 @@ class BundleSelectionResource(RechargeResource):
         data = self._paginate(self._url)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [BundleSelection(**item) for item in data]
+        return [BundleSelection.model_validate(item) for item in data]
 
     def get(self, bundle_selection_id: str) -> BundleSelection:
         """Get a bundle selection.
@@ -86,7 +86,7 @@ class BundleSelectionResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return BundleSelection(**data)
+        return BundleSelection.model_validate(data)
 
     def create(self, body: BundleSelectionCreateBody) -> BundleSelection:
         """Create a bundle selection.
@@ -98,7 +98,7 @@ class BundleSelectionResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return BundleSelection(**data)
+        return BundleSelection.model_validate(data)
 
     def update(
         self, bundle_selection_id: str, body: BundleSelectionUpdateBody
@@ -115,7 +115,7 @@ class BundleSelectionResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return BundleSelection(**data)
+        return BundleSelection.model_validate(data)
 
     def delete(self, bundle_selection_id: str) -> dict:
         """Delete a bundle selection.

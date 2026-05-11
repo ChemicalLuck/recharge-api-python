@@ -88,7 +88,7 @@ class DiscountResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Discount(**data)
+        return Discount.model_validate(data)
 
     def get(self, discount_id: str) -> Discount:
         """Get a discount by ID.
@@ -101,7 +101,7 @@ class DiscountResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Discount(**data)
+        return Discount.model_validate(data)
 
     def update(self, discount_id: str, body: DiscountUpdateBody) -> Discount:
         """Update a discount.
@@ -114,7 +114,7 @@ class DiscountResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Discount(**data)
+        return Discount.model_validate(data)
 
     def delete(self, discount_id: str) -> dict:
         """Delete a discount.
@@ -141,7 +141,7 @@ class DiscountResource(RechargeResource):
         data = self._http_get(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Discount(**item) for item in data]
+        return [Discount.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[DiscountListQuery] = None) -> list[Discount]:
         """List all discounts.
@@ -153,7 +153,7 @@ class DiscountResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Discount(**item) for item in data]
+        return [Discount.model_validate(item) for item in data]
 
     def count(self, query: Optional[DiscountCountQuery] = None) -> int:
         """Receive a count of all discounts.

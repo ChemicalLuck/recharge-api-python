@@ -1,189 +1,227 @@
-from typing import Literal, Optional, TypedDict
+from typing import Literal, Optional
+
+from pydantic import BaseModel, ConfigDict
 
 ChargeStatus = Literal[
     "SUCCESS", "QUEUED", "ERROR", "REFUNDED", "PARTIALLY_REFUNDED", "SKIPPED"
 ]
 
-
-class ChargeAnalyticsDataUtmParams(TypedDict):
-    utm_campaign: str
-    utm_content: str
-    utm_data_source: str
-    utm_source: str
-    utm_medium: str
-    utm_term: str
-    utm_timestamp: str
+ChargeType = Literal["CHECKOUT", "RECURRING"]
 
 
-class ChargeAnalyticsData(TypedDict):
-    utm_params: ChargeAnalyticsDataUtmParams
+class ChargeAnalyticsDataUtmParams(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    utm_campaign: Optional[str] = None
+    utm_content: Optional[str] = None
+    utm_data_source: Optional[str] = None
+    utm_source: Optional[str] = None
+    utm_medium: Optional[str] = None
+    utm_term: Optional[str] = None
+    utm_timestamp: Optional[str] = None
 
 
-class ChargeBillingAddress(TypedDict):
-    address1: str
-    address2: Optional[str]
-    city: str
-    company: Optional[str]
-    country_code: str
-    first_name: str
-    last_name: str
-    phone: str
-    province: str
-    zip: str
+class ChargeAnalyticsData(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    utm_params: Optional[ChargeAnalyticsDataUtmParams] = None
 
 
-class ChargeClientDetails(TypedDict):
-    browser_ip: str
-    user_agent: str
+class ChargeBillingAddress(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    address1: Optional[str] = None
+    address2: Optional[str] = None
+    city: Optional[str] = None
+    company: Optional[str] = None
+    country_code: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
+    province: Optional[str] = None
+    zip: Optional[str] = None
 
 
-class ChargeExternalCustomerId(TypedDict):
-    ecommerce: str
+class ChargeClientDetails(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    browser_ip: Optional[str] = None
+    user_agent: Optional[str] = None
 
 
-class ChargeCustomer(TypedDict):
-    id: int
-    email: str
-    external_customer_id: ChargeExternalCustomerId
-    hash: str
+class ChargeExternalCustomerId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
+
+
+class ChargeCustomer(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    id: Optional[int] = None
+    email: Optional[str] = None
+    external_customer_id: Optional[ChargeExternalCustomerId] = None
+    hash: Optional[str] = None
 
 
 ChargeDiscountCodeType = Literal["percentage", "fixed_amount"]
 
 
-class ChargeDiscount(TypedDict):
-    id: int
-    code: str
-    value: float
-    value_type: ChargeDiscountCodeType
+class ChargeDiscount(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    id: Optional[int] = None
+    code: Optional[str] = None
+    value: Optional[float] = None
+    value_type: Optional[ChargeDiscountCodeType] = None
 
 
-class ChargeExternalOrderId(TypedDict):
-    ecommerce: str
+class ChargeExternalOrderId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
 
 
-class ChargeExternalTransactionId(TypedDict):
-    ecommerce: str
+class ChargeExternalTransactionId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
 
 
-class ChargeLineItemImages(TypedDict):
-    large: str
-    medium: str
-    original: str
-    small: str
-    sort_order: int
+class ChargeLineItemImages(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    large: Optional[str] = None
+    medium: Optional[str] = None
+    original: Optional[str] = None
+    small: Optional[str] = None
+    sort_order: Optional[int] = None
 
 
-class ChargeLineItemProperty(TypedDict):
+class ChargeLineItemProperty(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     name: str
     value: str
 
 
-class ChargeExternalProductId(TypedDict):
-    ecommerce: str
+class ChargeExternalProductId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
 
 
-class ChargeExternalVariantId(TypedDict):
-    ecommerce: str
+class ChargeExternalVariantId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
 
 
-class ChargeTaxLine(TypedDict):
-    price: str
-    rate: str
-    title: str
+class ChargeTaxLine(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    price: Optional[str] = None
+    rate: Optional[str] = None
+    title: Optional[str] = None
 
 
-class ChargeLineItem(TypedDict):
-    purchase_item_id: int
-    external_product_id: ChargeExternalProductId
-    external_variant_id: ChargeExternalVariantId
-    grams: int
-    handle: str
-    images: ChargeLineItemImages
-    original_price: str
-    properties: list[ChargeLineItemProperty]
-    quantity: int
-    sku: str
-    tax_due: str
-    tax_lines: list[ChargeTaxLine]
-    taxable: bool
-    taxable_amount: str
-    title: str
-    total_price: str
-    unit_price: str
-    unit_price_includes_tax: bool
-    variant_title: str
+class ChargeLineItem(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    purchase_item_id: Optional[int] = None
+    external_product_id: Optional[ChargeExternalProductId] = None
+    external_variant_id: Optional[ChargeExternalVariantId] = None
+    grams: Optional[int] = None
+    handle: Optional[str] = None
+    images: Optional[ChargeLineItemImages] = None
+    original_price: Optional[str] = None
+    properties: list[ChargeLineItemProperty] = []
+    quantity: Optional[int] = None
+    sku: Optional[str] = None
+    tax_due: Optional[str] = None
+    tax_lines: list[ChargeTaxLine] = []
+    taxable: Optional[bool] = None
+    taxable_amount: Optional[str] = None
+    title: Optional[str] = None
+    total_price: Optional[str] = None
+    unit_price: Optional[str] = None
+    unit_price_includes_tax: Optional[bool] = None
+    variant_title: Optional[str] = None
 
 
-class ChargeOrderAttribute(TypedDict):
+class ChargeOrderAttribute(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     name: str
     value: str
 
 
-class ChargeShippingAddress(TypedDict):
-    address1: str
-    address2: Optional[str]
-    city: str
-    company: Optional[str]
-    country_code: str
-    first_name: str
-    last_name: str
-    phone: str
-    province: str
-    zip: str
+class ChargeShippingAddress(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    address1: Optional[str] = None
+    address2: Optional[str] = None
+    city: Optional[str] = None
+    company: Optional[str] = None
+    country_code: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
+    province: Optional[str] = None
+    zip: Optional[str] = None
 
 
-class ChargeShippingLine(TypedDict):
-    code: str
-    price: str
-    source: str
-    title: str
-    taxable: str
-    tax_lines: list[ChargeTaxLine]
+class ChargeShippingLine(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    code: Optional[str] = None
+    price: Optional[str] = None
+    source: Optional[str] = None
+    title: Optional[str] = None
+    taxable: Optional[str] = None
+    tax_lines: list[ChargeTaxLine] = []
 
 
-class Charge(TypedDict):
+class Charge(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
-    address_id: int
-    analytics_data: ChargeAnalyticsData
-    billing_address: ChargeBillingAddress
-    charge_attempts: Optional[int]
-    client_details: ChargeClientDetails
-    created_at: str
-    currency: str
-    customer: ChargeCustomer
-    discounts: list[ChargeDiscount]
-    error: Optional[str]
-    error_type: Optional[str]
-    external_order_id: ChargeExternalOrderId
-    external_transaction_id: ChargeExternalTransactionId
-    external_variant_id_not_found: Optional[bool]
-    has_uncommitted_changes: bool
-    line_items: list[ChargeLineItem]
-    note: str
-    order_attributes: list[ChargeOrderAttribute]
-    orders_count: int
-    payment_processor: str
-    processed_at: Optional[str]
-    retry_date: Optional[str]
-    scheduled_at: str
-    shipping_address: ChargeShippingAddress
-    shipping_lines: list[ChargeShippingLine]
-    status: ChargeStatus
-    subtotal_price: str
-    tags: list[str]
-    tax_lines: list[ChargeTaxLine]
-    taxable: bool
-    taxes_included: bool
-    total_discounts: str
-    total_line_items_price: str
-    total_price: str
-    total_refunds: Optional[str]
-    total_tax: str
-    total_weight_grams: int
-    updated_at: str
-
-
-ChargeType = Literal["checkout", "recurring"]
-
-Charge.__annotations__["type"] = ChargeType
+    address_id: Optional[int] = None
+    analytics_data: Optional[ChargeAnalyticsData] = None
+    billing_address: Optional[ChargeBillingAddress] = None
+    charge_attempts: Optional[int] = None
+    client_details: Optional[ChargeClientDetails] = None
+    created_at: Optional[str] = None
+    currency: Optional[str] = None
+    customer: Optional[ChargeCustomer] = None
+    discounts: list[ChargeDiscount] = []
+    error: Optional[str] = None
+    error_type: Optional[str] = None
+    external_order_id: Optional[ChargeExternalOrderId] = None
+    external_transaction_id: Optional[ChargeExternalTransactionId] = None
+    external_variant_id_not_found: Optional[bool] = None
+    has_uncommitted_changes: Optional[bool] = None
+    line_items: list[ChargeLineItem] = []
+    note: Optional[str] = None
+    order_attributes: list[ChargeOrderAttribute] = []
+    orders_count: Optional[int] = None
+    payment_processor: Optional[str] = None
+    processed_at: Optional[str] = None
+    retry_date: Optional[str] = None
+    scheduled_at: Optional[str] = None
+    shipping_address: Optional[ChargeShippingAddress] = None
+    shipping_lines: list[ChargeShippingLine] = []
+    status: Optional[ChargeStatus] = None
+    subtotal_price: Optional[str] = None
+    tags: list[str] = []
+    tax_lines: list[ChargeTaxLine] = []
+    taxable: Optional[bool] = None
+    taxes_included: Optional[bool] = None
+    total_discounts: Optional[str] = None
+    total_line_items_price: Optional[str] = None
+    total_price: Optional[str] = None
+    total_refunds: Optional[str] = None
+    total_tax: Optional[str] = None
+    total_weight_grams: Optional[int] = None
+    type: Optional[ChargeType] = None
+    updated_at: Optional[str] = None

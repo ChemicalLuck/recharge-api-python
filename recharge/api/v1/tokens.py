@@ -19,4 +19,4 @@ class TokenResource(RechargeResource):
         data = self._http_get(self._url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return TokenInformation(**data)
+        return TokenInformation.model_validate(data)

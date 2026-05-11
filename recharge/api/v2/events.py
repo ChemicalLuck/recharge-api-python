@@ -6,7 +6,7 @@ from recharge.model.v2.event import Event
 
 
 class EventListQuery(TypedDict, total=False):
-    create_at_min: str
+    created_at_min: str
     created_at_max: str
     object_type: str
     object_id: int
@@ -34,7 +34,7 @@ class EventResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Event(**event) for event in data]
+        return [Event.model_validate(event) for event in data]
 
     def list_all(self, query: Optional[EventListQuery] = None) -> list[Event]:
         """List all events.
@@ -46,4 +46,4 @@ class EventResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Event(**event) for event in data]
+        return [Event.model_validate(event) for event in data]

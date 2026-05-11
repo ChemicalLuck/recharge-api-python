@@ -1,7 +1,9 @@
-from typing import TypedDict
+from pydantic import BaseModel, ConfigDict
 
 
-class BundleSelectionItem(TypedDict):
+class BundleSelectionItem(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     collection_id: str
     collection_source: str
@@ -12,7 +14,9 @@ class BundleSelectionItem(TypedDict):
     updated_at: str
 
 
-class BundleSelection(TypedDict):
+class BundleSelection(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     bundle_variant_id: int
     purchase_item_id: int

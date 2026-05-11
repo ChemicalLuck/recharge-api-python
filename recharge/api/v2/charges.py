@@ -103,7 +103,7 @@ class ChargeResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def list_(self, query: Optional[ChargeListQuery] = None) -> list[Charge]:
         """List charges.
@@ -115,7 +115,7 @@ class ChargeResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Charge(**item) for item in data]
+        return [Charge.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[ChargeListQuery] = None) -> list[Charge]:
         """List all charges.
@@ -127,7 +127,7 @@ class ChargeResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Charge(**item) for item in data]
+        return [Charge.model_validate(item) for item in data]
 
     def apply_discount(self, charge_id: str, body: ChargeDiscountApplyBody) -> Charge:
         """Apply a discount to a charge.
@@ -142,7 +142,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def remove_discount(self, charge_id: str) -> Charge:
         """Remove a discount from a charge.
@@ -157,7 +157,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def skip(self, charge_id: str, body: ChargeSkipBody) -> Charge:
         """Skip a charge.
@@ -172,7 +172,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def unskip(self, charge_id: str, body: ChargeSkipBody) -> Charge:
         """Unskip a charge.
@@ -187,7 +187,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def refund(self, charge_id: str, body: ChargeRefundBody) -> Charge:
         """Refund a charge.
@@ -202,7 +202,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def process(self, charge_id: str) -> Charge:
         """Process a charge.
@@ -217,7 +217,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def capture(self, charge_id: str) -> Charge:
         """Capture a charge.
@@ -237,7 +237,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def add_freegift(self, charge_id: str, body: ChargeAddFreegiftBody) -> Charge:
         required_scopes: list[RechargeScope] = ["write_free_gifts"]
@@ -249,7 +249,7 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)
 
     def remove_freegift(self, charge_id: str, body: ChargeRemoveFreegiftBody) -> Charge:
         required_scopes: list[RechargeScope] = ["write_free_gifts"]
@@ -261,4 +261,4 @@ class ChargeResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Charge(**data)
+        return Charge.model_validate(data)

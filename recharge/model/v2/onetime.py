@@ -1,33 +1,43 @@
-from typing import Optional, TypedDict
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 
-class OnetimeExternalProductId(TypedDict):
-    ecommerce: str
+class OnetimeExternalProductId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
 
 
-class OnetimeExternalVariantId(TypedDict):
-    ecommerce: str
+class OnetimeExternalVariantId(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    ecommerce: Optional[str] = None
 
 
-class OnetimeProperty(TypedDict):
+class OnetimeProperty(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     name: str
     value: str
 
 
-class Onetime(TypedDict):
+class Onetime(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
-    address_id: int
-    created_at: str
-    customer_id: int
-    external_product_id: OnetimeExternalProductId
-    external_variant_id: OnetimeExternalVariantId
-    is_cancelled: bool
-    next_charge_scheduled_at: str
-    price: Optional[int]
-    product_title: str
-    properties: list[OnetimeProperty]
-    quantity: int
-    sku: str
-    sku_override: bool
-    updated_at: str
-    variant_title: str
+    address_id: Optional[int] = None
+    created_at: Optional[str] = None
+    customer_id: Optional[int] = None
+    external_product_id: Optional[OnetimeExternalProductId] = None
+    external_variant_id: Optional[OnetimeExternalVariantId] = None
+    is_cancelled: Optional[bool] = None
+    next_charge_scheduled_at: Optional[str] = None
+    price: Optional[int] = None
+    product_title: Optional[str] = None
+    properties: list[OnetimeProperty] = []
+    quantity: Optional[int] = None
+    sku: Optional[str] = None
+    sku_override: Optional[bool] = None
+    updated_at: Optional[str] = None
+    variant_title: Optional[str] = None

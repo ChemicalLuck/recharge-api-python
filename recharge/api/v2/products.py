@@ -52,6 +52,7 @@ class ProductResource(RechargeResource):
     """
 
     object_list_key = "products"
+    object_dict_key = "product"
     recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: ProductCreateBody) -> Product:
@@ -64,7 +65,7 @@ class ProductResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Product(**data)
+        return Product.model_validate(data)
 
     def get(self, product_id: str) -> Product:
         """Get a product.
@@ -77,7 +78,7 @@ class ProductResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Product(**data)
+        return Product.model_validate(data)
 
     def update(self, product_id: str, body: ProductUpdateBody) -> Product:
         """Update a product.
@@ -90,7 +91,7 @@ class ProductResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Product(**data)
+        return Product.model_validate(data)
 
     def delete(self, product_id: str) -> dict:
         """Delete a product.
@@ -117,7 +118,7 @@ class ProductResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Product(**item) for item in data]
+        return [Product.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[ProductListQuery] = None) -> list[Product]:
         """List all products.
@@ -129,4 +130,4 @@ class ProductResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Product(**item) for item in data]
+        return [Product.model_validate(item) for item in data]

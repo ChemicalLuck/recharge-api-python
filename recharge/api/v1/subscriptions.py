@@ -144,7 +144,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def get(self, subscription_id: str) -> Subscription:
         """Get a subscription.
@@ -159,7 +159,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def update(
         self, subscription_id: str, body: SubscriptionUpdateBody
@@ -176,7 +176,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def delete(self, subscription_id: str, body: SubscriptionDeleteBody) -> dict:
         """Delete a subscription.
@@ -205,7 +205,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_get(self._url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Subscription(**item) for item in data]
+        return [Subscription.model_validate(item) for item in data]
 
     def list_all(
         self, query: Optional[SubscriptionListQuery] = None
@@ -219,7 +219,7 @@ class SubscriptionResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Subscription(**item) for item in data]
+        return [Subscription.model_validate(item) for item in data]
 
     def count(self, query: Optional[SubscriptionCountQuery] = None) -> int:
         """Count subscriptions.
@@ -252,7 +252,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def change_address(
         self, subscription_id: str, body: SubscriptionChangeAddressBody
@@ -270,7 +270,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def cancel(
         self, subscription_id: str, body: SubscriptionCancelBody
@@ -287,7 +287,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def activate(self, subscription_id: str):
         """Activate a cancelled subscription.
@@ -302,7 +302,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def bulk_create(self, body: SubscriptionBulkCreateBody) -> list[Subscription]:
         """Bulk create subscriptions.
@@ -315,7 +315,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Subscription(**item) for item in data]
+        return [Subscription.model_validate(item) for item in data]
 
     def bulk_update(self, body: SubscriptionBulkUpdateBody) -> list[Subscription]:
         """Bulk update subscriptions.
@@ -328,7 +328,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Subscription(**item) for item in data]
+        return [Subscription.model_validate(item) for item in data]
 
     def bulk_delete(self, body: SubscriptionBulkDeleteBody) -> list[Subscription]:
         """Bulk delete subscriptions.
@@ -341,4 +341,4 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Subscription(**item) for item in data]
+        return [Subscription.model_validate(item) for item in data]

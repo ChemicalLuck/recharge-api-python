@@ -22,7 +22,7 @@ class ShopResource(RechargeResource):
         data = self._http_get(self._url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Store(**data)
+        return Store.model_validate(data)
 
     def shipping_countries(self) -> list[ShippingCountry]:
         """Retrieve shipping countries where items can be shipped.
@@ -35,4 +35,4 @@ class ShopResource(RechargeResource):
         data = self._http_get(url, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [ShippingCountry(**item) for item in data]
+        return [ShippingCountry.model_validate(item) for item in data]

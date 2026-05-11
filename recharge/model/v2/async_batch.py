@@ -1,6 +1,8 @@
-from typing import Literal, Optional, TypedDict
+from typing import Literal, Optional
 
-from recharge.api import RechargeVersion
+from pydantic import BaseModel, ConfigDict
+
+from recharge.types import RechargeVersion
 
 AsyncBatchStatus = Literal["not_started", "processing", "completed", "failed"]
 AsyncBatchTaskStatus = Literal["pending", "processing", "failed", "success"]
@@ -17,30 +19,34 @@ AsyncBatchType = Literal[
 ]
 
 
-class AsyncBatch(TypedDict):
+class AsyncBatch(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     batch_type: AsyncBatchType
-    closed_at: Optional[str]
+    closed_at: Optional[str] = None
     created_at: str
-    deleted_at: Optional[str]
+    deleted_at: Optional[str] = None
     fail_task_count: int
     status: AsyncBatchStatus
-    submitted_at: Optional[str]
+    submitted_at: Optional[str] = None
     success_task_count: int
     total_task_count: int
     updated_at: str
-    version: RechargeVersion
+    version: Optional[RechargeVersion] = None
 
 
-class AsyncBatchTask(TypedDict):
+class AsyncBatchTask(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     batch_id: int
     body: dict
-    completed_at: Optional[str]
+    completed_at: Optional[str] = None
     created_at: str
-    deleted_at: Optional[str]
+    deleted_at: Optional[str] = None
     id: int
-    queued_at: Optional[str]
+    queued_at: Optional[str] = None
     result: dict
-    started_at: Optional[str]
+    started_at: Optional[str] = None
     status: AsyncBatchStatus
     updated_at: str

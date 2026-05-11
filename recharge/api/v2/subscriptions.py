@@ -136,7 +136,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def get(self, subscription_id: str) -> Subscription:
         """Get a subscription.
@@ -151,7 +151,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def update(
         self, subscription_id: str, body: SubscriptionUpdateBody
@@ -168,7 +168,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def delete(self, subscription_id: str, body: SubscriptionDeleteBody) -> dict:
         """Delete a subscription.
@@ -197,7 +197,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Subscription(**item) for item in data]
+        return [Subscription.model_validate(item) for item in data]
 
     def list_all(
         self, query: Optional[SubscriptionListQuery] = None
@@ -211,7 +211,7 @@ class SubscriptionResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Subscription(**item) for item in data]
+        return [Subscription.model_validate(item) for item in data]
 
     def change_date(
         self, subscription_id: str, body: SubscriptionChangeDateBody
@@ -229,7 +229,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def change_address(
         self, subscription_id: str, body: SubscriptionChangeAddressBody
@@ -247,7 +247,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def cancel(
         self, subscription_id: str, body: SubscriptionCancelBody
@@ -264,7 +264,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def activate(self, subscription_id: str) -> Subscription:
         """Activate a cancelled subscription.
@@ -279,7 +279,7 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Subscription(**data)
+        return Subscription.model_validate(data)
 
     def skip_gift(self, body: SubscriptionSkipGiftBody) -> list[Onetime]:
         """Skip a gift subscription.
@@ -292,4 +292,4 @@ class SubscriptionResource(RechargeResource):
         data = self._http_post(url, body, expected=list, response_key="onetimes")
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Onetime(**item) for item in data]
+        return [Onetime.model_validate(item) for item in data]

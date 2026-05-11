@@ -103,7 +103,7 @@ class AddressResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def get(self, address_id: str) -> Address:
         """Get an address by ID.
@@ -116,7 +116,7 @@ class AddressResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def update(self, address_id: str, body: AddressUpdateBody) -> Address:
         """Update an address by ID.
@@ -129,7 +129,7 @@ class AddressResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def delete(self, address_id: str) -> dict:
         """Delete an address by ID.
@@ -156,7 +156,7 @@ class AddressResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Address(**address) for address in data]
+        return [Address.model_validate(address) for address in data]
 
     def list_all(self, query: Optional[AddressListQuery] = None) -> list[Address]:
         """List all addresses for a customer.
@@ -168,7 +168,7 @@ class AddressResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Address(**address) for address in data]
+        return [Address.model_validate(address) for address in data]
 
     def merge(self, body: AddressMergeBody) -> Address:
         """Merge two addresses.
@@ -177,11 +177,11 @@ class AddressResource(RechargeResource):
         required_scopes: list[RechargeScope] = ["write_customers"]
         self._check_scopes(f"POST /{self.object_list_key}/merge", required_scopes)
 
-        url = f"{self.base_url}/merge"
+        url = f"{self._url}/merge"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)
 
     def skip(self, address_id: str, body: AddressSkipBody) -> Address:
         """Skip an address.
@@ -190,8 +190,8 @@ class AddressResource(RechargeResource):
         required_scopes: list[RechargeScope] = ["write_customers"]
         self._check_scopes(f"POST /{self.object_list_key}/skip", required_scopes)
 
-        url = f"{self.base_url}/{address_id}/charges/skip"
+        url = f"{self._url}/{address_id}/charges/skip"
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Address(**data)
+        return Address.model_validate(data)

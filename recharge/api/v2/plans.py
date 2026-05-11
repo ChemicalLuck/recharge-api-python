@@ -68,7 +68,7 @@ class PlanResource(RechargeResource):
     """
 
     object_list_key = "plans"
-    object_key_dict = "plan"
+    object_dict_key = "plan"
     recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: PlanCreateBody) -> Plan:
@@ -81,7 +81,7 @@ class PlanResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Plan(**data)
+        return Plan.model_validate(data)
 
     def update(self, plan_id: int, body: PlanUpdateBody) -> Plan:
         """Update a plan.
@@ -94,7 +94,7 @@ class PlanResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Plan(**data)
+        return Plan.model_validate(data)
 
     def delete(self, plan_id: int) -> dict:
         """Delete a plan.
@@ -119,7 +119,7 @@ class PlanResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Plan(**item) for item in data]
+        return [Plan.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[PlanListQuery] = None) -> list[Plan]:
         """List all plans.
@@ -131,7 +131,7 @@ class PlanResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Plan(**item) for item in data]
+        return [Plan.model_validate(item) for item in data]
 
     def bulk_create(
         self, external_product_id: str, body: PlanBulkCreateBody
@@ -146,9 +146,9 @@ class PlanResource(RechargeResource):
 
         url = f"{self.base_url}/products/{external_product_id}/plans-bulk"
         data = self._http_post(url, body, expected=list)
-        if not isinstance(data, dict):
-            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return [Plan(**item) for item in data]
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Plan.model_validate(item) for item in data]
 
     def bulk_update(
         self, external_product_id: str, body: PlanBulkUpdateBody
@@ -163,9 +163,9 @@ class PlanResource(RechargeResource):
 
         url = f"{self.base_url}/products/{external_product_id}/plans-bulk"
         data = self._http_put(url, body, expected=list)
-        if not isinstance(data, dict):
-            raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return [Plan(**item) for item in data]
+        if not isinstance(data, list):
+            raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
+        return [Plan.model_validate(item) for item in data]
 
     def bulk_delete(self, external_product_id: str, body: PlanBulkDeleteBody) -> dict:
         """Bulk delete plans.

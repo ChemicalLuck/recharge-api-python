@@ -109,7 +109,7 @@ class MetafieldResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Metafield(**data)
+        return Metafield.model_validate(data)
 
     def get(self, metafield_id: str, resource: MetafieldOwnerResource) -> Metafield:
         """Get a metafield by ID.
@@ -124,7 +124,7 @@ class MetafieldResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Metafield(**data)
+        return Metafield.model_validate(data)
 
     def update(self, metafield_id: str, body: MetafieldUpdateBody) -> Metafield:
         """Update a metafield.
@@ -140,7 +140,7 @@ class MetafieldResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Metafield(**data)
+        return Metafield.model_validate(data)
 
     def delete(self, metafield_id: str, resource: MetafieldOwnerResource) -> dict:
         """Delete a metafield.
@@ -168,7 +168,7 @@ class MetafieldResource(RechargeResource):
         data = self._http_get(self._url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Metafield(**item) for item in data]
+        return [Metafield.model_validate(item) for item in data]
 
     def list_all(self, query: MetafieldListQuery) -> list[Metafield]:
         """List all metafields.
@@ -181,7 +181,7 @@ class MetafieldResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Metafield(**item) for item in data]
+        return [Metafield.model_validate(item) for item in data]
 
     def count(self, query: MetafieldCountQuery) -> int:
         """Retrieve a count of metafields.

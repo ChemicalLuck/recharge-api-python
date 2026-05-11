@@ -40,6 +40,7 @@ class PaymentMethodResource(RechargeResource):
     """
 
     object_list_key = "payment_methods"
+    object_dict_key = "payment_method"
     recharge_version: RechargeVersion = "2021-11"
 
     def create(self, body: PaymentMethodCreateBody) -> PaymentMethod:
@@ -52,7 +53,7 @@ class PaymentMethodResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return PaymentMethod(**data)
+        return PaymentMethod.model_validate(data)
 
     def get(self, payment_method_id: int) -> PaymentMethod:
         """Get a payment method.
@@ -67,7 +68,7 @@ class PaymentMethodResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return PaymentMethod(**data)
+        return PaymentMethod.model_validate(data)
 
     def update(
         self, payment_method_id: int, body: PaymentMethodUpdateBody
@@ -84,7 +85,7 @@ class PaymentMethodResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return PaymentMethod(**data)
+        return PaymentMethod.model_validate(data)
 
     def delete(self, payment_method_id: int) -> dict:
         """Delete a payment method.
@@ -113,7 +114,7 @@ class PaymentMethodResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [PaymentMethod(**item) for item in data]
+        return [PaymentMethod.model_validate(item) for item in data]
 
     def list_all(
         self, query: Optional[PaymentMethodListQuery] = None
@@ -127,4 +128,4 @@ class PaymentMethodResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [PaymentMethod(**item) for item in data]
+        return [PaymentMethod.model_validate(item) for item in data]

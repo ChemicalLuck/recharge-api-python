@@ -1,14 +1,18 @@
-from typing import TypedDict
+from pydantic import BaseModel, ConfigDict
 
-from recharge.api import RechargeScope
+from recharge.types import RechargeScope
 
 
-class TokenClient(TypedDict):
+class TokenClient(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     name: str
     contact_email: str
 
 
-class TokenInformation(TypedDict):
+class TokenInformation(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     client: TokenClient
     contact_email: str
     name: str

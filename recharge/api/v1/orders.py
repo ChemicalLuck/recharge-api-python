@@ -84,7 +84,7 @@ class OrderResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def update(self, order_id: str, body: OrderUpdateBody) -> Order:
         """Update an order.
@@ -97,7 +97,7 @@ class OrderResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def delete(self, order_id: str) -> dict:
         """Delete an order.
@@ -122,7 +122,7 @@ class OrderResource(RechargeResource):
         data = self._http_get(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Order(**item) for item in data]
+        return [Order.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[OrderListQuery] = None) -> list[Order]:
         """List all orders.
@@ -134,7 +134,7 @@ class OrderResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Order(**item) for item in data]
+        return [Order.model_validate(item) for item in data]
 
     def count(self, query: Optional[OrderCountQuery] = None) -> int:
         """Count orders.
@@ -164,7 +164,7 @@ class OrderResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def change_variant(
         self, order_id: str, old_variant_id: str, body: OrderChangeVariantBody
@@ -182,7 +182,7 @@ class OrderResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def clone(self, order_id: str, charge_id: str, body: OrderCloneBody) -> Order:
         """Clone an order.
@@ -198,7 +198,7 @@ class OrderResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)
 
     def delay(self, order_id: str) -> Order:
         """Delay an order.
@@ -213,4 +213,4 @@ class OrderResource(RechargeResource):
         data = self._http_post(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Order(**data)
+        return Order.model_validate(data)

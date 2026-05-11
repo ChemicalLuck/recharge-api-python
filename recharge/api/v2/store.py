@@ -22,4 +22,4 @@ class StoreResource(RechargeResource):
         data = self._http_get(self._url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Store(**data)
+        return Store.model_validate(data)

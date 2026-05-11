@@ -76,7 +76,7 @@ class OnetimeResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Onetime(**data)
+        return Onetime.model_validate(data)
 
     def get(self, onetime_id: str) -> Onetime:
         """Get a Onetime
@@ -89,7 +89,7 @@ class OnetimeResource(RechargeResource):
         data = self._http_get(url)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Onetime(**data)
+        return Onetime.model_validate(data)
 
     def update(self, onetime_id: str, body: OnetimeUpdateBody) -> Onetime:
         """Update a Onetime
@@ -102,7 +102,7 @@ class OnetimeResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Onetime(**data)
+        return Onetime.model_validate(data)
 
     def delete(self, onetime_id: str) -> dict:
         """Delete a Onetime.
@@ -129,7 +129,7 @@ class OnetimeResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Onetime(**item) for item in data]
+        return [Onetime.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[OnetimeListQuery] = None) -> list[Onetime]:
         """List all onetimes.
@@ -138,7 +138,7 @@ class OnetimeResource(RechargeResource):
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self._url, query, list)
+        data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Onetime(**item) for item in data]
+        return [Onetime.model_validate(item) for item in data]

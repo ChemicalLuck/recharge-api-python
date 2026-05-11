@@ -1,6 +1,6 @@
 [project]
 name = "recharge-api"
-version = "1.20.0"
+version = "2.0.0"
 authors = [
 	{ name="ChemicalLuck", email="j.tebbett@outlook.com" }
 ]
@@ -17,10 +17,10 @@ classifiers = [
 	"Topic :: Software Development :: Testing",
 	"Topic :: Utilities"
 ]
-dependencies = ["requests"]
+dependencies = ["requests", "pydantic>=2.0"]
 
 [project.optional-dependencies]
-dev = ["ruff", "pre-commit"]
+dev = ["ruff", "pre-commit", "pytest", "pytest-cov", "responses"]
 
 [project.urls]
 Homepage = "http://github.com/ChemicalLuck/recharge-api"

@@ -80,7 +80,7 @@ class CustomerResource(RechargeResource):
         data = self._http_post(self._url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Customer(**data)
+        return Customer.model_validate(data)
 
     def get(self, customer_id: str, includes: Optional[list[CustomerIncludes]] = None) -> Customer:
         """Get a customer by ID.
@@ -94,7 +94,7 @@ class CustomerResource(RechargeResource):
         data = self._http_get(url, query)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Customer(**data)
+        return Customer.model_validate(data)
 
     def update(self, customer_id: str, body: CustomerUpdateBody) -> Customer:
         """Update a customer.
@@ -107,7 +107,7 @@ class CustomerResource(RechargeResource):
         data = self._http_put(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return Customer(**data)
+        return Customer.model_validate(data)
 
     def delete(self, customer_id: str) -> dict:
         """Delete a customer.
@@ -134,7 +134,7 @@ class CustomerResource(RechargeResource):
         data = self._http_get(self._url, query, list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Customer(**item) for item in data]
+        return [Customer.model_validate(item) for item in data]
 
     def list_all(self, query: Optional[CustomerListQuery] = None) -> list[Customer]:
         """List all customers.
@@ -146,7 +146,7 @@ class CustomerResource(RechargeResource):
         data = self._paginate(self._url, query)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
-        return [Customer(**item) for item in data]
+        return [Customer.model_validate(item) for item in data]
 
     def get_delivery_schedule(
         self, customer_id: str, query: Optional[CustomerGetDeliveryScheduleQuery] = None
@@ -164,7 +164,7 @@ class CustomerResource(RechargeResource):
         data = self._http_get(url, query, response_key="deliverySchedule")
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return CustomerDeliverySchedule(**data)
+        return CustomerDeliverySchedule.model_validate(data)
 
     def get_credit_summary(self, customer_id: str) -> CustomerCreditSummary:
         """Get a customer's credit summary.
@@ -179,4 +179,4 @@ class CustomerResource(RechargeResource):
         data = self._http_get(url, response_key="credit_summary")
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return CustomerCreditSummary(**data)
+        return CustomerCreditSummary.model_validate(data)

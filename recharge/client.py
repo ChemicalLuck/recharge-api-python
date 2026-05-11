@@ -1,363 +1,151 @@
 import json
 import logging
-import random
 import time
-from enum import Enum
-from typing import Any, Literal, Mapping, Optional, Union
-from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+from typing import Any, Mapping, Optional, Union
 
-from requests import Request, Response, Session
 from requests.exceptions import HTTPError, JSONDecodeError, RequestException
-from requests.models import PreparedRequest
 
-from recharge.exceptions import (
-    RechargeAPIError,
-    RechargeHTTPError,
-    RechargeRequestException,
-)
+from recharge.exceptions import RechargeAPIError, RechargeHTTPError, RechargeRequestException
+from recharge.pagination import get_next_page_url
+from recharge.retry import ExponentialBackoffRetry, RetryStrategy
+from recharge.transport import HttpResponse, HttpTransport, RequestsTransport
+from recharge.types import RechargeScope, RechargeVersion
 
-RechargeVersion = Literal["2021-01", "2021-11"]
-
-RechargeScope = Literal[
-    "write_orders",
-    "read_orders",
-    "read_discounts",
-    "write_discounts",
-    "write_subscriptions",
-    "read_subscriptions",
-    "write_payments",
-    "read_payments",
-    "write_payment_methods",
-    "read_payment_methods",
-    "write_customers",
-    "read_customers",
-    "write_products",
-    "read_products",
-    "store_info",
-    "write_batches",
-    "read_batches",
-    "read_accounts",
-    "write_checkouts",
-    "read_checkouts",
-    "write_notifications",
-    "read_events",
-    "write_retention_strategies",
-    "read_gift_purchases",
-    "write_gift_purchases",
-    "read_gift_purchases",
-    "write_gift_purchases",
-    "read_bundle_products",
-    "read_credit_summary",
-    "write_free_gifts",
-]
-
-REDACTED_HEADERS = ["Cookie", "X-Recharge-Access-Token"]
-
-
-class RequestMethod(Enum):
-    GET = "GET"
-    POST = "POST"
-    PUT = "PUT"
-    DELETE = "DELETE"
+REDACTED_HEADERS = {"X-Recharge-Access-Token", "Cookie"}
 
 
 class RechargeCustomFormatter(logging.Formatter):
-    # List of standard log record attributes
-    standard_attributes = {
-        "name",
-        "msg",
-        "args",
-        "levelname",
-        "levelno",
-        "pathname",
-        "filename",
-        "module",
-        "exc_info",
-        "exc_text",
-        "stack_info",
-        "lineno",
-        "funcName",
-        "created",
-        "msecs",
-        "relativeCreated",
-        "thread",
-        "threadName",
-        "processName",
-        "process",
-        "message",
-        "asctime",
-        "taskName",
+    _standard_attrs = {
+        "name", "msg", "args", "levelname", "levelno", "pathname", "filename",
+        "module", "exc_info", "exc_text", "stack_info", "lineno", "funcName",
+        "created", "msecs", "relativeCreated", "thread", "threadName",
+        "processName", "process", "message", "asctime", "taskName",
     }
 
-    def format(self, record):
-        # Start with the base message
-        base_message = super().format(record)
+    def format(self, record: logging.LogRecord) -> str:
+        base = super().format(record)
+        extra = {k: v for k, v in record.__dict__.items() if k not in self._standard_attrs}
+        return f"{base}\n{json.dumps(extra, indent=4)}" if extra else base
 
-        # Get the extra fields
-        extra_fields = {
-            key: value
-            for key, value in record.__dict__.items()
-            if key not in self.standard_attributes
-        }
 
-        # Combine base message with extra fields
-        if extra_fields:
-            extra_message = json.dumps(extra_fields, indent=4)
-            return f"{base_message}\n{extra_message}"
-        else:
-            return base_message
+def _create_default_logger(level: int) -> logging.Logger:
+    logger = logging.getLogger(__name__)
+    if not logger.handlers:
+        handler = logging.StreamHandler()
+        handler.setFormatter(
+            RechargeCustomFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        )
+        logger.addHandler(handler)
+    logger.setLevel(level)
+    return logger
 
 
 class RechargeClient:
+    base_url = "https://api.rechargeapps.com"
+
     def __init__(
         self,
         access_token: str,
-        max_retries: int = 3,
-        retry_delay: int = 2,
-        session: Optional[Session] = None,
+        transport: Optional[HttpTransport] = None,
+        retry_strategy: Optional[RetryStrategy] = None,
         logger: Optional[logging.Logger] = None,
         logging_level: int = logging.DEBUG,
-    ):
-        self._max_retries = max_retries
-        self._base_retry_delay = retry_delay
-        self._retry_delay = retry_delay
-        self._retries = 0
-        self._logger = logger or self._create_default_logger(logging_level)
-        self._session = session or Session()
-        self._session.headers.update(
-            {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "X-Recharge-Access-Token": access_token,
-            }
-        )
+    ) -> None:
+        self._base_headers: dict[str, str] = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-Recharge-Access-Token": access_token,
+        }
+        self._transport = transport or RequestsTransport()
+        self._retry_strategy = retry_strategy or ExponentialBackoffRetry()
+        self._logger = logger or _create_default_logger(logging_level)
+        self._version: Optional[RechargeVersion] = None
 
-    def _create_default_logger(self, logging_level: int = logging.DEBUG):
-        logger = logging.getLogger(__name__)
-        handler = logging.StreamHandler()
-        formatter = RechargeCustomFormatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        logger.setLevel(logging_level)
-        return logger
+    def set_version(self, version: RechargeVersion) -> "RechargeClient":
+        self._version = version
+        return self
 
-    def _redact_auth(self, request: PreparedRequest) -> PreparedRequest:
-        temp_request = request.copy()
-        for header in REDACTED_HEADERS:
-            if header in temp_request.headers:
-                temp_request.headers[header] = "REDACTED"
-        return temp_request
+    def _build_headers(self) -> dict[str, str]:
+        headers = dict(self._base_headers)
+        if self._version:
+            headers["X-Recharge-Version"] = self._version
+        return headers
 
-    def _retry(self, request: PreparedRequest) -> Response:
-        redacted_request = self._redact_auth(request)
-        if self._retries >= self._max_retries:
-            self._logger.error(
-                "Max retries reached",
-                extra={
-                    "retries": self._retries,
-                    "max_retries": self._max_retries,
-                    "url": redacted_request.url,
-                    "body": redacted_request.body,
-                    "headers": dict(redacted_request.headers),
-                },
+    def _redact(self, headers: dict[str, str]) -> dict[str, str]:
+        return {k: ("REDACTED" if k in REDACTED_HEADERS else v) for k, v in headers.items()}
+
+    def _send(
+        self,
+        method: str,
+        url: str,
+        params: Optional[Mapping[str, Any]],
+        json_body: Optional[Mapping[str, Any]],
+    ) -> HttpResponse:
+        headers = self._build_headers()
+        attempt = 0
+
+        while True:
+            self._logger.debug(
+                "Sending request",
+                extra={"method": method, "url": url, "headers": self._redact(headers)},
             )
-            self._reset_retry_logic()
-            raise RechargeAPIError("Max retries reached")
-        self._increase_retry_logic()
-        self._logger.info(
-            "Retrying",
-            extra={
-                "retries": self._retries,
-                "max_retries": self._max_retries,
-                "delay": self._retry_delay,
-                "url": redacted_request.url,
-                "body": redacted_request.body,
-                "headers": dict(redacted_request.headers),
-            },
-        )
-        time.sleep(self._retry_delay)
-        return self._send(request)
+            try:
+                response = self._transport.send(method, url, headers, params, json_body)
+            except RequestException as exc:
+                self._logger.critical("Transport error", extra={"error": str(exc)})
+                raise RechargeRequestException("Request failed", cause=exc) from exc
 
-    def _increase_retry_logic(self):
-        self._retries += 1
-        self._retry_delay *= 2
-        self._retry_delay += random.uniform(0, 1)
+            if self._retry_strategy.should_retry(attempt, response.status_code):
+                delay = self._retry_strategy.delay_for(attempt)
+                self._logger.warning(
+                    "Retrying request",
+                    extra={"attempt": attempt, "status_code": response.status_code, "delay": delay},
+                )
+                time.sleep(delay)
+                attempt += 1
+                continue
 
-    def _reset_retry_logic(self):
-        self._retries = 0
-        self._retry_delay = self._base_retry_delay
+            try:
+                response.raise_for_status()
+            except HTTPError as exc:
+                body = self._extract_body(response)
+                self._logger.critical(
+                    "HTTP error",
+                    extra={"status_code": response.status_code, "body": body},
+                )
+                raise RechargeHTTPError(
+                    f"HTTP {response.status_code}", status_code=response.status_code, body=body
+                ) from exc
 
-    def _extract_error_message(self, response: Response):
+            self._logger.debug("Request successful", extra={"status_code": response.status_code})
+            return response
+
+    def _extract_body(self, response: HttpResponse) -> Any:
         try:
             return response.json()
-        except JSONDecodeError:
-            self._logger.error(
-                "Failed to decode JSON response", extra={"response": response.text}
-            )
+        except Exception:
             return response.text
-
-    def _send(self, request: PreparedRequest) -> Response:
-        redacted_request = self._redact_auth(request)
-        self._logger.debug(
-            "Sending request",
-            extra={
-                "url": redacted_request.url,
-                "body": redacted_request.body,
-                "headers": dict(redacted_request.headers),
-            },
-        )
-        try:
-            response = self._session.send(request)
-            if response.status_code == 429:
-                self._logger.warning("Rate limited, retrying...")
-                return self._retry(request)
-            if response.status_code >= 500:
-                self._logger.error(
-                    "Server error, retrying...",
-                    extra={
-                        "response": response.text,
-                        "status_code": response.status_code,
-                    },
-                )
-                return self._retry(request)
-            self._reset_retry_logic()
-            response.raise_for_status()
-            self._logger.debug("Request successful", extra={"response": response.text})
-            return response
-        except HTTPError as http_error:
-            self._logger.critical(
-                "HTTP error",
-                extra={
-                    "error": http_error.response.text,
-                    "request": http_error.request,
-                },
-            )
-            raise RechargeHTTPError(
-                self._extract_error_message(http_error.response)
-            ) from http_error
-        except RequestException as request_error:
-            self._logger.critical(
-                "Request failed",
-                extra={
-                    "error": "An ambiguous error occured",
-                    "request": request_error.request,
-                },
-            )
-            raise RechargeRequestException("Request failed") from request_error
 
     def _extract_data(
         self,
-        response: Response,
-        key: Optional[str] = None,
-        expected: type[Union[dict, list]] = dict,
+        response: HttpResponse,
+        key: Optional[str],
+        expected: type[Union[dict, list]],
     ) -> Union[dict, list]:
-        try:
-            response_json = response.json()
-        except JSONDecodeError:
-            self._logger.error(
-                "Failed to decode JSON response, expect missing data",
-                extra={"response": response.text},
-            )
+        body = self._extract_body(response)
+        if not isinstance(body, dict):
+            self._logger.error("Non-dict response body", extra={"body": body})
             return expected()
-        data = response_json if key is None else response_json.get(key, response_json)
+        data = body if key is None else body.get(key, body)
         if not isinstance(data, expected):
             self._logger.error(
-                "Invalid data type",
-                extra={
-                    "expected": expected.__name__,
-                    "got": type(data).__name__,
-                    "response": response.text,
-                },
+                "Unexpected data type",
+                extra={"expected": expected.__name__, "got": type(data).__name__},
             )
-            raise RechargeAPIError(
-                f"Expected {expected.__name__}, got {type(data).__name__}"
-            )
+            raise RechargeAPIError(f"Expected {expected.__name__}, got {type(data).__name__}")
         return data
 
-    def _request(
-        self,
-        method: RequestMethod,
-        url: str,
-        query: Optional[Mapping[str, Any]] = None,
-        json: Optional[Mapping[str, Any]] = None,
-    ) -> Response:
-        request = Request(method.value, url, params=query, json=json)
-        prepared_request = self._session.prepare_request(request)
-        return self._send(prepared_request)
-
-    def _get_next_page_url(self, response: Response) -> str:
-        version = self._session.headers.get("X-Recharge-Version")
-        if version == "2021-01":
-            return response.links.get("next", {}).get("url")
-        if version == "2021-11":
-            try:
-                data = response.json()
-                cursor = data.get("next_cursor")
-                if cursor:
-                    parsed_url = urlparse(response.url)
-                    query_params = parse_qs(parsed_url.query)
-                    query_params["cursor"] = [cursor]
-                    query_params = {
-                        k: v
-                        for k, v in query_params.items()
-                        if k in ["cursor", "limit"]
-                    }
-                    new_query_string = urlencode(query_params, doseq=True)
-                    return urlunparse(parsed_url._replace(query=new_query_string))
-            except JSONDecodeError:
-                self._logger.error(
-                    "Failed to decode JSON response, expect missing data",
-                    extra={"response": response.text},
-                )
-        return ""
-
-    def set_version(self, version: RechargeVersion):
-        self._session.headers.update({"X-Recharge-Version": version})
-        return self
-
-    def paginate(
-        self,
-        url: str,
-        query: Optional[Mapping[str, Any]] = None,
-        response_key: Optional[str] = None,
-    ) -> list:
-        pages, data = 0, []
-        while url:
-            pages += 1
-            self._logger.debug(
-                "Fetching page", extra={"page": pages, "url": url, "query": query}
-            )
-            response = self._request(RequestMethod.GET, url, query)
-            if not isinstance(response, Response):
-                return data
-            try:
-                response_data = response.json()
-                data.extend(response_data.get(response_key, []))
-            except JSONDecodeError:
-                self._logger.error(
-                    "Failed to decode JSON response, expect missing data",
-                    extra={"response_key": response_key, "response": response.text},
-                )
-                break
-            url = self._get_next_page_url(response)
-            query = None
-        self._logger.debug(
-            "Fetched all pages",
-            extra={"pages": pages, "records": len(data)},
-        )
-        return data
-
-    def delete(
-        self,
-        url: str,
-        body: Optional[Mapping[str, Any]] = None,
-        response_key: Optional[str] = None,
-        expected: type[Union[dict, list]] = dict,
-    ) -> Union[dict, list]:
-        response = self._request(RequestMethod.DELETE, url, json=body)
-        return self._extract_data(response, response_key, expected)
+    # ── Public HTTP methods ────────────────────────────────────────────────
 
     def get(
         self,
@@ -366,18 +154,7 @@ class RechargeClient:
         response_key: Optional[str] = None,
         expected: type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
-        response = self._request(RequestMethod.GET, url, query)
-        return self._extract_data(response, response_key, expected)
-
-    def put(
-        self,
-        url: str,
-        body: Optional[Mapping[str, Any]] = None,
-        query: Optional[Mapping[str, Any]] = None,
-        response_key: Optional[str] = None,
-        expected: type[Union[dict, list]] = dict,
-    ) -> Union[dict, list]:
-        response = self._request(RequestMethod.PUT, url, query, body)
+        response = self._send("GET", url, params=query, json_body=None)
         return self._extract_data(response, response_key, expected)
 
     def post(
@@ -388,5 +165,53 @@ class RechargeClient:
         response_key: Optional[str] = None,
         expected: type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
-        response = self._request(RequestMethod.POST, url, query, body)
+        response = self._send("POST", url, params=query, json_body=body)
         return self._extract_data(response, response_key, expected)
+
+    def put(
+        self,
+        url: str,
+        body: Optional[Mapping[str, Any]] = None,
+        query: Optional[Mapping[str, Any]] = None,
+        response_key: Optional[str] = None,
+        expected: type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
+        response = self._send("PUT", url, params=query, json_body=body)
+        return self._extract_data(response, response_key, expected)
+
+    def delete(
+        self,
+        url: str,
+        body: Optional[Mapping[str, Any]] = None,
+        response_key: Optional[str] = None,
+        expected: type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
+        response = self._send("DELETE", url, params=None, json_body=body)
+        return self._extract_data(response, response_key, expected)
+
+    def paginate(
+        self,
+        url: str,
+        query: Optional[Mapping[str, Any]] = None,
+        response_key: Optional[str] = None,
+    ) -> list:
+        data: list = []
+        page = 0
+        current_url: Optional[str] = url
+        current_query = query
+
+        while current_url:
+            page += 1
+            self._logger.debug("Fetching page", extra={"page": page, "url": current_url})
+            response = self._send("GET", current_url, params=current_query, json_body=None)
+            try:
+                body = response.json()
+                data.extend(body.get(response_key, []) if response_key else [])
+            except Exception:
+                self._logger.error("Failed to decode page response")
+                break
+            current_url = get_next_page_url(response, self._version or "2021-11") or None
+            current_query = None
+
+        self._logger.debug("Pagination complete", extra={"pages": page, "records": len(data)})
+        return data

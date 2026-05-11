@@ -1,4 +1,6 @@
-from typing import Literal, TypedDict
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict
 
 RetentionStrategyCancellationFlowType = Literal["subscription", "membership"]
 
@@ -7,7 +9,9 @@ RetentionStrategyIncentiveType = Literal[
 ]
 
 
-class RetentionStrategy(TypedDict):
+class RetentionStrategy(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     cancellation_flow_type: RetentionStrategyCancellationFlowType
     created_at: str

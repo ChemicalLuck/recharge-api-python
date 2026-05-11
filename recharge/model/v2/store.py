@@ -1,12 +1,16 @@
-from typing import TypedDict
+from pydantic import BaseModel, ConfigDict
 
 
-class StoreTimezone(TypedDict):
+class StoreTimezone(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     iana_name: str
     name: str
 
 
-class Store(TypedDict):
+class Store(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
     id: int
     checkout_logo_url: str
     checkout_platform: str
