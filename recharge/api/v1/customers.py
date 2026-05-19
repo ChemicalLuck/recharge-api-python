@@ -136,7 +136,6 @@ class CustomerResource(RechargeResource):
         https://developer.rechargepayments.com/2021-01/customers/customers_list
         """
         required_scopes: list[RechargeScope] = ["read_customers"]
-        print(query)
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
         data = self._http_get(self._url, query, expected=list)

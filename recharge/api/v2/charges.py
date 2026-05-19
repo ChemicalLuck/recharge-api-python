@@ -112,7 +112,7 @@ class ChargeResource(RechargeResource):
         required_scopes: list[RechargeScope] = ["read_orders"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self._url, query, list)
+        data = self._http_get(self._url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Charge.model_validate(item) for item in data]
@@ -230,7 +230,7 @@ class ChargeResource(RechargeResource):
             "write_customers",
         ]
         self._check_scopes(
-            f"POST /{self.object_list_key}/:charge_id/capture", required_scopes
+            f"POST /{self.object_list_key}/:charge_id/capture_payment", required_scopes
         )
 
         url = f"{self._url}/{charge_id}/capture_payment"

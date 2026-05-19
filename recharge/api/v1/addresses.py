@@ -222,7 +222,7 @@ class AddressResource(RechargeResource):
         data = self._http_post(url, body)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
-        return AddressValidateResponse.model_validate(data)
+        return data
 
     def apply_discount(
         self,

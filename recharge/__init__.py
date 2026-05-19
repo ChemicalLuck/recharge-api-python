@@ -66,7 +66,7 @@ class RechargeAPI:
         from recharge.api.v1 import TokenResource
 
         token = TokenResource(self.client)
-        self.scopes: list[RechargeScope] = token.get()["scopes"]
+        self.scopes: list[RechargeScope] = token.get().scopes
 
         self.v1 = RechargeAPIv1(self.client, self.scopes)
         self.v2 = RechargeAPIv2(self.client, self.scopes)

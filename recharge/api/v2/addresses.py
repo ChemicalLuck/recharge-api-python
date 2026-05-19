@@ -153,7 +153,7 @@ class AddressResource(RechargeResource):
         required_scopes: list[RechargeScope] = ["read_customers"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self._url, query, list)
+        data = self._http_get(self._url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [Address.model_validate(address) for address in data]
@@ -188,7 +188,7 @@ class AddressResource(RechargeResource):
         https://developer.rechargepayments.com/2021-11/addresses/skip_future_charge
         """
         required_scopes: list[RechargeScope] = ["write_customers"]
-        self._check_scopes(f"POST /{self.object_list_key}/skip", required_scopes)
+        self._check_scopes(f"POST /{self.object_list_key}/:address_id/charges/skip", required_scopes)
 
         url = f"{self._url}/{address_id}/charges/skip"
         data = self._http_post(url, body)

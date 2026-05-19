@@ -56,7 +56,7 @@ class BundleSelectionResource(RechargeResource):
         required_scopes: list[RechargeScope] = ["read_subscriptions"]
         self._check_scopes(f"GET /{self.object_list_key}", required_scopes)
 
-        data = self._http_get(self._url, query, list)
+        data = self._http_get(self._url, query, expected=list)
         if not isinstance(data, list):
             raise RechargeAPIError(f"Expected list, got {type(data).__name__}")
         return [BundleSelection.model_validate(item) for item in data]
