@@ -1,6 +1,6 @@
-from typing import Literal, Optional
+from typing import Any, Literal, Optional, Union
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 ChargeStatus = Literal[
     "SUCCESS", "QUEUED", "ERROR", "REFUNDED", "PARTIALLY_REFUNDED", "SKIPPED"
@@ -25,6 +25,13 @@ class ChargeAnalyticsData(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     utm_params: Optional[ChargeAnalyticsDataUtmParams] = None
+
+    @field_validator("utm_params", mode="before")
+    @classmethod
+    def coerce_utm_params(cls, v: Any) -> Any:
+        if isinstance(v, list):
+            return None
+        return v
 
 
 class ChargeBillingAddress(BaseModel):
@@ -153,7 +160,7 @@ class ChargeOrderAttribute(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     name: str
-    value: str
+    value: Optional[str] = None
 
 
 class ChargeShippingAddress(BaseModel):
@@ -178,12 +185,26 @@ class ChargeShippingLine(BaseModel):
     price: Optional[str] = None
     source: Optional[str] = None
     title: Optional[str] = None
-    taxable: Optional[str] = None
+    taxable: Optional[Union[str, bool]] = None
     tax_lines: list[ChargeTaxLine] = []
 
 
 class Charge(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    @field_validator("status", "type", mode="before")
+    @classmethod
+    def uppercase_literals(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            return v.upper()
+        return v
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def coerce_tags(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            return [t.strip() for t in v.split(",") if t.strip()]
+        return v
 
     id: int
     address_id: Optional[int] = None
