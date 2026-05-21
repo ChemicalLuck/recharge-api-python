@@ -1,15 +1,13 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 OrderStatus = Literal["SUCCESS", "QUEUED", "ERROR", "REFUNDED", "SKIPPED"]
 
 OrderType = Literal["CHECKOUT", "RECURRING"]
 
 
-class OrderBillingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderBillingAddress(RechargeModel):
     address1: Optional[str] = None
     province: Optional[str] = None
     address2: Optional[str] = None
@@ -22,9 +20,7 @@ class OrderBillingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class OrderShippingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderShippingAddress(RechargeModel):
     address1: Optional[str] = None
     province: Optional[str] = None
     address2: Optional[str] = None
@@ -37,42 +33,32 @@ class OrderShippingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class OrderCustomer(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderCustomer(RechargeModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[str] = None
 
 
-class OrderLineItemImages(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemImages(RechargeModel):
     large: Optional[str] = None
     medium: Optional[str] = None
     original: Optional[str] = None
     small: Optional[str] = None
 
 
-class OrderLineItemTaxLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemTaxLine(RechargeModel):
     price: Optional[str] = None
     rate: Optional[str] = None
     title: Optional[str] = None
     unit_price: Optional[str] = None
 
 
-class OrderLineItemProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemProperty(RechargeModel):
     name: str
     value: str
 
 
-class OrderLineItem(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItem(RechargeModel):
     external_inventory_policy: Optional[str] = None
     gram: Optional[int] = None
     images: Optional[OrderLineItemImages] = None
@@ -89,9 +75,7 @@ class OrderLineItem(BaseModel):
     properties: list[OrderLineItemProperty] = []
 
 
-class Order(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Order(RechargeModel):
     id: int
     billing_address: Optional[OrderBillingAddress] = None
     currency: Optional[str] = None

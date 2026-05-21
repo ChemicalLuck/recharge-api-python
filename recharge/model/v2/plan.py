@@ -1,44 +1,32 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class PlanChannelSettingsApi(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PlanChannelSettingsApi(RechargeModel):
     display: bool
 
 
-class PlanChannelSettingsCustomerPortal(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PlanChannelSettingsCustomerPortal(RechargeModel):
     display: bool
 
 
-class PlanChannelSettingsMerchantPortal(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PlanChannelSettingsMerchantPortal(RechargeModel):
     display: bool
 
 
-class PlanChannelSettingsCheckoutPage(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PlanChannelSettingsCheckoutPage(RechargeModel):
     display: bool
 
 
-class PlanExternalProductId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PlanExternalProductId(RechargeModel):
     ecommerce: str
 
 
 PlanIntervalUnit = Literal["day", "week", "month"]
 
 
-class PlanSubscriptionPreferences(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PlanSubscriptionPreferences(RechargeModel):
     apply_cutoff_date_to_checkout: Optional[bool] = None
     charge_interval_frequency: Optional[int] = None
     cutoff_day_of_month: Optional[int] = None
@@ -50,9 +38,7 @@ class PlanSubscriptionPreferences(BaseModel):
     interval_unit: Optional[PlanIntervalUnit] = None
 
 
-class PlanChannelSettings(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PlanChannelSettings(RechargeModel):
     api: Optional[PlanChannelSettingsApi] = None
     customer_portal: Optional[PlanChannelSettingsCustomerPortal] = None
     merchant_portal: Optional[PlanChannelSettingsMerchantPortal] = None
@@ -64,9 +50,7 @@ PlanType = Literal["subscription", "prepaid", "onetime"]
 PlanDiscountType = Literal["percentage"]
 
 
-class Plan(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Plan(RechargeModel):
     id: int
     channel_settings: Optional[PlanChannelSettings] = None
     created_at: Optional[str] = None

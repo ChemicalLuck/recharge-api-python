@@ -1,6 +1,6 @@
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 CheckoutExternalCheckoutSource = Literal["big_commerce", "headless", "shopify"]
 
@@ -13,9 +13,7 @@ CheckoutPaymentProcessor = Literal["stripe", "braintree", "mollie", "authorize"]
 CheckoutPaymentType = Literal["CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY"]
 
 
-class CheckoutUtmParams(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutUtmParams(RechargeModel):
     utm_campaign: Optional[str] = None
     utm_content: Optional[str] = None
     utm_data_source: Optional[str] = None
@@ -25,15 +23,11 @@ class CheckoutUtmParams(BaseModel):
     utm_timestamp: Optional[str] = None
 
 
-class CheckoutAnalyticsData(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutAnalyticsData(RechargeModel):
     utm_params: Optional[list[CheckoutUtmParams]] = None
 
 
-class CheckoutBillingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutBillingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -46,16 +40,12 @@ class CheckoutBillingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class CheckoutLineItemProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutLineItemProperty(RechargeModel):
     name: str
     value: str
 
 
-class CheckoutLineItem(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutLineItem(RechargeModel):
     charge_interval_frequency: Optional[int] = None
     cutoff_day_of_month: Optional[int] = None
     cutoff_day_of_week: Optional[int] = None
@@ -84,16 +74,12 @@ class CheckoutLineItem(BaseModel):
     variant_title: Optional[str] = None
 
 
-class CheckoutNoteAttribute(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutNoteAttribute(RechargeModel):
     name: str
     value: str
 
 
-class CheckoutShippingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutShippingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -106,9 +92,7 @@ class CheckoutShippingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class Checkout(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Checkout(RechargeModel):
     analytics_data: Optional[CheckoutAnalyticsData] = None
     billing_address: Optional[CheckoutBillingAddress] = None
     buyer_accepts_marketing: Optional[bool] = None
@@ -125,25 +109,19 @@ class Checkout(BaseModel):
     shipping_address: Optional[CheckoutShippingAddress] = None
 
 
-class CheckoutCharge(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutCharge(RechargeModel):
     payment_processor: CheckoutPaymentProcessor
     payment_token: str
     payment_type: CheckoutPaymentType
 
 
-class CheckoutDetails(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutDetails(RechargeModel):
     subtotal_price: Optional[str] = None
     total_price: Optional[str] = None
     total_tax: Optional[str] = None
 
 
-class CheckoutShippingRate(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CheckoutShippingRate(RechargeModel):
     checkout: Optional[CheckoutDetails] = None
     code: str
     delivery_range: Optional[str] = None

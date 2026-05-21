@@ -1,17 +1,13 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class ProductExternalProductId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductExternalProductId(RechargeModel):
     ecommerce: str
 
 
-class ProductImage(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductImage(RechargeModel):
     large: Optional[str] = None
     medium: Optional[str] = None
     original: Optional[str] = None
@@ -19,44 +15,32 @@ class ProductImage(BaseModel):
     sort_order: Optional[int] = None
 
 
-class ProductOptionValue(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductOptionValue(RechargeModel):
     label: str
     position: str
 
 
-class ProductOption(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductOption(RechargeModel):
     name: str
     position: str
     values: list[ProductOptionValue]
 
 
-class ProductVariantDimensions(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductVariantDimensions(RechargeModel):
     weight: int
     weight_unit: str
 
 
-class ProductVariantOptionValue(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductVariantOptionValue(RechargeModel):
     label: str
 
 
-class ProductVariantPrices(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductVariantPrices(RechargeModel):
     compare_at_price: str
     unit_price: str
 
 
-class ProductVariant(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductVariant(RechargeModel):
     dimensions: Optional[ProductVariantDimensions] = None
     external_variant_id: str
     image: Optional[ProductImage] = None
@@ -78,9 +62,7 @@ ProductStorefrontPurchaseOptions = Literal[
 ProductOrderIntervalUnit = Literal["day", "week", "month"]
 
 
-class Product(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Product(RechargeModel):
     external_product_id: str
     brand: Optional[str] = None
     external_created_at: Optional[str] = None

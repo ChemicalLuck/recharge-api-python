@@ -1,11 +1,11 @@
 from typing import Any, Literal, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import field_validator
+
+from recharge.model.base import RechargeModel
 
 
-class OrderBillingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderBillingAddress(RechargeModel):
     address1: Optional[str] = None
     province: Optional[str] = None
     address2: Optional[str] = None
@@ -18,9 +18,7 @@ class OrderBillingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class OrderShippingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderShippingAddress(RechargeModel):
     address1: Optional[str] = None
     province: Optional[str] = None
     address2: Optional[str] = None
@@ -33,38 +31,28 @@ class OrderShippingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class OrderCustomer(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderCustomer(RechargeModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[str] = None
 
 
-class OrderLineItemExternalProductId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemExternalProductId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class OrderLineItemExternalVariantId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemExternalVariantId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class OrderLineItemImages(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemImages(RechargeModel):
     large: Optional[str] = None
     medium: Optional[str] = None
     small: Optional[str] = None
     original: Optional[str] = None
 
 
-class OrderLineItemProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemProperty(RechargeModel):
     name: str
     value: str
 
@@ -72,17 +60,13 @@ class OrderLineItemProperty(BaseModel):
 OrderLineItemPurchaseItemType = Literal["subscription", "onetime"]
 
 
-class OrderLineItemTaxLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItemTaxLine(RechargeModel):
     price: str
     rate: Union[str, float]
     title: str
 
 
-class OrderLineItem(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderLineItem(RechargeModel):
     purchase_item_id: Optional[int] = None
     external_product_id: Optional[OrderLineItemExternalProductId] = None
     external_variant_id: Optional[OrderLineItemExternalVariantId] = None
@@ -105,9 +89,7 @@ class OrderLineItem(BaseModel):
     variant_title: Optional[str] = None
 
 
-class OrderExternalOrderId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderExternalOrderId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
@@ -116,28 +98,20 @@ OrderStatus = Literal["success", "error", "queued", "cancelled"]
 OrderType = Literal["checkout", "recurring"]
 
 
-class OrderExternalTransactionId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderExternalTransactionId(RechargeModel):
     payment_processor: Optional[str] = None
 
 
-class OrderExternalOrderNumber(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderExternalOrderNumber(RechargeModel):
     ecommerce: str
 
 
-class OrderCharge(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderCharge(RechargeModel):
     id: int
     external_transaction_id: Optional[OrderExternalTransactionId] = None
 
 
-class OrderClientDetails(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderClientDetails(RechargeModel):
     browser_ip: Optional[str] = None
     user_agent: Optional[str] = None
 
@@ -145,33 +119,25 @@ class OrderClientDetails(BaseModel):
 OrderDiscountValueType = Literal["percentage", "fixed_amount", "shipping"]
 
 
-class OrderDiscount(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderDiscount(RechargeModel):
     id: int
     code: str
     value: float
     value_type: OrderDiscountValueType
 
 
-class OrderAttribute(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderAttribute(RechargeModel):
     name: str
     value: Optional[str] = None
 
 
-class OrderTaxLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderTaxLine(RechargeModel):
     price: str
     rate: Union[str, float]
     title: str
 
 
-class OrderShippingLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OrderShippingLine(RechargeModel):
     code: Optional[str] = None
     price: Optional[str] = None
     source: Optional[str] = None
@@ -180,9 +146,7 @@ class OrderShippingLine(BaseModel):
     tax_lines: list[OrderTaxLine] = []
 
 
-class Order(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Order(RechargeModel):
     @field_validator("tags", mode="before")
     @classmethod
     def parse_tags(cls, v: Any) -> Any:

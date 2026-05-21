@@ -1,18 +1,14 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class TokenClient(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class TokenClient(RechargeModel):
     name: Optional[str] = None
     email: Optional[str] = None
 
 
-class TokenInformation(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class TokenInformation(RechargeModel):
     client: Optional[TokenClient] = None
     contact_email: Optional[str] = None
     name: Optional[str] = None

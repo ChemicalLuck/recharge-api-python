@@ -1,18 +1,14 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class OnetimeProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OnetimeProperty(RechargeModel):
     name: str
     value: str
 
 
-class Onetime(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Onetime(RechargeModel):
     id: int
     address_id: Optional[int] = None
     add_to_next_charge: Optional[bool] = None

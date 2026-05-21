@@ -1,6 +1,6 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 ProductDiscountType = Literal["percentage"]
 
@@ -11,18 +11,14 @@ ProductStorefrontPurchaseOptions = Literal[
 ProductOrderIntervalUnit = Literal["day", "week", "month"]
 
 
-class ProductImages(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ProductImages(RechargeModel):
     large: Optional[str] = None
     medium: Optional[str] = None
     original: Optional[str] = None
     small: Optional[str] = None
 
 
-class Product(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Product(RechargeModel):
     id: int
     charge_interval_frequency: Optional[int] = None
     created_at: Optional[str] = None

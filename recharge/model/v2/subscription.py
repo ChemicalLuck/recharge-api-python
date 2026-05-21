@@ -1,13 +1,13 @@
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import field_validator
+
+from recharge.model.base import RechargeModel
 
 SubscriptionOrderIntervalUnit = Literal["day", "week", "month"]
 
 
-class SubscriptionProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class SubscriptionProperty(RechargeModel):
     name: str
     value: str
 
@@ -15,9 +15,7 @@ class SubscriptionProperty(BaseModel):
 SubscriptionStatus = Literal["ACTIVE", "CANCELLED", "EXPIRED"]
 
 
-class SubscriptionAnalyticsDataUtmParams(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class SubscriptionAnalyticsDataUtmParams(RechargeModel):
     utm_campaign: Optional[str] = None
     utm_content: Optional[str] = None
     utm_data_source: Optional[str] = None
@@ -27,27 +25,19 @@ class SubscriptionAnalyticsDataUtmParams(BaseModel):
     utm_timestamp: Optional[str] = None
 
 
-class SubscriptionAnalyticsData(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class SubscriptionAnalyticsData(RechargeModel):
     utm_params: list[SubscriptionAnalyticsDataUtmParams] = []
 
 
-class SubscriptionExternalProductId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class SubscriptionExternalProductId(RechargeModel):
     ecommerce: str
 
 
-class SubscriptionExternalVariantId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class SubscriptionExternalVariantId(RechargeModel):
     ecommerce: str
 
 
-class Subscription(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Subscription(RechargeModel):
     @field_validator("status", mode="before")
     @classmethod
     def uppercase_status(cls, v: Any) -> Any:

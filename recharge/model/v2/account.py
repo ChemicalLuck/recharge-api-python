@@ -1,11 +1,9 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class Account(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Account(RechargeModel):
     id: int
     user_id: int
     created_at: str

@@ -1,16 +1,12 @@
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class TokenClient(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class TokenClient(RechargeModel):
     name: str
     contact_email: str
 
 
-class TokenInformation(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class TokenInformation(RechargeModel):
     client: TokenClient
     contact_email: str
     name: str

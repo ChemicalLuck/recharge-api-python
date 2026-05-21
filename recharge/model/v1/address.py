@@ -1,26 +1,20 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class AddressNoteAttribute(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AddressNoteAttribute(RechargeModel):
     name: str
     value: str
 
 
-class AddressShippingLinesOverride(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AddressShippingLinesOverride(RechargeModel):
     code: str
     price: str
     title: str
 
 
-class Address(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Address(RechargeModel):
     id: int
     address1: Optional[str] = None
     address2: Optional[str] = None

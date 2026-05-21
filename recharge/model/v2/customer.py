@@ -1,13 +1,11 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 CustomerStatus = Literal["ACTIVE", "INACTIVE"]
 
 
-class CustomerAnalyticsDataUtmParams(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerAnalyticsDataUtmParams(RechargeModel):
     utm_campaign: Optional[str] = None
     utm_content: Optional[str] = None
     utm_data_source: Optional[str] = None
@@ -17,21 +15,15 @@ class CustomerAnalyticsDataUtmParams(BaseModel):
     utm_timestamp: Optional[str] = None
 
 
-class CustomerAnalyticsData(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerAnalyticsData(RechargeModel):
     utm_params: Optional[list[CustomerAnalyticsDataUtmParams]] = None
 
 
-class CustomerExternalCustomerId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerExternalCustomerId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class Customer(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Customer(RechargeModel):
     id: int
     analytics_data: Optional[CustomerAnalyticsData] = None
     apply_credit_to_next_recurring_charge: bool
@@ -52,29 +44,21 @@ class Customer(BaseModel):
     updated_at: str
 
 
-class CustomerCreditSummary(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerCreditSummary(RechargeModel):
     customer_id: int
     total_available_balance: str
     currency_code: str
 
 
-class CustomerDeliveryOrderLineItemExternalProductId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrderLineItemExternalProductId(RechargeModel):
     ecommerce: str
 
 
-class CustomerDeliveryOrderLineItemExternalVariantId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrderLineItemExternalVariantId(RechargeModel):
     ecommerce: str
 
 
-class CustomerDeliveryOrderLineItemImage(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrderLineItemImage(RechargeModel):
     large: Optional[str] = None
     medium: Optional[str] = None
     small: Optional[str] = None
@@ -85,16 +69,12 @@ class CustomerDeliveryOrderLineItemImage(BaseModel):
 CustomerDeliveryOrderLineItemPlanType = Literal["subscription", "onetime"]
 
 
-class CustomerDeliveryOrderLineItemProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrderLineItemProperty(RechargeModel):
     name: str
     value: str
 
 
-class CustomerDeliveryOrderLineItem(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrderLineItem(RechargeModel):
     subscription_id: int
     external_product_id: CustomerDeliveryOrderLineItemExternalProductId
     external_variant_id: CustomerDeliveryOrderLineItemExternalVariantId
@@ -112,9 +92,7 @@ class CustomerDeliveryOrderLineItem(BaseModel):
     variant_title: str
 
 
-class CustomerPaymentDetails(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerPaymentDetails(RechargeModel):
     brand: Optional[str] = None
     exp_month: Optional[int] = None
     exp_year: Optional[int] = None
@@ -125,9 +103,7 @@ class CustomerPaymentDetails(BaseModel):
     funding_type: Optional[str] = None
 
 
-class CustomerBillingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerBillingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -140,17 +116,13 @@ class CustomerBillingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class CustomerDeliveryOrderPaymentMethod(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrderPaymentMethod(RechargeModel):
     id: int
     billing_address: CustomerBillingAddress
     payment_details: CustomerPaymentDetails
 
 
-class CustomerDeliveryOrderShippingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrderShippingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -163,9 +135,7 @@ class CustomerDeliveryOrderShippingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class CustomerDeliveryOrder(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryOrder(RechargeModel):
     id: Optional[int] = None
     address_id: int
     charge_id: Optional[int] = None
@@ -175,24 +145,18 @@ class CustomerDeliveryOrder(BaseModel):
     shipping_address: CustomerDeliveryOrderShippingAddress
 
 
-class CustomerDeliveryScheduleDelivery(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryScheduleDelivery(RechargeModel):
     date: str
     orders: list[CustomerDeliveryOrder]
 
 
-class CustomerDeliveryScheduleCustomer(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliveryScheduleCustomer(RechargeModel):
     id: int
     email: str
     first_name: str
     last_name: str
 
 
-class CustomerDeliverySchedule(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CustomerDeliverySchedule(RechargeModel):
     customer: CustomerDeliveryScheduleCustomer
     deliveries: list[CustomerDeliveryScheduleDelivery]  # fixed: was 'delvieries'

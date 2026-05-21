@@ -1,13 +1,11 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 CustomerStatus = Literal["ACTIVE", "INACTIVE"]
 
 
-class Customer(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Customer(RechargeModel):
     id: int
     accepts_marketing: Optional[bool] = None
     billing_address1: Optional[str] = None

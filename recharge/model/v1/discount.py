@@ -1,6 +1,6 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 DiscountProductType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
@@ -15,24 +15,18 @@ DiscountFirstTimeCustomerRestriction = Literal[
 DiscountStatus = Literal["enabled", "disabled", "fully_disabled"]
 
 
-class DiscountChannelSettingsValue(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class DiscountChannelSettingsValue(RechargeModel):
     can_apply: Optional[bool] = None
 
 
-class DiscountChannelSettings(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class DiscountChannelSettings(RechargeModel):
     api: Optional[DiscountChannelSettingsValue] = None
     checkout_page: Optional[DiscountChannelSettingsValue] = None
     customer_portal: Optional[DiscountChannelSettingsValue] = None
     merchant_portal: Optional[DiscountChannelSettingsValue] = None
 
 
-class Discount(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Discount(RechargeModel):
     id: int
     applies_to_id: Optional[int] = None
     applies_to_product_type: Optional[DiscountProductType] = None

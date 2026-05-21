@@ -1,6 +1,6 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 ChargeStatus = Literal[
     "SUCCESS", "QUEUED", "ERROR", "REFUNDED", "PARTIALLY_REFUNDED", "SKIPPED"
@@ -9,9 +9,7 @@ ChargeStatus = Literal[
 ChargeDiscountCodeType = Literal["percentage", "fixed_amount"]
 
 
-class ChargeAnalyticsDataUtmParams(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeAnalyticsDataUtmParams(RechargeModel):
     utm_campaign: Optional[str] = None
     utm_content: Optional[str] = None
     utm_data_source: Optional[str] = None
@@ -21,15 +19,11 @@ class ChargeAnalyticsDataUtmParams(BaseModel):
     utm_timestamp: Optional[str] = None
 
 
-class ChargeAnalyticsData(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeAnalyticsData(RechargeModel):
     utm_params: Optional[ChargeAnalyticsDataUtmParams] = None
 
 
-class ChargeBillingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeBillingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -42,41 +36,31 @@ class ChargeBillingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class ChargeClientDetails(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeClientDetails(RechargeModel):
     browser_ip: Optional[str] = None
     user_agent: Optional[str] = None
 
 
-class ChargeDiscountCode(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeDiscountCode(RechargeModel):
     recharge_discount_id: Optional[int] = None
     code: Optional[str] = None
     value: Optional[float] = None
     type: Optional[ChargeDiscountCodeType] = None
 
 
-class ChargeLineItemImages(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeLineItemImages(RechargeModel):
     large: Optional[str] = None
     medium: Optional[str] = None
     original: Optional[str] = None
     small: Optional[str] = None
 
 
-class ChargeLineItemProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeLineItemProperty(RechargeModel):
     name: str
     value: str
 
 
-class ChargeLineItem(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeLineItem(RechargeModel):
     gram: Optional[int] = None
     images: Optional[ChargeLineItemImages] = None
     original_price: Optional[str] = None
@@ -91,16 +75,12 @@ class ChargeLineItem(BaseModel):
     subscription_id: Optional[int] = None
 
 
-class ChargeNoteAttribute(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeNoteAttribute(RechargeModel):
     name: str
     value: str
 
 
-class ChargeShippingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeShippingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -113,9 +93,7 @@ class ChargeShippingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class ChargeShippingLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeShippingLine(RechargeModel):
     code: Optional[str] = None
     price: Optional[str] = None
     source: Optional[str] = None
@@ -123,9 +101,7 @@ class ChargeShippingLine(BaseModel):
     taxable: Optional[str] = None
 
 
-class ChargeTaxLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeTaxLine(RechargeModel):
     code: Optional[str] = None
     price: Optional[str] = None
     source: Optional[str] = None
@@ -133,9 +109,7 @@ class ChargeTaxLine(BaseModel):
     taxable: Optional[str] = None
 
 
-class Charge(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Charge(RechargeModel):
     id: int
     address_id: Optional[int] = None
     analytics_data: Optional[ChargeAnalyticsData] = None

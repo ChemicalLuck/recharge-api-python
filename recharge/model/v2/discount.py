@@ -1,15 +1,13 @@
 from typing import Any, Literal, Optional, Union
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 DiscountAppliesToPurchaseItemType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
 DiscountAppliesToResource = Literal["shopify_product", "shopify_collection_id"]
 
 
-class DiscountAppliesTo(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class DiscountAppliesTo(RechargeModel):
     ids: Optional[list[Union[str, int]]] = None
     purchase_item_type: Optional[DiscountAppliesToPurchaseItemType] = None
     resource: Optional[DiscountAppliesToResource] = None
@@ -18,15 +16,11 @@ class DiscountAppliesTo(BaseModel):
 DiscountProductType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 
 
-class DiscountChannelSettingsValue(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class DiscountChannelSettingsValue(RechargeModel):
     can_apply: Optional[bool] = None
 
 
-class DiscountChannelSettings(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class DiscountChannelSettings(RechargeModel):
     api: Optional[DiscountChannelSettingsValue] = None
     checkout_page: Optional[DiscountChannelSettingsValue] = None
     customer_portal: Optional[DiscountChannelSettingsValue] = None
@@ -40,9 +34,7 @@ DiscountFirstTimeCustomerRestriction = Literal[
 ]
 
 
-class DiscountUsageLimits(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class DiscountUsageLimits(RechargeModel):
     one_application_per_customer: bool
     first_time_customer_restriction: Optional[Any] = None
     max_subsequent_redemptions: Optional[int] = None
@@ -52,15 +44,11 @@ class DiscountUsageLimits(BaseModel):
 DiscountStatus = Literal["enabled", "disabled", "fully_disabled"]
 
 
-class DiscountExternalDiscountId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class DiscountExternalDiscountId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class Discount(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Discount(RechargeModel):
     id: int
     applies_to: Optional[DiscountAppliesTo] = None
     channel_settings: Optional[DiscountChannelSettings] = None

@@ -1,15 +1,13 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 CollectionSortOrder = Literal[
     "id-asc", "id-desc", "title-asc", "title-desc", "created-asc", "created-desc"
 ]
 
 
-class Collection(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Collection(RechargeModel):
     id: int
     created_at: Optional[str] = None
     description: Optional[str] = None
@@ -19,9 +17,7 @@ class Collection(BaseModel):
     updated_at: Optional[str] = None
 
 
-class CollectionProduct(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class CollectionProduct(RechargeModel):
     collection_id: Optional[int] = None
     created_at: Optional[str] = None
     external_product_id: Optional[int] = None

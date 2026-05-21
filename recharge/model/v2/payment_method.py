@@ -1,6 +1,8 @@
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import field_validator
+
+from recharge.model.base import RechargeModel
 
 PaymentMethodType = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"
@@ -11,9 +13,7 @@ PaymentMethodProcessorName = Literal[
 ]
 
 
-class PaymentMethodBillingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PaymentMethodBillingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -26,9 +26,7 @@ class PaymentMethodBillingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class PaymentMethodDetails(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PaymentMethodDetails(RechargeModel):
     brand: Optional[str] = None
     exp_month: Optional[int] = None
     exp_year: Optional[int] = None
@@ -42,9 +40,7 @@ class PaymentMethodDetails(BaseModel):
 PaymentMethodStatus = Literal["unvalidated", "valid", "invalid", "empty"]
 
 
-class PaymentMethod(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class PaymentMethod(RechargeModel):
     @field_validator("payment_type", mode="before")
     @classmethod
     def uppercase_payment_type(cls, v: Any) -> Any:

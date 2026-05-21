@@ -1,9 +1,7 @@
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class BundleSelectionItem(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class BundleSelectionItem(RechargeModel):
     id: int
     collection_id: str
     collection_source: str
@@ -14,9 +12,7 @@ class BundleSelectionItem(BaseModel):
     updated_at: str
 
 
-class BundleSelection(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class BundleSelection(RechargeModel):
     id: int
     bundle_variant_id: int
     purchase_item_id: int

@@ -1,6 +1,6 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 RetentionStrategyCancellationFlowType = Literal["subscription", "membership"]
 
@@ -9,9 +9,7 @@ RetentionStrategyIncentiveType = Literal[
 ]
 
 
-class RetentionStrategy(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class RetentionStrategy(RechargeModel):
     id: int
     cancellation_flow_type: RetentionStrategyCancellationFlowType
     created_at: str

@@ -1,26 +1,20 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class StoreTimezone(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class StoreTimezone(RechargeModel):
     iana_name: str
     name: str
 
 
-class StorePresentmentCurrencySymbol(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class StorePresentmentCurrencySymbol(RechargeModel):
     currency: Optional[str] = None
     locale_name: Optional[str] = None
     symbol: Optional[str] = None
 
 
-class Store(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Store(RechargeModel):
     id: int
     checkout_logo_url: str
     checkout_platform: str

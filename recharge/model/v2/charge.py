@@ -1,6 +1,8 @@
 from typing import Any, Literal, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import field_validator
+
+from recharge.model.base import RechargeModel
 
 ChargeStatus = Literal[
     "SUCCESS", "QUEUED", "ERROR", "REFUNDED", "PARTIALLY_REFUNDED", "SKIPPED"
@@ -9,9 +11,7 @@ ChargeStatus = Literal[
 ChargeType = Literal["CHECKOUT", "RECURRING"]
 
 
-class ChargeAnalyticsDataUtmParams(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeAnalyticsDataUtmParams(RechargeModel):
     utm_campaign: Optional[str] = None
     utm_content: Optional[str] = None
     utm_data_source: Optional[str] = None
@@ -21,15 +21,11 @@ class ChargeAnalyticsDataUtmParams(BaseModel):
     utm_timestamp: Optional[str] = None
 
 
-class ChargeAnalyticsData(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeAnalyticsData(RechargeModel):
     utm_params: Optional[list[ChargeAnalyticsDataUtmParams]] = None
 
 
-class ChargeBillingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeBillingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -42,22 +38,16 @@ class ChargeBillingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class ChargeClientDetails(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeClientDetails(RechargeModel):
     browser_ip: Optional[str] = None
     user_agent: Optional[str] = None
 
 
-class ChargeExternalCustomerId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeExternalCustomerId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class ChargeCustomer(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeCustomer(RechargeModel):
     id: Optional[int] = None
     email: Optional[str] = None
     external_customer_id: Optional[ChargeExternalCustomerId] = None
@@ -67,30 +57,22 @@ class ChargeCustomer(BaseModel):
 ChargeDiscountCodeType = Literal["percentage", "fixed_amount"]
 
 
-class ChargeDiscount(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeDiscount(RechargeModel):
     id: Optional[int] = None
     code: Optional[str] = None
     value: Optional[float] = None
     value_type: Optional[ChargeDiscountCodeType] = None
 
 
-class ChargeExternalOrderId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeExternalOrderId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class ChargeExternalTransactionId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeExternalTransactionId(RechargeModel):
     payment_processor: Optional[str] = None
 
 
-class ChargeLineItemImages(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeLineItemImages(RechargeModel):
     large: Optional[str] = None
     medium: Optional[str] = None
     original: Optional[str] = None
@@ -98,28 +80,20 @@ class ChargeLineItemImages(BaseModel):
     sort_order: Optional[int] = None
 
 
-class ChargeLineItemProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeLineItemProperty(RechargeModel):
     name: str
     value: str
 
 
-class ChargeExternalProductId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeExternalProductId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class ChargeExternalVariantId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeExternalVariantId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class ChargeTaxLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeTaxLine(RechargeModel):
     price: Optional[str] = None
     rate: Optional[Union[str, float]] = None
     title: Optional[str] = None
@@ -129,9 +103,7 @@ class ChargeTaxLine(BaseModel):
 ChargeLineItemPurchaseItemType = Literal["subscription", "onetime"]
 
 
-class ChargeLineItem(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeLineItem(RechargeModel):
     purchase_item_id: Optional[int] = None
     external_product_id: Optional[ChargeExternalProductId] = None
     external_variant_id: Optional[ChargeExternalVariantId] = None
@@ -154,16 +126,12 @@ class ChargeLineItem(BaseModel):
     variant_title: Optional[str] = None
 
 
-class ChargeOrderAttribute(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeOrderAttribute(RechargeModel):
     name: str
     value: Optional[str] = None
 
 
-class ChargeShippingAddress(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeShippingAddress(RechargeModel):
     address1: Optional[str] = None
     address2: Optional[str] = None
     city: Optional[str] = None
@@ -176,9 +144,7 @@ class ChargeShippingAddress(BaseModel):
     zip: Optional[str] = None
 
 
-class ChargeShippingLine(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class ChargeShippingLine(RechargeModel):
     code: Optional[str] = None
     price: Optional[str] = None
     source: Optional[str] = None
@@ -187,9 +153,7 @@ class ChargeShippingLine(BaseModel):
     tax_lines: list[ChargeTaxLine] = []
 
 
-class Charge(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Charge(RechargeModel):
     @field_validator("status", "type", mode="before")
     @classmethod
     def uppercase_literals(cls, v: Any) -> Any:

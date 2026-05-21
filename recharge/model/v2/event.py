@@ -1,11 +1,9 @@
 from typing import Any, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class EventSource(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class EventSource(RechargeModel):
     account_id: Optional[Any] = None
     api_token_id: Optional[Any] = None
     api_token_name: Optional[str] = None
@@ -14,9 +12,7 @@ class EventSource(BaseModel):
     user_type: Optional[str] = None
 
 
-class Event(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Event(RechargeModel):
     id: int
     object_id: int
     customer_id: int

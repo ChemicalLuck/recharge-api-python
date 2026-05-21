@@ -1,44 +1,34 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 AddressDiscountValueType = Literal["percentage", "fixed_amount"]
 
 
-class AddressOrderAttribute(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AddressOrderAttribute(RechargeModel):
     name: str
     value: str
 
 
-class AddressDiscount(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AddressDiscount(RechargeModel):
     id: Optional[int] = None
     code: Optional[str] = None
     value: Optional[float] = None
     value_type: Optional[AddressDiscountValueType] = None
 
 
-class AddressNoteAttribute(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AddressNoteAttribute(RechargeModel):
     name: str
     value: str
 
 
-class AddressShippingLinesOverride(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AddressShippingLinesOverride(RechargeModel):
     code: Optional[str] = None
     price: Optional[str] = None
     title: Optional[str] = None
 
 
-class Address(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Address(RechargeModel):
     id: int
     payment_method_id: Optional[int] = None
     address1: Optional[str] = None

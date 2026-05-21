@@ -1,7 +1,6 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
-
+from recharge.model.base import RechargeModel
 from recharge.types import RechargeVersion
 
 AsyncBatchStatus = Literal["not_started", "processing", "completed", "failed"]
@@ -19,9 +18,7 @@ AsyncBatchType = Literal[
 ]
 
 
-class AsyncBatch(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AsyncBatch(RechargeModel):
     id: int
     batch_type: AsyncBatchType
     closed_at: Optional[str] = None
@@ -36,9 +33,7 @@ class AsyncBatch(BaseModel):
     version: Optional[RechargeVersion] = None
 
 
-class AsyncBatchTask(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class AsyncBatchTask(RechargeModel):
     batch_id: int
     body: dict
     completed_at: Optional[str] = None

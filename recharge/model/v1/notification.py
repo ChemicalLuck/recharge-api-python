@@ -1,12 +1,10 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 NotificationTemplateType = Literal["upcoming_charge", "get_account_access"]
 
 
-class NotificationTemplateVars(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class NotificationTemplateVars(RechargeModel):
     address_id: Optional[int] = None
     charge_id: Optional[int] = None

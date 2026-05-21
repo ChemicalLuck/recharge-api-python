@@ -1,30 +1,22 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 
-class OnetimeExternalProductId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OnetimeExternalProductId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class OnetimeExternalVariantId(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OnetimeExternalVariantId(RechargeModel):
     ecommerce: Optional[str] = None
 
 
-class OnetimeProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class OnetimeProperty(RechargeModel):
     name: str
     value: str
 
 
-class Onetime(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Onetime(RechargeModel):
     id: int
     address_id: Optional[int] = None
     created_at: Optional[str] = None

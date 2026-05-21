@@ -1,7 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
-
+from recharge.model.base import RechargeModel
 from recharge.types import RechargeScope
 
 WebhookTopic = Literal[
@@ -77,9 +76,7 @@ WebhookTopicMap: dict[str, RechargeScope] = {
 WebhookIncludedObject = Literal["addresses", "collections", "customer", "metafields"]
 
 
-class Webhook(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Webhook(RechargeModel):
     id: int
     address: str
     included_objects: list[WebhookIncludedObject] = []

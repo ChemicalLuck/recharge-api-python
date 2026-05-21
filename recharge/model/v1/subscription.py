@@ -1,22 +1,18 @@
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 SubscriptionOrderIntervalUnit = Literal["day", "week", "month"]
 
 SubscriptionStatus = Literal["ACTIVE", "CANCELLED", "EXPIRED"]
 
 
-class SubscriptionProperty(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class SubscriptionProperty(RechargeModel):
     name: str
     value: str
 
 
-class Subscription(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Subscription(RechargeModel):
     id: int
     address_id: Optional[int] = None
     cancellation_reason: Optional[str] = None

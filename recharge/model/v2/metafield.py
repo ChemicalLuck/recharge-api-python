@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from recharge.model.base import RechargeModel
 
 MetafieldOwnerResource = Literal[
     "address", "store", "customer", "subscription", "order", "charge"
@@ -9,9 +9,7 @@ MetafieldOwnerResource = Literal[
 MetafieldValueType = Literal["string", "json_string", "integer"]
 
 
-class Metafield(BaseModel):
-    model_config = ConfigDict(extra="allow", populate_by_name=True)
-
+class Metafield(RechargeModel):
     id: int
     created_at: str
     description: str
