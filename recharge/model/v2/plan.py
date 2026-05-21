@@ -40,14 +40,14 @@ class PlanSubscriptionPreferences(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     apply_cutoff_date_to_checkout: Optional[bool] = None
-    charge_interval_frequency: int
+    charge_interval_frequency: Optional[int] = None
     cutoff_day_of_month: Optional[int] = None
     cutoff_day_of_week: Optional[int] = None
     expire_after_specific_number_of_charges: Optional[int] = None
     order_day_of_month: Optional[int] = None
     order_day_of_week: Optional[int] = None
-    order_interval_frequency: int
-    interval_unit: PlanIntervalUnit
+    order_interval_frequency: Optional[int] = None
+    interval_unit: Optional[PlanIntervalUnit] = None
 
 
 class PlanChannelSettings(BaseModel):

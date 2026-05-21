@@ -15,7 +15,7 @@ class Collection(BaseModel):
     description: Optional[str] = None
     sort_order: Optional[CollectionSortOrder] = None
     title: Optional[str] = None
-    type: Optional[Literal["manual"]] = None
+    type: Optional[str] = None
     updated_at: Optional[str] = None
 
 

@@ -30,8 +30,8 @@ class PaymentMethodDetails(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     brand: Optional[str] = None
-    exp_month: Optional[str] = None
-    exp_year: Optional[str] = None
+    exp_month: Optional[int] = None
+    exp_year: Optional[int] = None
     last4: Optional[str] = None
     paypal_email: Optional[str] = None
     paypal_payer_id: Optional[str] = None

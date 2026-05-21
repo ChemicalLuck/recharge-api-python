@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -6,6 +8,14 @@ class StoreTimezone(BaseModel):
 
     iana_name: str
     name: str
+
+
+class StorePresentmentCurrencySymbol(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    currency: Optional[str] = None
+    locale_name: Optional[str] = None
+    symbol: Optional[str] = None
 
 
 class Store(BaseModel):
@@ -20,7 +30,7 @@ class Store(BaseModel):
     default_api_version: str
     email: str
     enabled_presentment_currencies: list[str]
-    enabled_presentment_currencies_symbols: list[str]
+    enabled_presentment_currencies_symbols: list[StorePresentmentCurrencySymbol]
     disabled_currencies_historical: list[str]
     external_platform: str
     identifier: str

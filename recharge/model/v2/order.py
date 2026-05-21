@@ -1,6 +1,6 @@
-from typing import Literal, Optional, Union
+from typing import Any, Literal, Optional, Union
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class OrderBillingAddress(BaseModel):
@@ -142,7 +142,7 @@ class OrderClientDetails(BaseModel):
     user_agent: Optional[str] = None
 
 
-OrderDiscountValueType = Literal["percentage", "fixed_amount"]
+OrderDiscountValueType = Literal["percentage", "fixed_amount", "shipping"]
 
 
 class OrderDiscount(BaseModel):
@@ -158,7 +158,7 @@ class OrderAttribute(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     name: str
-    value: str
+    value: Optional[str] = None
 
 
 class OrderTaxLine(BaseModel):
@@ -182,6 +182,13 @@ class OrderShippingLine(BaseModel):
 
 class Order(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def parse_tags(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            return [t.strip() for t in v.split(",") if t.strip()]
+        return v
 
     id: int
     address_id: int

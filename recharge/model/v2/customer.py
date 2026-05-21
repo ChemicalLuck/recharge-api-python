@@ -98,7 +98,7 @@ class CustomerDeliveryOrderLineItem(BaseModel):
     subscription_id: int
     external_product_id: CustomerDeliveryOrderLineItemExternalProductId
     external_variant_id: CustomerDeliveryOrderLineItemExternalVariantId
-    images: list[CustomerDeliveryOrderLineItemImage]
+    images: Optional[CustomerDeliveryOrderLineItemImage] = None
     is_prepaid: bool
     is_skippable: bool
     is_skipped: bool
@@ -168,7 +168,7 @@ class CustomerDeliveryOrder(BaseModel):
 
     id: Optional[int] = None
     address_id: int
-    charge_id: int
+    charge_id: Optional[int] = None
     line_items: list[CustomerDeliveryOrderLineItem]
     order_subtotal: str
     payment_method: CustomerDeliveryOrderPaymentMethod

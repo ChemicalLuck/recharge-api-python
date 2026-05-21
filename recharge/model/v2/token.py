@@ -1,7 +1,5 @@
 from pydantic import BaseModel, ConfigDict
 
-from recharge.types import RechargeScope
-
 
 class TokenClient(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
@@ -16,4 +14,4 @@ class TokenInformation(BaseModel):
     client: TokenClient
     contact_email: str
     name: str
-    scopes: list[RechargeScope]
+    scopes: list[str]

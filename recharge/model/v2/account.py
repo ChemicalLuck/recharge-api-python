@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -7,5 +9,5 @@ class Account(BaseModel):
     id: int
     user_id: int
     created_at: str
-    invited_at: str
+    invited_at: Optional[str] = None
     is_owner: bool

@@ -1,6 +1,6 @@
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 SubscriptionOrderIntervalUnit = Literal["day", "week", "month"]
 
@@ -47,6 +47,13 @@ class SubscriptionExternalVariantId(BaseModel):
 
 class Subscription(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def uppercase_status(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            return v.upper()
+        return v
 
     id: int
     address_id: int

@@ -33,7 +33,7 @@ class Onetime(BaseModel):
     external_variant_id: Optional[OnetimeExternalVariantId] = None
     is_cancelled: Optional[bool] = None
     next_charge_scheduled_at: Optional[str] = None
-    price: Optional[int] = None
+    price: Optional[str] = None
     product_title: Optional[str] = None
     properties: list[OnetimeProperty] = []
     quantity: Optional[int] = None

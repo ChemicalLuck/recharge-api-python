@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Any, Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict
 
@@ -10,7 +10,7 @@ DiscountAppliesToResource = Literal["shopify_product", "shopify_collection_id"]
 class DiscountAppliesTo(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    ids: Optional[list[str]] = None
+    ids: Optional[list[Union[str, int]]] = None
     purchase_item_type: Optional[DiscountAppliesToPurchaseItemType] = None
     resource: Optional[DiscountAppliesToResource] = None
 
@@ -44,9 +44,9 @@ class DiscountUsageLimits(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     one_application_per_customer: bool
-    first_time_customer_restriction: DiscountFirstTimeCustomerRestriction
-    max_subsequent_redemptions: int
-    redemptions: int
+    first_time_customer_restriction: Optional[Any] = None
+    max_subsequent_redemptions: Optional[int] = None
+    redemptions: Optional[int] = None
 
 
 DiscountStatus = Literal["enabled", "disabled", "fully_disabled"]
@@ -55,7 +55,7 @@ DiscountStatus = Literal["enabled", "disabled", "fully_disabled"]
 class DiscountExternalDiscountId(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    ecommerce: str
+    ecommerce: Optional[str] = None
 
 
 class Discount(BaseModel):
