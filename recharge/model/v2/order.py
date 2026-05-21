@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict
 
@@ -11,7 +11,7 @@ class OrderBillingAddress(BaseModel):
     address2: Optional[str] = None
     city: Optional[str] = None
     company: Optional[str] = None
-    country: Optional[str] = None
+    country_code: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     phone: Optional[str] = None
@@ -26,7 +26,7 @@ class OrderShippingAddress(BaseModel):
     address2: Optional[str] = None
     city: Optional[str] = None
     company: Optional[str] = None
-    country: Optional[str] = None
+    country_code: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     phone: Optional[str] = None
@@ -76,7 +76,7 @@ class OrderLineItemTaxLine(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     price: str
-    rate: str
+    rate: Union[str, float]
     title: str
 
 
@@ -119,7 +119,7 @@ OrderType = Literal["checkout", "recurring"]
 class OrderExternalTransactionId(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    ecommerce: str
+    payment_processor: Optional[str] = None
 
 
 class OrderExternalOrderNumber(BaseModel):
@@ -138,8 +138,8 @@ class OrderCharge(BaseModel):
 class OrderClientDetails(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    browser_ip: str
-    user_agent: str
+    browser_ip: Optional[str] = None
+    user_agent: Optional[str] = None
 
 
 OrderDiscountValueType = Literal["percentage", "fixed_amount"]
@@ -165,18 +165,18 @@ class OrderTaxLine(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     price: str
-    rate: str
+    rate: Union[str, float]
     title: str
 
 
 class OrderShippingLine(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    code: str
-    price: str
-    source: str
-    title: str
-    taxable: bool
+    code: Optional[str] = None
+    price: Optional[str] = None
+    source: Optional[str] = None
+    title: Optional[str] = None
+    taxable: Optional[Union[str, bool]] = None
     tax_lines: list[OrderTaxLine] = []
 
 
@@ -209,7 +209,7 @@ class Order(BaseModel):
     taxable: bool
     total_discounts: str
     total_duties: Optional[str] = None
-    total_line_items_price: Optional[int] = None
+    total_line_items_price: Optional[str] = None
     total_price: str
     total_tax: str
     total_weight_grams: int

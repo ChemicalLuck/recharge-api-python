@@ -1,6 +1,6 @@
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 PaymentMethodType = Literal[
     "CREDIT_CARD", "PAYPAL", "APPLE_PAY", "GOOGLE_PAY", "SEPA_DEBIT"
@@ -45,8 +45,16 @@ PaymentMethodStatus = Literal["unvalidated", "valid", "invalid", "empty"]
 class PaymentMethod(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
+    @field_validator("payment_type", mode="before")
+    @classmethod
+    def uppercase_payment_type(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            return v.upper()
+        return v
+
     id: int
     customer_id: int
+    billing_address: Optional[PaymentMethodBillingAddress] = None
     created_at: str
     default: bool
     payment_details: Optional[PaymentMethodDetails] = None

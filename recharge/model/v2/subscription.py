@@ -52,6 +52,7 @@ class Subscription(BaseModel):
     address_id: int
     customer_id: int
     analytics_data: Optional[SubscriptionAnalyticsData] = None
+    plan_id: Optional[int] = None
     cancellation_reason: Optional[str] = None
     cancellation_reason_comment: Optional[str] = None
     cancelled_at: Optional[str] = None

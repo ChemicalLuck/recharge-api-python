@@ -2,7 +2,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict
 
-AddressDiscountType = Literal["percentage", "fixed_amount"]
+AddressDiscountValueType = Literal["percentage", "fixed_amount"]
 
 
 class AddressOrderAttribute(BaseModel):
@@ -15,10 +15,10 @@ class AddressOrderAttribute(BaseModel):
 class AddressDiscount(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    id: Optional[str] = None
+    id: Optional[int] = None
     code: Optional[str] = None
-    value: Optional[int] = None
-    discount_type: Optional[AddressDiscountType] = None
+    value: Optional[float] = None
+    value_type: Optional[AddressDiscountValueType] = None
 
 
 class AddressNoteAttribute(BaseModel):

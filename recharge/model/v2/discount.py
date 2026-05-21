@@ -21,7 +21,7 @@ DiscountProductType = Literal["ALL", "ONETIME", "SUBSCRIPTION"]
 class DiscountChannelSettingsValue(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    can_apply: bool
+    can_apply: Optional[bool] = None
 
 
 class DiscountChannelSettings(BaseModel):

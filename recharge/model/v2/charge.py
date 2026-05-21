@@ -24,14 +24,7 @@ class ChargeAnalyticsDataUtmParams(BaseModel):
 class ChargeAnalyticsData(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    utm_params: Optional[ChargeAnalyticsDataUtmParams] = None
-
-    @field_validator("utm_params", mode="before")
-    @classmethod
-    def coerce_utm_params(cls, v: Any) -> Any:
-        if isinstance(v, list):
-            return None
-        return v
+    utm_params: Optional[list[ChargeAnalyticsDataUtmParams]] = None
 
 
 class ChargeBillingAddress(BaseModel):
@@ -92,7 +85,7 @@ class ChargeExternalOrderId(BaseModel):
 class ChargeExternalTransactionId(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    ecommerce: Optional[str] = None
+    payment_processor: Optional[str] = None
 
 
 class ChargeLineItemImages(BaseModel):
@@ -128,8 +121,12 @@ class ChargeTaxLine(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     price: Optional[str] = None
-    rate: Optional[str] = None
+    rate: Optional[Union[str, float]] = None
     title: Optional[str] = None
+    unit_price: Optional[str] = None
+
+
+ChargeLineItemPurchaseItemType = Literal["subscription", "onetime"]
 
 
 class ChargeLineItem(BaseModel):
@@ -143,6 +140,7 @@ class ChargeLineItem(BaseModel):
     images: Optional[ChargeLineItemImages] = None
     original_price: Optional[str] = None
     properties: list[ChargeLineItemProperty] = []
+    purchase_item_type: Optional[ChargeLineItemPurchaseItemType] = None
     quantity: Optional[int] = None
     sku: Optional[str] = None
     tax_due: Optional[str] = None

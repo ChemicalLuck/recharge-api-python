@@ -45,6 +45,7 @@ class Customer(BaseModel):
     hash: str
     last_name: str
     phone: Optional[str] = None
+    status: Optional[CustomerStatus] = None
     subscriptions_active_count: int
     subscriptions_total_count: int
     tax_exempt: bool
