@@ -63,7 +63,7 @@ class Subscription(RechargeModel):
     is_skippable: bool
     is_swappable: bool
     max_retries_reached: bool
-    next_charge_scheduled_at: str
+    next_charge_scheduled_at: Optional[str]
     order_day_of_month: Optional[int] = None
     order_day_of_week: Optional[int] = None
     order_interval_frequency: int
