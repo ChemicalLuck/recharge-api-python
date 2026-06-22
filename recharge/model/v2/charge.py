@@ -54,7 +54,7 @@ class ChargeCustomer(RechargeModel):
     hash: Optional[str] = None
 
 
-ChargeDiscountCodeType = Literal["percentage", "fixed_amount"]
+ChargeDiscountCodeType = Literal["percentage", "fixed_amount", "shipping"]
 
 
 class ChargeDiscount(RechargeModel):

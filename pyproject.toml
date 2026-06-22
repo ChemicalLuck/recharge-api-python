@@ -1,6 +1,6 @@
 [project]
 name = "recharge-api"
-version = "2.0.6"
+version = "2.0.7"
 authors = [
 	{ name="ChemicalLuck", email="j.tebbett@outlook.com" }
 ]
