@@ -935,7 +935,7 @@ wheels = [
 
 [[package]]
 name = "recharge-api"
-version = "2.0.3"
+version = "2.0.8"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },

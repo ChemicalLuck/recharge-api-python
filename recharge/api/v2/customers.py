@@ -90,10 +90,19 @@ class CustomerResource(RechargeResource):
         self._check_scopes(f"GET /{self.object_list_key}/:customer_id", required_scopes)
 
         url = f"{self._url}/{customer_id}"
-        query = {"includes": includes} if includes else None
+        # Recharge expects a single comma-separated `include` query parameter.
+        # Sending `includes` (plural) or repeated `include` params is silently
+        # ignored by the API, so the extra objects never come back.
+        query = {"include": ",".join(includes)} if includes else None
         data = self._http_get(url, query)
         if not isinstance(data, dict):
             raise RechargeAPIError(f"Expected dict, got {type(data).__name__}")
+        # Included objects are returned nested under an `include` envelope; lift
+        # them onto the customer so they're accessible as attributes (e.g.
+        # referral_info, punch_card_progress).
+        included = data.pop("include", None)
+        if isinstance(included, dict):
+            data.update(included)
         return Customer.model_validate(data)
 
     def update(self, customer_id: str, body: CustomerUpdateBody) -> Customer:
